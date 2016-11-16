@@ -83,6 +83,7 @@ void Roborace::loop() {
 
 #ifdef DEBUG
     unsigned long finish = micros();
+    Serial.print("\n\n\nloop time mcs = ");
     Serial.println(finish - start);
 #endif
 }
