@@ -14,18 +14,18 @@
 class Forward : public Strategy {
 public:
 
-    ValueInt *distStartTurn = new ValueInt(80); // 90
-    ValueInt *distFullTurn = new ValueInt(65); // 85
+    ValueInt *distStartTurn = new ValueInt(85); // 90
+    ValueInt *distFullTurn = new ValueInt(70); // 85
     ValueInt *mediumModeMaxTurn = new ValueInt(30); // 30
 
-    ValueInt *turboModeDist = new ValueInt(70); // 70
-    ValueInt *turboTurn = new ValueInt(5); // 20
-    ValueInt *turboMaxTurn = new ValueInt(5); // 15
+    ValueInt *turboModeDist = new ValueInt(100); // 70
+    ValueInt *turboTurn = new ValueInt(40); // 20
+    ValueInt *turboMaxTurn = new ValueInt(20); // 15
 
-    Adaptation *forwardSpeed = new Adaptation(60); // 80
-    Adaptation *forwardAcceleration = new Adaptation(0);
+    Adaptation *forwardSpeed = new Adaptation(70); // 80
+    Adaptation *forwardAcceleration = new Adaptation(5);
 
-    ValueInt *distWall = new ValueInt(10); // 8
+    ValueInt *distWall = new ValueInt(15); // 8
 
 
     virtual Strategy *init(unsigned int minMs = 500) final override {
@@ -44,7 +44,7 @@ public:
             if (sensors->isSamePlace(4000)) {
                 return backward->init(800);
             }
-            if (rotationHelper->isClockWise()) {
+            if (rotationHelper->isCounterClockWise()) {
                 rotationHelper->reset();
                 return rotate->init();
             }
@@ -57,14 +57,15 @@ public:
 
 //        power += map(abs(angle), Mechanics::TURN_MAX_ANGLE, 0, 0, 8);
         power = forwardSpeed->adaptedValue();
-//        power += (int) map(sensors->maxForwardDistance, 0, 180, 0, forwardAcceleration->adaptedValue());
+        power += (int) map(sensors->maxForwardDistance, 0, 180, 0, forwardAcceleration->adaptedValue());
 
         if (sensors->forwardLeftDistance > turboModeDist->value && sensors->forwardRightDistance > turboModeDist->value) {
-//            angle = getAngle(sensors->forwardRightDistance, sensors->forwardLeftDistance);
             angle = (int) (angle * 30.0 * turboTurn->value / sensors->maxForwardDistance);
             angle = maxAngle(angle, turboMaxTurn->value);
         } else {
-            angle = minAngle(angle, (int) map(sensors->minForwardDistance,
+            unsigned int mmm = min(sensors->minDistance, 4*sensors->leftDistance);
+            mmm = min(mmm, 4*sensors->rightDistance);
+            angle = minAngle(angle, (int) map(mmm,
                                               distFullTurn->value, distStartTurn->value,
                                               30, 0));
             angle = maxAngle(angle, mediumModeMaxTurn->value);
