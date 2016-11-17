@@ -59,13 +59,12 @@ public:
         power = forwardSpeed->adaptedValue();
         power += (int) map(sensors->maxForwardDistance, 0, 180, 0, forwardAcceleration->adaptedValue());
 
-        if (sensors->forwardLeftDistance > turboModeDist->value && sensors->forwardRightDistance > turboModeDist->value) {
+        if (sensors->forwardLeftDistance > turboModeDist->value &&
+            sensors->forwardRightDistance > turboModeDist->value) {
             angle = (int) (angle * 30.0 * turboTurn->value / sensors->maxForwardDistance);
             angle = maxAngle(angle, turboMaxTurn->value);
         } else {
-            unsigned int mmm = min(sensors->minDistance, 2*sensors->leftDistance);
-            mmm = min(mmm, 2*sensors->rightDistance);
-            angle = minAngle(angle, (int) map(mmm,
+            angle = minAngle(angle, (int) map(sensors->minFactor,
                                               distFullTurn->value, distStartTurn->value,
                                               30, 0));
             angle = maxAngle(angle, mediumModeMaxTurn->value);

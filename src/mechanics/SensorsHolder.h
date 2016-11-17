@@ -27,6 +27,8 @@ public:
 
     unsigned int maxDistance, minDistance;
 
+    unsigned int minFactor;
+
 
     TimingFilter *forwardLeftSensor = createSensor(A3);
     TimingFilter *rightSensor = createSensor(A2);
@@ -94,6 +96,9 @@ void SensorsHolder::calcMinDistance() {
 
     minDistance = min(minForwardDistance, leftDistance);
     minDistance = min(minDistance, rightDistance);
+
+    minFactor = min(minForwardDistance, 2 * leftDistance);
+    minFactor = min(minFactor, 2 * rightDistance);
 }
 
 
