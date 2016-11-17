@@ -25,7 +25,7 @@ public:
     Adaptation *forwardSpeed = new Adaptation(70); // 80
     Adaptation *forwardAcceleration = new Adaptation(0);
 
-    ValueInt *distWall = new ValueInt(15); // 8
+    ValueInt *distWall = new ValueInt(8); // 8
 
 
     virtual Strategy *init(unsigned int minMs = 500) final override {
@@ -59,7 +59,9 @@ public:
         power = forwardSpeed->adaptedValue();
         power += (int) map(sensors->maxForwardDistance, 0, 180, 0, forwardAcceleration->adaptedValue());
 
-        if (sensors->forwardLeftDistance > turboModeDist->value &&
+        if (sensors->minForwardDistance < 40) {
+            angle = minAngle(angle, 35);
+        } else if (sensors->forwardLeftDistance > turboModeDist->value &&
             sensors->forwardRightDistance > turboModeDist->value) {
             angle = (int) (angle * 30.0 * turboTurn->value / sensors->maxForwardDistance);
             angle = maxAngle(angle, turboMaxTurn->value);
