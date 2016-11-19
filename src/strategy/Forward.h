@@ -14,15 +14,15 @@
 class Forward : public Strategy {
 public:
 
-    ValueInt *distStartTurn = new ValueInt(90); // 90
-    ValueInt *distFullTurn = new ValueInt(75); // 85
+    ValueInt *distStartTurn = new ValueInt(100); // 90
+    ValueInt *distFullTurn = new ValueInt(80); // 85
     ValueInt *mediumModeMaxTurn = new ValueInt(30); // 30
 
     ValueInt *turboModeDist = new ValueInt(100); // 70
-    ValueInt *turboTurn = new ValueInt(40); // 20
+    ValueInt *turboTurn = new ValueInt(30); // 20
     ValueInt *turboMaxTurn = new ValueInt(20); // 15
 
-    Adaptation *forwardSpeed = new Adaptation(65); // 80
+    Adaptation *forwardSpeed = new Adaptation(80, 30, 0); // 80
     Adaptation *forwardAcceleration = new Adaptation(0);
 
     ValueInt *distWall = new ValueInt(10); // 8
@@ -41,7 +41,7 @@ public:
             if (isWallNear(sensors)) {
                 return backward->init(0);
             }
-            if (sensors->isSamePlace(4000)) {
+            if (sensors->isSamePlace(3500)) {
                 return backward->init(800);
             }
             if (rotationHelper->isCounterClockWise()) {
@@ -59,12 +59,15 @@ public:
         power = forwardSpeed->adaptedValue();
 //        power += (int) map(sensors->maxForwardDistance, 0, 180, 0, forwardAcceleration->adaptedValue());
 
-        if (sensors->minForwardDistance < 45) {
-            angle = minAngle(angle, 35);
+        if (sensors->minForwardDistance < 55) {
+            angle = minAngle(angle, 33);
         } else if (sensors->forwardLeftDistance > turboModeDist->value &&
             sensors->forwardRightDistance > turboModeDist->value) {
             angle = (int) (angle * 30.0 * turboTurn->value / sensors->maxForwardDistance);
             angle = maxAngle(angle, turboMaxTurn->value);
+            if (sensors->minForwardDistance > 130) {
+                power += 10;
+            }
         } else {
             angle = minAngle(angle, (int) map(sensors->minFactor,
                                               distFullTurn->value, distStartTurn->value,
