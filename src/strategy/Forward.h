@@ -22,7 +22,7 @@ public:
     ValueInt *turboTurn = new ValueInt(30); // 20
     ValueInt *turboMaxTurn = new ValueInt(20); // 15
 
-    Adaptation *forwardSpeed = new Adaptation(80, 30, 0); // 80
+    Adaptation *forwardSpeed = new Adaptation(75, 30, 0); // 80
     Adaptation *forwardAcceleration = new Adaptation(0);
 
     ValueInt *distWall = new ValueInt(10); // 8
@@ -66,7 +66,7 @@ public:
             angle = (int) (angle * 30.0 * turboTurn->value / sensors->maxForwardDistance);
             angle = maxAngle(angle, turboMaxTurn->value);
             if (sensors->minForwardDistance > 130) {
-                power += 10;
+                power += 5;
             }
         } else {
             angle = minAngle(angle, (int) map(sensors->minFactor,
