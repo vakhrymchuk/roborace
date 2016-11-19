@@ -97,8 +97,8 @@ void SensorsHolder::calcMinDistance() {
     minDistance = min(minForwardDistance, leftDistance);
     minDistance = min(minDistance, rightDistance);
 
-    minFactor = min(minForwardDistance, 2 * leftDistance);
-    minFactor = min(minFactor, 2 * rightDistance);
+    minFactor = min(minForwardDistance, 3 * leftDistance);
+    minFactor = min(minFactor, 3 * rightDistance);
 }
 
 

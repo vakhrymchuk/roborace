@@ -14,7 +14,7 @@
 class Forward : public Strategy {
 public:
 
-    ValueInt *distStartTurn = new ValueInt(85); // 90
+    ValueInt *distStartTurn = new ValueInt(90); // 90
     ValueInt *distFullTurn = new ValueInt(75); // 85
     ValueInt *mediumModeMaxTurn = new ValueInt(30); // 30
 
@@ -22,10 +22,10 @@ public:
     ValueInt *turboTurn = new ValueInt(40); // 20
     ValueInt *turboMaxTurn = new ValueInt(20); // 15
 
-    Adaptation *forwardSpeed = new Adaptation(70); // 80
+    Adaptation *forwardSpeed = new Adaptation(65); // 80
     Adaptation *forwardAcceleration = new Adaptation(0);
 
-    ValueInt *distWall = new ValueInt(8); // 8
+    ValueInt *distWall = new ValueInt(10); // 8
 
 
     virtual Strategy *init(unsigned int minMs = 500) final override {
@@ -57,9 +57,9 @@ public:
 
 //        power += map(abs(angle), Mechanics::TURN_MAX_ANGLE, 0, 0, 8);
         power = forwardSpeed->adaptedValue();
-        power += (int) map(sensors->maxForwardDistance, 0, 180, 0, forwardAcceleration->adaptedValue());
+//        power += (int) map(sensors->maxForwardDistance, 0, 180, 0, forwardAcceleration->adaptedValue());
 
-        if (sensors->minForwardDistance < 40) {
+        if (sensors->minForwardDistance < 45) {
             angle = minAngle(angle, 35);
         } else if (sensors->forwardLeftDistance > turboModeDist->value &&
             sensors->forwardRightDistance > turboModeDist->value) {
