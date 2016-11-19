@@ -16,13 +16,13 @@ public:
 
     ValueInt *distStartTurn = new ValueInt(100); // 90
     ValueInt *distFullTurn = new ValueInt(80); // 85
-    ValueInt *mediumModeMaxTurn = new ValueInt(30); // 30
+    ValueInt *mediumModeMaxTurn = new ValueInt(31); // 30
 
-    ValueInt *turboModeDist = new ValueInt(100); // 70
+    ValueInt *turboModeDist = new ValueInt(110); // 70
     ValueInt *turboTurn = new ValueInt(30); // 20
     ValueInt *turboMaxTurn = new ValueInt(20); // 15
 
-    Adaptation *forwardSpeed = new Adaptation(75, 30, 0); // 80
+    Adaptation *forwardSpeed = new Adaptation(78, 15, 0); // 80
     Adaptation *forwardAcceleration = new Adaptation(0);
 
     ValueInt *distWall = new ValueInt(10); // 8
@@ -65,8 +65,8 @@ public:
             sensors->forwardRightDistance > turboModeDist->value) {
             angle = (int) (angle * 30.0 * turboTurn->value / sensors->maxForwardDistance);
             angle = maxAngle(angle, turboMaxTurn->value);
-            if (sensors->minForwardDistance > 130) {
-                power += 5;
+            if (sensors->minForwardDistance > 110) {
+                power += 15;
             }
         } else {
             angle = minAngle(angle, (int) map(sensors->minFactor,
