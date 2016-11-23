@@ -17,10 +17,10 @@ public:
     /**
      * 40*10ms = 400 ms
      */
-    static const int SIZE = 30;
+    static const int SIZE = 40;
 
     ValueInt *maxCorrectionRun = new ValueInt(50); // 80
-    ValueInt *maxCorrectionBrake = new ValueInt(60); // 50
+    ValueInt *maxCorrectionBrake = new ValueInt(72); // 50
     ValueInt *correctionFactor = new ValueInt(15); // 10
 
     EngineHelper() {
