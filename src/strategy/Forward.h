@@ -59,9 +59,7 @@ public:
         power = forwardSpeed->adaptedValue();
         power += (int) map(sensors->maxForwardDistance, 0, 180, 0, forwardAcceleration->adaptedValue());
 
-        if (sensors->minForwardDistance < 55) {
-            angle = minAngle(angle, 33);
-        } else if (sensors->minForwardDistance > turboModeDist->value) {
+        if (sensors->minForwardDistance > turboModeDist->value) {
             angle = (int) (angle * 30.0 * turboTurn->value / sensors->maxForwardDistance);
             angle = maxAngle(angle, turboMaxTurn->value);
 //            if (sensors->minForwardDistance > 130) {
@@ -72,6 +70,13 @@ public:
                                               distFullTurn->value, distStartTurn->value,
                                               30, 0));
             angle = maxAngle(angle, mediumModeMaxTurn->value);
+
+            // уменьшаем скорость вплоть до остановки если везде препятствия
+            if (sensors->minDistance < 50) {
+//                angle = maxAngle(angle, (int) map(sensors->minDistance, 0, 50, 15, 30));
+                power = (int) map(sensors->minDistance, 0, 50, 50, power);
+            }
+
         }
 
         rotationHelper->placeVector(angle, power);
