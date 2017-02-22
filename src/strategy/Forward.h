@@ -61,8 +61,7 @@ public:
 
         if (sensors->minForwardDistance < 55) {
             angle = minAngle(angle, 33);
-        } else if (sensors->forwardLeftDistance > turboModeDist->value &&
-            sensors->forwardRightDistance > turboModeDist->value) {
+        } else if (sensors->minForwardDistance > turboModeDist->value) {
             angle = (int) (angle * 30.0 * turboTurn->value / sensors->maxForwardDistance);
             angle = maxAngle(angle, turboMaxTurn->value);
 //            if (sensors->minForwardDistance > 130) {
