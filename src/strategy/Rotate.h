@@ -15,7 +15,6 @@ class Rotate : public Strategy {
 public:
 
     static const int ROTATE_SPEED = 72;
-    static const int ROTATE_MAX_ANGLE = 35;
 
     virtual Strategy *init(unsigned int minMs = 0) final override {
         Strategy::init(minMs);
@@ -34,7 +33,7 @@ public:
         switch (stage) {
             case 0:
                 if (/*sensors->leftDistance > 10 && */stopwatch->isLessThan(600)) {
-                    angle = -ROTATE_MAX_ANGLE;
+                    angle = Mechanics::FULL_RIGHT;
                     power = ROTATE_SPEED;
                 } else {
                     nextStage();
@@ -42,7 +41,7 @@ public:
                 break;
             case 1:
                 if (/*sensors->rightDistance < 50 && */stopwatch->isLessThan(900)) {
-                    angle = ROTATE_MAX_ANGLE;
+                    angle = Mechanics::FULL_LEFT;
                     power = -ROTATE_SPEED;
                 } else {
                     nextStage();
@@ -50,7 +49,7 @@ public:
                 break;
             case 2:
                 if (/*sensors->rightDistance < 50 &&*/ stopwatch->isLessThan(500)) {
-                    angle = -ROTATE_MAX_ANGLE;
+                    angle = Mechanics::FULL_RIGHT;
                     power = ROTATE_SPEED;
                 } else {
                     nextStage();
