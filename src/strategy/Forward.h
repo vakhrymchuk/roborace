@@ -32,6 +32,7 @@ public:
         Strategy::init(minMs);
         forwardSpeed->init();
         forwardAcceleration->init();
+        persecution = false;
 //        rotationHelper->reset();
         return this;
     }
@@ -43,6 +44,10 @@ public:
             }
             if (sensors->isSamePlace(3500)) {
                 return backward->init(800);
+            }
+            if (persecutionStopwatch->isMoreThan(2000)) {
+                return backward->init(1000);
+//                return rightWall->init(5000);
             }
             if (rotationHelper->isCounterClockWise()) {
                 rotationHelper->reset();
@@ -74,7 +79,15 @@ public:
             // уменьшаем скорость вплоть до остановки если везде препятствия
             if (sensors->minDistance < 50) {
 //                angle = maxAngle(angle, (int) map(sensors->minDistance, 0, 50, 15, 30));
-                power = (int) map(sensors->minDistance, 0, 50, 50, power);
+                power = (int) map(sensors->minDistance, 8, 50, 50, power);
+                if (!persecution && power < 55) {
+                    persecution = true;
+                    persecutionStopwatch->start();
+                } else {
+                    persecution = false;
+                }
+            } else {
+                persecution = false;
             }
 
         }
@@ -86,6 +99,9 @@ public:
     Strategy *rotate;
 
 private:
+
+    bool persecution = false;
+    Stopwatch *persecutionStopwatch = new Stopwatch();
 
     RotationHelper *rotationHelper = new RotationHelper();
 
