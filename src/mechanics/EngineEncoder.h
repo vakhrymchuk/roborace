@@ -3,7 +3,7 @@
 
 #include <Timing.h>
 
-#define ENCODER_PIN  2
+#define ENCODER_PIN 2
 
 volatile unsigned int pos = 0;
 

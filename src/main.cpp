@@ -18,8 +18,9 @@ Roborace *roborace;
 
 void setup() {
 
+#ifdef FREE_RUN_MODE
     ADC_setup();
-
+#endif
 #ifdef DEBUG
     Serial.begin(115200);
 #endif
