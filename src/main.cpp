@@ -3,6 +3,7 @@
  */
 
 #include <Arduino.h>
+#include <MemoryFree.h>
 
 //#define DEBUG true
 
@@ -21,8 +22,11 @@ void setup() {
 #ifdef FREE_RUN_MODE
     ADC_setup();
 #endif
+
 #ifdef DEBUG
     Serial.begin(115200);
+    Serial.print(F("free memory="));
+    Serial.println(freeMemory());
 #endif
 
 #if defined(BLUETOOTH_ENABLE)
@@ -38,6 +42,10 @@ void setup() {
 //        roborace->activeStrategy = &Strategy::rightWall;
 //    }
 
+#ifdef DEBUG
+    Serial.print(F("free memory="));
+    Serial.println(freeMemory());
+#endif
 }
 
 void loop() {

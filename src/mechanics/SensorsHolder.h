@@ -50,9 +50,7 @@ private:
     static TimingFilter *createSensor(const byte pin) {
         DistanceSensor *distanceSensor = new Sharp10_150(pin);
 //        distanceSensor = new MedianFilter(distanceSensor, MedianFilter::ARR_SIZE);
-#ifndef DEBUG
         distanceSensor = new KalmanFilter(distanceSensor);
-#endif
         return new TimingFilter(distanceSensor);
     }
 };
@@ -63,18 +61,6 @@ void SensorsHolder::readDistances() {
     rightDistance = rightSensor->getDistance();
     leftDistance = leftSensor->getDistance();
     forwardRightDistance = forwardRightSensor->getDistance();
-
-#ifdef DEBUG
-    Serial.println(F("\n\n"));
-    Serial.print(F("forwardLeftDistance = "));
-    Serial.println(forwardLeftDistance);
-    Serial.print(F("rightDistance = "));
-    Serial.println(rightDistance);
-    Serial.print(F("leftDistance = "));
-    Serial.println(leftDistance);
-    Serial.print(F("forwardRightDistance = "));
-    Serial.println(forwardRightDistance);
-#endif
 
     calcMaxDistance();
     calcMinDistance();

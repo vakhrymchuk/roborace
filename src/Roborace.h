@@ -46,6 +46,10 @@ protected:
 
     void waitForMainLoop() const;
 
+#ifdef DEBUG
+    Interval debugInterval = Interval(1000);
+#endif
+
 private:
 
     void waitForEngineInit() const {
@@ -82,10 +86,21 @@ void Roborace::loop() {
     activeStrategy->run(mechanics);
 
 #ifdef DEBUG
-    unsigned long finish = micros();
-    Serial.print(F("\n\n\nloop time mcs = "));
-    Serial.println(finish - start);
-    delay(2000);
+    if (debugInterval.isReady()) {
+        unsigned long finish = micros();
+        Serial.print(F("\n\nloop time mcs = "));
+        Serial.println(finish - start);
+
+        Serial.println(F("\n"));
+        Serial.print(F("forwardLeftDistance = "));
+        Serial.println(sensors->forwardLeftDistance);
+        Serial.print(F("rightDistance = "));
+        Serial.println(sensors->rightDistance);
+        Serial.print(F("leftDistance = "));
+        Serial.println(sensors->leftDistance);
+        Serial.print(F("forwardRightDistance = "));
+        Serial.println(sensors->forwardRightDistance);
+    }
 #endif
 }
 
