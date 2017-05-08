@@ -44,9 +44,11 @@ protected:
 
     boolean enabled = true;
 
+    void waitForMainLoop() const;
+
 private:
 
-    void waitForEngineInit() {
+    void waitForEngineInit() const {
         delay(1300);
     }
 
@@ -68,9 +70,7 @@ void Roborace::initStrategies() {
 
 void Roborace::loop() {
 
-    while (!mainLoopChange->isReady()) {
-        // play buzzer!
-    }
+    waitForMainLoop();
 
 #ifdef DEBUG
     unsigned long start = micros();
@@ -86,6 +86,10 @@ void Roborace::loop() {
     Serial.print("\n\n\nloop time mcs = ");
     Serial.println(finish - start);
 #endif
+}
+
+void Roborace::waitForMainLoop() const {
+    while (!mainLoopChange->isReady()) {}
 }
 
 #endif
