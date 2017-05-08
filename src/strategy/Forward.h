@@ -27,6 +27,8 @@ public:
 
     ValueInt *distWall = new ValueInt(10); // 8
 
+    ValueInt *distPersecution = new ValueInt(80);
+
 
     virtual Strategy *init(unsigned int minMs = 500) final override {
         Strategy::init(minMs);
@@ -45,9 +47,8 @@ public:
             if (sensors->isSamePlace(3500)) {
                 return backward->init(800);
             }
-            if (persecutionStopwatch->isMoreThan(2000)) {
-                return backward->init(1000);
-//                return rightWall->init(5000);
+            if (persecutionStopwatch->isMoreThan(3000)) {
+                return rightWall->init(5000);
             }
             if (rotationHelper->isCounterClockWise()) {
                 rotationHelper->reset();
@@ -76,27 +77,30 @@ public:
                                               30, 0));
             angle = maxAngle(angle, mediumModeMaxTurn->value);
 
-            // уменьшаем скорость вплоть до остановки если везде препятствия
-            if (sensors->minDistance < 50) {
-//                angle = maxAngle(angle, (int) map(sensors->minDistance, 0, 50, 15, 30));
-                power = (int) map(sensors->minDistance, 8, 50, 50, power);
-                if (!persecution && power < 55) {
-                    persecution = true;
-                    persecutionStopwatch->start();
-                } else {
-                    persecution = false;
-                }
-            } else {
-                persecution = false;
-            }
+            checkPersecution(sensors);
 
         }
 
         rotationHelper->placeVector(angle, power);
     }
 
+    void checkPersecution(const SensorsHolder *sensors) {
+        // уменьшаем скорость вплоть до остановки если везде препятствия
+        if (sensors->minDistance < distPersecution->value) {
+//                angle = maxAngle(angle, (int) map(sensors->minDistance, 0, 50, 15, 30));
+            power = (int) map(sensors->minDistance, 8, 50, 50, power);
+            if (!persecution) {
+                persecution = true;
+                persecutionStopwatch->start();
+            }
+        } else {
+            persecution = false;
+        }
+    }
+
     Strategy *backward;
     Strategy *rotate;
+    Strategy *rightWall;
 
 private:
 

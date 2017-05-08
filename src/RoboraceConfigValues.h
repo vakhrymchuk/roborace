@@ -43,6 +43,7 @@ void RoboraceConfigValues::initValueEditor() {
     valueEditor.add(forward->distStartTurn, F("DIST START TURN"));
     valueEditor.add(forward->distFullTurn, F("DIST FULL TURN"));
     valueEditor.add(forward->distWall, F("DIST WALL"));
+    valueEditor.add(forward->distPersecution, F("DIST PERSECUTION"));
 
     valueEditor.add(forward->mediumModeMaxTurn, F("MED ANGL MAXTURN"));
 

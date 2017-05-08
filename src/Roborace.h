@@ -40,6 +40,7 @@ protected:
     Forward *forward = new Forward;
     Backward *backward = new Backward;
     Rotate *rotate = new Rotate;
+    RightWall *rightWall = new RightWall;
     Strategy *activeStrategy;
 
     boolean enabled = true;
@@ -63,10 +64,13 @@ private:
 void Roborace::initStrategies() {
     forward->backward = backward;
     forward->rotate = rotate;
+    forward->rightWall = rightWall;
 
     backward->forward = forward;
 
     rotate->forward = forward;
+
+    rightWall->forward = forward;
 
     activeStrategy = forward->init();
 }
