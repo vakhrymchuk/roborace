@@ -23,7 +23,7 @@ public:
     static const int FULL_LEFT = TURN_MAX_ANGLE;
 
     ValueInt *turnMaxAngle = new ValueInt(TURN_MAX_ANGLE);
-    ValueInt *turnCentralPosition = new ValueInt(93);
+    ValueInt *turnCentralPosition = new ValueInt(85);
 
     Mechanics() {
         stop();

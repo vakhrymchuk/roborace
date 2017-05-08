@@ -18,7 +18,7 @@ private:
 
     void initValueEditor();
 
-    void readConfigFromEEPROM() const;
+    void readConfigFromEEPROM();
 
 };
 
@@ -45,8 +45,6 @@ void RoboraceConfigValues::initValueEditor() {
     valueEditor.add(forward->distWall, F("DIST WALL"));
     valueEditor.add(forward->distPersecution, F("DIST PERSECUTION"));
 
-    valueEditor.add(forward->mediumModeMaxTurn, F("MED ANGL MAXTURN"));
-
     valueEditor.add(forward->turboModeDist, F("TRB DIST ENABLE"));
     valueEditor.add(forward->turboTurn, F("TRB ANGLE TURN"));
     valueEditor.add(forward->turboMaxTurn, F("TRB ANGLE MAX"));
@@ -59,11 +57,11 @@ void RoboraceConfigValues::initValueEditor() {
 
 }
 
-void RoboraceConfigValues::readConfigFromEEPROM() const {
+void RoboraceConfigValues::readConfigFromEEPROM() {
     valueEditor.displayAll("Config code values:");
-//    valueEditor->writeAllEEPROM();
-//    valueEditor->readAllEEPROM();
-//    valueEditor->displayAll("Config EEPROM values:");
+//    valueEditor.writeAllEEPROM();
+//    valueEditor.readAllEEPROM();
+//    valueEditor.displayAll("Config EEPROM values:");
 }
 
 #endif

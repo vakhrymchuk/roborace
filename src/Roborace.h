@@ -48,7 +48,7 @@ protected:
     void waitForMainLoop() const;
 
 #ifdef DEBUG
-    Interval debugInterval = Interval(1000);
+    Interval debugInterval = Interval(200);
 #endif
 
 private:
@@ -92,17 +92,16 @@ void Roborace::loop() {
 #ifdef DEBUG
     if (debugInterval.isReady()) {
         unsigned long finish = micros();
-        Serial.print(F("\n\nloop time mcs = "));
-        Serial.println(finish - start);
+        Serial.print(F("loop time mcs = "));
+        Serial.print(finish - start);
 
-        Serial.println(F("\n"));
-        Serial.print(F("forwardLeftDistance = "));
-        Serial.println(sensors->forwardLeftDistance);
-        Serial.print(F("rightDistance = "));
-        Serial.println(sensors->rightDistance);
-        Serial.print(F("leftDistance = "));
-        Serial.println(sensors->leftDistance);
-        Serial.print(F("forwardRightDistance = "));
+        Serial.print(F("\tFL = "));
+        Serial.print(sensors->forwardLeftDistance);
+        Serial.print(F("\tL = "));
+        Serial.print(sensors->leftDistance);
+        Serial.print(F("\tR = "));
+        Serial.print(sensors->rightDistance);
+        Serial.print(F("\tFR = "));
         Serial.println(sensors->forwardRightDistance);
     }
 #endif

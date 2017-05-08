@@ -54,6 +54,4 @@ public:
 
 };
 
-RightWall rightWall;
-
 #endif

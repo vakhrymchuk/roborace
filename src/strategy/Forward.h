@@ -14,20 +14,19 @@
 class Forward : public Strategy {
 public:
 
-    ValueInt *distStartTurn = new ValueInt(100); // 90
-    ValueInt *distFullTurn = new ValueInt(80); // 85
-    ValueInt *mediumModeMaxTurn = new ValueInt(31); // 30
+    ValueInt *distStartTurn = new ValueInt(80); // 90
+    ValueInt *distFullTurn = new ValueInt(60); // 85
 
-    ValueInt *turboModeDist = new ValueInt(170); // 70
+    ValueInt *turboModeDist = new ValueInt(120); // 70
     ValueInt *turboTurn = new ValueInt(45); // 20
-    ValueInt *turboMaxTurn = new ValueInt(20); // 15
+    ValueInt *turboMaxTurn = new ValueInt(10); // 15
 
-    Adaptation *forwardSpeed = new Adaptation(77, 10, 1); // 80
+    Adaptation *forwardSpeed = new Adaptation(65, 10, 1); // 80
     Adaptation *forwardAcceleration = new Adaptation(5);
 
     ValueInt *distWall = new ValueInt(10); // 8
 
-    ValueInt *distPersecution = new ValueInt(80);
+    ValueInt *distPersecution = new ValueInt(40);
 
 
     virtual Strategy *init(unsigned int minMs = 500) final override {
@@ -68,17 +67,11 @@ public:
         if (sensors->minForwardDistance > turboModeDist->value) {
             angle = (int) (angle * 30.0 * turboTurn->value / sensors->maxForwardDistance);
             angle = maxAngle(angle, turboMaxTurn->value);
-//            if (sensors->minForwardDistance > 130) {
-//                power += 5;
-//            }
         } else {
-            angle = minAngle(angle, (int) map(sensors->minFactor,
+            angle = minAngle(angle, (int) map(sensors->minForwardDistance,
                                               distFullTurn->value, distStartTurn->value,
-                                              30, 0));
-            angle = maxAngle(angle, mediumModeMaxTurn->value);
-
+                                              Mechanics::TURN_MAX_ANGLE, 0));
             checkPersecution(sensors);
-
         }
 
         rotationHelper->placeVector(angle, power);
@@ -88,7 +81,9 @@ public:
         // уменьшаем скорость вплоть до остановки если везде препятствия
         if (sensors->minDistance < distPersecution->value) {
 //                angle = maxAngle(angle, (int) map(sensors->minDistance, 0, 50, 15, 30));
-            power = (int) map(sensors->minDistance, 8, 50, 50, power);
+            power = (int) map(sensors->minDistance,
+                              8, distPersecution->value,
+                              50, power);
             if (!persecution) {
                 persecution = true;
                 persecutionStopwatch->start();
