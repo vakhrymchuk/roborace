@@ -11,11 +11,26 @@
 #include "RoboraceBluetooth.h"
 #elif defined(DISPLAY_ENABLE)
 #include "RoboraceDisplay.h"
+#elif defined(CONFIG_VALUES_ENABLE)
+#include "RoboraceConfigValues.h"
 #else
 #include "Roborace.h"
 #endif
 
 Roborace *roborace;
+
+Roborace *createRoborace() {
+#if defined(BLUETOOTH_ENABLE)
+    return new RoboraceBluetooth();
+#elif defined(DISPLAY_ENABLE)
+    return new RoboraceDisplay();
+#elif defined(CONFIG_VALUES_ENABLE)
+    return new RoboraceConfigValues();
+#else
+    return new Roborace();
+#endif
+
+}
 
 void setup() {
 
@@ -29,13 +44,7 @@ void setup() {
     Serial.println(freeMemory());
 #endif
 
-#if defined(BLUETOOTH_ENABLE)
-    roborace = new RoboraceBluetooth();
-#elif defined(DISPLAY_ENABLE)
-    roborace = new RoboraceDisplay();
-#else
-    roborace = new Roborace();
-#endif
+    roborace = createRoborace();
 
 //    ButtonPullUp rightWallBtn(3);
 //    if (rightWallBtn.read()) {

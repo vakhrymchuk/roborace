@@ -4,14 +4,13 @@
 #include <HardwareSerial.h>
 #include "Roborace.h"
 #include "value/ValueEditor.h"
+#include "RoboraceConfigValues.h"
 
-class RoboraceBluetooth : public Roborace {
+class RoboraceBluetooth : public RoboraceConfigValues {
 public:
 
     RoboraceBluetooth() {
         initBluetooth();
-        initValueEditor();
-        readConfigFromEEPROM();
     }
 
     virtual void loop() override final {
@@ -23,18 +22,12 @@ public:
 
 private:
 
-    ValueEditor *valueEditor;
-
     HardwareSerial *bluetooth = &Serial;
 
     IntervalValue *sendPackageInterval = new IntervalValue(new ValueInt(1000));
     ValueInt *sendPackageValue = new ValueInt(0);
 
     void initBluetooth() const;
-
-    void initValueEditor();
-
-    void readConfigFromEEPROM() const;
 
     void processConfig();
 
@@ -57,79 +50,34 @@ void RoboraceBluetooth::initBluetooth() const {
 //    bluetooth->flush();
 }
 
-void RoboraceBluetooth::initValueEditor() {
-    valueEditor = new ValueEditor(bluetooth);
-
-    // mechanics
-//    valueEditor->add(mechanics->turnMaxAngle, "TURN MAX ANGLE");
-//    valueEditor->add(mechanics->turnCentralPosition, "TURN CENTRAL POSITION");
-
-//    valueEditor->add(mechanics->engine->engineHelper->maxCorrectionRun, "ENG MAX COR RUN");
-//    valueEditor->add(mechanics->engine->engineHelper->maxCorrectionBrake, "ENG MAX COR BRAKE");
-//    valueEditor->add(mechanics->engine->engineHelper->correctionFactor, "ENG COR FACTOR");
-
-//    valueEditor->add(&kalmanFactorValue, "KALMAN FACTOR");
-
-//    valueEditor->add(sensors->samePlaceTime, "SAME PLACE TIME");
-//    valueEditor->add((ValueBase *) sameValueFactor, "SAME VALUE FACTOR");
-
-    // strategies
-    valueEditor->add(forward->forwardSpeed->valueInt, "FRWD SPEED");
-    valueEditor->add(forward->forwardAcceleration->valueInt, "FRWD SPEED ACCELERATION");
-    valueEditor->add(forward->distStartTurn, "FRWD DIST START TURN");
-    valueEditor->add(forward->distFullTurn, "FRWD DIST FULL TURN");
-    valueEditor->add(forward->mediumModeMaxTurn, "FRWD MEDIUM MODE ANGLE MAX TURN");
-    valueEditor->add(forward->turboModeDist, "FRWD TURBO DIST ENABLE");
-    valueEditor->add(forward->turboTurn, "FRWD TURBO ANGLE TURN");
-    valueEditor->add(forward->turboMaxTurn, "FRWD TURBO ANGLE MAX");
-    valueEditor->add(forward->distWall, "FRWD DIST WALL");
-
-    valueEditor->add(backward->backwardSpeed, "BACKWARD SPEED");
-
-//    valueEditor->add(forwardRunMinDelay, "FORWARD RUN MIN DELAY");
-//    valueEditor->add(backwardRunMaxDelay, "BACK RUN MAX DELAY");
-//    valueEditor->add(angleRunMaxDelay, "ANGLE RUN MAX DELAY");
-
-    valueEditor->add(sendPackageValue, "SEND PACKAGE BOOL");
-    valueEditor->add(sendPackageInterval->getValueInt(), "SEND PACKAGE INTERVAL");
-
-}
-
-void RoboraceBluetooth::readConfigFromEEPROM() const {
-    valueEditor->displayAll("Config code values:");
-//    valueEditor->writeAllEEPROM();
-//    valueEditor->readAllEEPROM();
-//    valueEditor->displayAll("Config EEPROM values:");
-}
-
 void RoboraceBluetooth::processConfig() {
     if (bluetooth->available()) {
         const String &command = bluetooth->readString();
         if (command == "n") {
-            valueEditor->displayElem(valueEditor->next());
+            valueEditor.displayElem(valueEditor.next());
         } else if (command == "p") {
-            valueEditor->displayElem(valueEditor->prev());
+            valueEditor.displayElem(valueEditor.prev());
         } else if (command == "c") {
-            valueEditor->displayElem(valueEditor->current());
+            valueEditor.displayElem(valueEditor.current());
         } else if (command == "a") {
-            valueEditor->displayAll("Config params:");
+            valueEditor.displayAll("Config params:");
         } else if (command == "s") {
             sendState();
         } else if (command == "read") {
-            valueEditor->readAllEEPROM();
-            valueEditor->displayAll("Read");
+            valueEditor.readAllEEPROM();
+            valueEditor.displayAll("Read");
         } else if (command == "write") {
-            valueEditor->writeAllEEPROM();
-            valueEditor->displayAll("Write");
+            valueEditor.writeAllEEPROM();
+            valueEditor.displayAll("Write");
         } else if (command == "stop") {
             enabled = false;
         } else if (command == "start") {
             enabled = true;
         } else {
             // edit value
-            valueEditor->current()->parseValue(command.c_str());
-            valueEditor->displayCurrent();
-//            valueEditor->displayElem(valueEditor->next());
+            valueEditor.current()->parseValue(command.c_str());
+            valueEditor.displayCurrent();
+//            valueEditor.displayElem(valueEditor.next());
         }
     }
 }
