@@ -16,7 +16,7 @@ public:
         }
     }
 
-    void add(ValueBase *value, const char *name) {
+    void add(ValueBase *value, const __FlashStringHelper *name) {
         add(value);
         if (name) {
             value->name = name;

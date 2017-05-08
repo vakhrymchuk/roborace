@@ -8,9 +8,9 @@ public:
 
 //    static const int STRING_LENGTH = 6;
 
-    ValueBase(const char *name) : name(name) {}
+    ValueBase(const __FlashStringHelper *name) : name(name) {}
 
-    const char *name;
+    const __FlashStringHelper *name;
 
     virtual void inc(int size = 1) = 0;
 
@@ -36,7 +36,7 @@ public:
 
     static const int INT_STEP = 1;
 
-    ValueInt(int value, const char *name = NULL) : ValueBase(name), value(value) {}
+    ValueInt(int value, const __FlashStringHelper *name = NULL) : ValueBase(name), value(value) {}
 
     int value;
 
@@ -86,7 +86,7 @@ public:
 
     static constexpr float FLOAT_STEP = 0.05;
 
-    ValueFloat(float value, const char *name = NULL) : ValueBase(name), value(value) {}
+    ValueFloat(float value, const __FlashStringHelper *name = NULL) : ValueBase(name), value(value) {}
 
     float value;
 
