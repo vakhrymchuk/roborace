@@ -79,7 +79,7 @@ void ValueEditor::writeAllEEPROM() {
 
 void ValueEditor::displayElem(const ValueBase *elem) const {
     print->print(elem->name);
-    print->print("=");
+    print->write('=');
     elem->printValue(print);
 }
 
@@ -89,7 +89,6 @@ void ValueEditor::displayAll(const char *string) const {
     for (int i = 0; i < size; ++i) {
         displayElem(values[i]);
     }
-//    bluetooth->flush();
 }
 
 void ValueEditor::printLine() const {

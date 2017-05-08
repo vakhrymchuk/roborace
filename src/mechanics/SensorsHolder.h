@@ -65,18 +65,15 @@ void SensorsHolder::readDistances() {
     forwardRightDistance = forwardRightSensor->getDistance();
 
 #ifdef DEBUG
-    Serial.println();
-    Serial.println();
-    Serial.println();
-    Serial.print("forwardLeftDistance = ");
+    Serial.println(F("\n\n"));
+    Serial.print(F("forwardLeftDistance = "));
     Serial.println(forwardLeftDistance);
-    Serial.print("rightDistance = ");
+    Serial.print(F("rightDistance = "));
     Serial.println(rightDistance);
-    Serial.print("leftDistance = ");
+    Serial.print(F("leftDistance = "));
     Serial.println(leftDistance);
-    Serial.print("forwardRightDistance = ");
+    Serial.print(F("forwardRightDistance = "));
     Serial.println(forwardRightDistance);
-    delay(1500);
 #endif
 
     calcMaxDistance();
