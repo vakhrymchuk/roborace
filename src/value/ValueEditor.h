@@ -6,7 +6,7 @@
 class ValueEditor {
 public:
 
-    ValueEditor(HardwareSerial *bluetooth) : bluetooth(bluetooth) { };
+    ValueEditor(Print *print) : print(print) { };
 
     static const int SIZE = 32;
 
@@ -57,7 +57,7 @@ public:
 
 private:
 
-    HardwareSerial *bluetooth;
+    Print *print;
 
     int currentIndex = 0;
 
@@ -78,14 +78,14 @@ void ValueEditor::writeAllEEPROM() {
 }
 
 void ValueEditor::displayElem(const ValueBase *elem) const {
-    bluetooth->print(elem->name);
-    bluetooth->print("=");
-    elem->printValue(bluetooth);
+    print->print(elem->name);
+    print->print("=");
+    elem->printValue(print);
 }
 
 void ValueEditor::displayAll(const char *string) const {
     printLine();
-    bluetooth->println(string);
+    print->println(string);
     for (int i = 0; i < size; ++i) {
         displayElem(values[i]);
     }
@@ -93,7 +93,7 @@ void ValueEditor::displayAll(const char *string) const {
 }
 
 void ValueEditor::printLine() const {
-    bluetooth->println(F("===================="));
+    print->println(F("===================="));
 }
 
 #endif
