@@ -14,19 +14,19 @@
 class Forward : public Strategy {
 public:
 
-    ValueInt *distStartTurn = new ValueInt(80); // 90
-    ValueInt *distFullTurn = new ValueInt(60); // 85
+    ValueInt *distStartTurn = new ValueInt(78); // 90
+    ValueInt *distFullTurn = new ValueInt(72); // 85
 
-    ValueInt *turboModeDist = new ValueInt(120); // 70
+    ValueInt *turboModeDist = new ValueInt(100); // 70
     ValueInt *turboTurn = new ValueInt(45); // 20
     ValueInt *turboMaxTurn = new ValueInt(10); // 15
 
-    Adaptation *forwardSpeed = new Adaptation(65, 10, 1); // 80
-    Adaptation *forwardAcceleration = new Adaptation(5);
+    Adaptation *forwardSpeed = new Adaptation(80, 10, 4); // 80
+    Adaptation *forwardAcceleration = new Adaptation(0, 10);
 
     ValueInt *distWall = new ValueInt(10); // 8
 
-    ValueInt *distPersecution = new ValueInt(40);
+    ValueInt *distPersecution = new ValueInt(30);
 
 
     virtual Strategy *init(unsigned int minMs = 500) final override {
@@ -43,16 +43,16 @@ public:
             if (isWallNear(sensors)) {
                 return backward->init(0);
             }
-            if (sensors->isSamePlace(3500)) {
+            if (sensors->isSamePlace(2000)) {
                 return backward->init(800);
             }
-            if (persecutionStopwatch->isMoreThan(3000)) {
-                return rightWall->init(5000);
-            }
-            if (rotationHelper->isCounterClockWise()) {
-                rotationHelper->reset();
-                return rotate->init();
-            }
+//            if (persecutionStopwatch->isMoreThan(3000)) {
+//                return rightWall->init(5000);
+//            }
+//            if (rotationHelper->isCounterClockWise()) {
+//                rotationHelper->reset();
+//                return rotate->init();
+//            }
         }
         return this;
     }
@@ -62,7 +62,7 @@ public:
 
 //        power += map(abs(angle), Mechanics::TURN_MAX_ANGLE, 0, 0, 8);
         power = forwardSpeed->adaptedValue();
-        power += (int) map(sensors->maxForwardDistance, 0, 180, 0, forwardAcceleration->adaptedValue());
+        power += (int) map(sensors->maxForwardDistance, 100, 180, 0, forwardAcceleration->adaptedValue());
 
         if (sensors->minForwardDistance > turboModeDist->value) {
             angle = (int) (angle * 30.0 * turboTurn->value / sensors->maxForwardDistance);
@@ -83,7 +83,7 @@ public:
 //                angle = maxAngle(angle, (int) map(sensors->minDistance, 0, 50, 15, 30));
             power = (int) map(sensors->minDistance,
                               8, distPersecution->value,
-                              50, power);
+                              64, power);
             if (!persecution) {
                 persecution = true;
                 persecutionStopwatch->start();

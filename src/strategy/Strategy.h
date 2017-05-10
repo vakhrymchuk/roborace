@@ -54,7 +54,7 @@ protected:
     Timeout *minTimeout = new Timeout();
 
     int getAngle(int right, int left) const {
-        return sign(45 - (int) degrees(atan2(right, left)));
+        return sign(45 - (int) degrees(atan2(smooth(right), smooth(left))));
     }
 
     int minAngle(int angle, int minValue) const {
@@ -75,6 +75,10 @@ protected:
         return angle;
     }
 
+private:
+    double smooth(int num) const {
+        return round(sqrt(num));
+    }
 };
 
 #include "Forward.h"
