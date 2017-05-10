@@ -8,8 +8,8 @@ public:
 
     // to robot
 
-    uint8_t angle;
-    uint16_t speed;
+    int8_t angle;
+    int16_t power;
     bool enabled;
 
     // from robot
@@ -22,6 +22,9 @@ public:
     uint8_t forwardLeftDistance;
 
     uint16_t rotate;
+
+    float logicVoltage;
+    float engineVoltage;
 };
 
 #endif

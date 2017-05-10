@@ -2,6 +2,7 @@
 #define ROBORACE_MECHANICS_H
 
 #include "Engine.h"
+#include "VoltageDivider.h"
 
 #define TURN_SERVO_PIN SERVO_PIN_B // 10
 #define ENGINE_PIN SERVO_PIN_A // 9
@@ -24,6 +25,9 @@ public:
 
     ValueInt *turnMaxAngle = new ValueInt(TURN_MAX_ANGLE);
     ValueInt *turnCentralPosition = new ValueInt(85);
+
+    VoltageDivider logicVoltage = VoltageDivider(A6, 2);
+    VoltageDivider engineVoltage = VoltageDivider(A7, 3);
 
     Mechanics() {
         stop();

@@ -101,12 +101,17 @@ void Roborace::loop() {
     activeStrategy->run(mechanics);
 
 #ifdef NRF_ENABLE
+    transceiver.message.angle = activeStrategy->angle;
+    transceiver.message.power = activeStrategy->power;
+
     transceiver.message.forwardRightDistance = sensors->forwardRightDistance;
     transceiver.message.leftDistance = sensors->leftDistance;
     transceiver.message.rightDistance = sensors->rightDistance;
     transceiver.message.forwardLeftDistance = sensors->forwardLeftDistance;
 
     transceiver.message.rotate = mechanics->engine->engineEncoder->getPosition();
+    transceiver.message.logicVoltage = mechanics->logicVoltage.readFloatKalman();
+    transceiver.message.engineVoltage = mechanics->engineVoltage.readFloatKalman();
 
     transceiver.send("joy01");
 #endif
@@ -124,7 +129,11 @@ void Roborace::loop() {
         Serial.print(F("\tR = "));
         Serial.print(sensors->rightDistance);
         Serial.print(F("\tFR = "));
-        Serial.println(sensors->forwardRightDistance);
+        Serial.print(sensors->forwardRightDistance);
+        Serial.print(F("\tLogicVolt = "));
+        Serial.print(mechanics->logicVoltage.readFloatKalman());
+        Serial.print(F("\tEngineVolt = "));
+        Serial.println(mechanics->engineVoltage.readFloatKalman());
     }
 #endif
 }
