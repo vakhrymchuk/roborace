@@ -6,7 +6,8 @@ public:
 
     ValueInt *valueInt;
 
-    Adaptation(int value = 0, int educationTime = 10, int step = 1) : educationTime(educationTime), step(step) {
+    Adaptation(const int value = 0, const int educationTime = 10, const int step = 1) : educationTime(educationTime),
+                                                                                        step(step) {
         valueInt = new ValueInt(value);
     }
 
@@ -24,8 +25,8 @@ public:
 
 private:
     int testValue;
-    int educationTime;
-    int step;
+    const int educationTime;
+    const int step;
 
     Stopwatch *stopwatch = new Stopwatch();
 
