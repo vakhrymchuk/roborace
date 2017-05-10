@@ -81,9 +81,4 @@ private:
     }
 };
 
-#include "Forward.h"
-#include "Backward.h"
-#include "Rotate.h"
-#include "RightWall.h"
-
 #endif

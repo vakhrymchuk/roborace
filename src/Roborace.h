@@ -5,7 +5,12 @@
 #include "value/TimingValue.h"
 #include "mechanics/SensorsHolder.h"
 #include "mechanics/Mechanics.h"
+#include "remote/Transceiver.h"
 #include "strategy/Strategy.h"
+#include "strategy/Forward.h"
+#include "strategy/Backward.h"
+#include "strategy/Rotate.h"
+#include "strategy/RightWall.h"
 
 
 /**
@@ -24,6 +29,9 @@ public:
     Roborace() {
         waitForEngineInit();
         initStrategies();
+#ifdef NRF_ENABLE
+        transceiver.init("car01");
+#endif
     }
 
     virtual void loop();
@@ -36,6 +44,9 @@ protected:
 
     Mechanics *mechanics = new Mechanics();
 
+#ifdef NRF_ENABLE
+    Transceiver transceiver;
+#endif
 
     Forward *forward = new Forward;
     Backward *backward = new Backward;
@@ -88,6 +99,17 @@ void Roborace::loop() {
     activeStrategy = activeStrategy->check(sensors);
     activeStrategy->calc(sensors);
     activeStrategy->run(mechanics);
+
+#ifdef NRF_ENABLE
+    transceiver.message.forwardRightDistance = sensors->forwardRightDistance;
+    transceiver.message.leftDistance = sensors->leftDistance;
+    transceiver.message.rightDistance = sensors->rightDistance;
+    transceiver.message.forwardLeftDistance = sensors->forwardLeftDistance;
+
+    transceiver.message.rotate = mechanics->engine->engineEncoder->getPosition();
+
+    transceiver.send("joy01");
+#endif
 
 #ifdef DEBUG
     if (debugInterval.isReady()) {
