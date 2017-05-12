@@ -30,7 +30,7 @@ public:
         waitForEngineInit();
         initStrategies();
 #ifdef NRF_ENABLE
-        transceiver.init("car01");
+        transceiver.init("car01", Serial);
 #endif
     }
 
@@ -61,11 +61,14 @@ protected:
 #ifdef DEBUG
     Interval debugInterval = Interval(200);
 #endif
+#ifdef NRF_ENABLE
+    Interval nrfInterval = Interval(200);
+#endif
 
 private:
 
     void waitForEngineInit() const {
-        delay(1300);
+        delay(1500);
     }
 
     void initStrategies();
@@ -101,19 +104,21 @@ void Roborace::loop() {
     activeStrategy->run(mechanics);
 
 #ifdef NRF_ENABLE
-    transceiver.message.angle = activeStrategy->angle;
-    transceiver.message.power = activeStrategy->power;
+    if (nrfInterval.isReady()) {
+        transceiver.message.angle = activeStrategy->angle;
+        transceiver.message.power = activeStrategy->power;
 
-    transceiver.message.forwardRightDistance = sensors->forwardRightDistance;
-    transceiver.message.leftDistance = sensors->leftDistance;
-    transceiver.message.rightDistance = sensors->rightDistance;
-    transceiver.message.forwardLeftDistance = sensors->forwardLeftDistance;
+        transceiver.message.forwardRightDistance = sensors->forwardRightDistance;
+        transceiver.message.leftDistance = sensors->leftDistance;
+        transceiver.message.rightDistance = sensors->rightDistance;
+        transceiver.message.forwardLeftDistance = sensors->forwardLeftDistance;
 
-    transceiver.message.rotate = mechanics->engine->engineEncoder->getPosition();
-    transceiver.message.logicVoltage = mechanics->logicVoltage.readFloatKalman();
-    transceiver.message.engineVoltage = mechanics->engineVoltage.readFloatKalman();
+        transceiver.message.rotate = mechanics->engine->engineEncoder->getPosition();
+        transceiver.message.logicVoltage = mechanics->logicVoltage.readFloatKalman();
+        transceiver.message.engineVoltage = mechanics->engineVoltage.readFloatKalman();
 
-    transceiver.send("joy01");
+        transceiver.send("joy01");
+    }
 #endif
 
 #ifdef DEBUG
@@ -130,9 +135,9 @@ void Roborace::loop() {
         Serial.print(sensors->rightDistance);
         Serial.print(F("\tFR = "));
         Serial.print(sensors->forwardRightDistance);
-        Serial.print(F("\tLogicVolt = "));
+        Serial.print(F("\tLV = "));
         Serial.print(mechanics->logicVoltage.readFloatKalman());
-        Serial.print(F("\tEngineVolt = "));
+        Serial.print(F("\tEV = "));
         Serial.println(mechanics->engineVoltage.readFloatKalman());
     }
 #endif

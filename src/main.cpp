@@ -7,6 +7,8 @@
 
 //#define DEBUG true
 
+#ifndef JOYSTICK_ENABLE
+
 #if defined(BLUETOOTH_ENABLE)
 #include "RoboraceBluetooth.h"
 #elif defined(DISPLAY_ENABLE)
@@ -60,3 +62,26 @@ void setup() {
 void loop() {
     roborace->loop();
 }
+
+#else
+
+#include "RoboraceJoystick.h"
+
+RoboraceJoystick roboraceJoystick;
+
+void setup() {
+
+#ifdef DEBUG
+    Serial.begin(115200);
+    Serial.print(F("free memory="));
+    Serial.println(freeMemory());
+#endif
+
+    roboraceJoystick.init();
+}
+
+void loop() {
+    roboraceJoystick.process();
+}
+
+#endif

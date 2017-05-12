@@ -15,7 +15,7 @@ public:
 
     Message message;
 
-    void init(const char *name);
+    void init(const char *name, Print &print);
 
     void send(const char *name);
 
@@ -57,19 +57,19 @@ bool Transceiver::receive() {
     return true;
 }
 
-void Transceiver::init(const char *name) {
+void Transceiver::init(const char *name, Print &print) {
     if (!nrf24.init())
-        Serial.println(F("NRF24 init failed"));
+        print.println(F("NRF24 init failed"));
     if (!nrf24.setChannel(CHANNEL))
-        Serial.println(F("setChannel failed"));
+        print.println(F("setChannel failed"));
     if (!nrf24.setThisAddress((uint8_t *) name, strlen(name)))
-        Serial.println(F("setThisAddress failed"));
+        print.println(F("setThisAddress failed"));
     if (!nrf24.setPayloadSize(sizeof(Message)))
-        Serial.println(F("setPayloadSize failed"));
+        print.println(F("setPayloadSize failed"));
     if (!nrf24.setRF(NRF24::NRF24DataRate2Mbps, NRF24::NRF24TransmitPower0dBm))
-        Serial.println(F("setRF failed"));
+        print.println(F("setRF failed"));
 
-    Serial.println(F("NRF24 initialised"));
+    print.println(F("NRF24 initialised"));
 }
 
 #endif
