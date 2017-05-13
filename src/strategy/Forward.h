@@ -14,17 +14,17 @@
 class Forward : public Strategy {
 public:
 
-    ValueInt *distStartTurn = new ValueInt(78); // 90
-    ValueInt *distFullTurn = new ValueInt(72); // 85
+    ValueInt *distStartTurn = new ValueInt(90); // 90
+    ValueInt *distFullTurn = new ValueInt(70); // 85
 
     ValueInt *turboModeDist = new ValueInt(100); // 70
     ValueInt *turboTurn = new ValueInt(45); // 20
-    ValueInt *turboMaxTurn = new ValueInt(10); // 15
+    ValueInt *turboMaxTurn = new ValueInt(5); // 15
 
-    Adaptation *forwardSpeed = new Adaptation(80, 10, 4); // 80
-    Adaptation *forwardAcceleration = new Adaptation(0, 10);
+    Adaptation *forwardSpeed = new Adaptation(66, 20, 2); // 80
+    Adaptation *forwardAcceleration = new Adaptation(0, 20);
 
-    ValueInt *distWall = new ValueInt(10); // 8
+    ValueInt *distWall = new ValueInt(12); // 8
 
     ValueInt *distPersecution = new ValueInt(30);
 
@@ -62,11 +62,13 @@ public:
 
 //        power += map(abs(angle), Mechanics::TURN_MAX_ANGLE, 0, 0, 8);
         power = forwardSpeed->adaptedValue();
-        power += (int) map(sensors->maxForwardDistance, 100, 180, 0, forwardAcceleration->adaptedValue());
 
         if (sensors->minForwardDistance > turboModeDist->value) {
             angle = (int) (angle * 30.0 * turboTurn->value / sensors->maxForwardDistance);
             angle = maxAngle(angle, turboMaxTurn->value);
+            power += (int) map(sensors->maxForwardDistance,
+                               turboModeDist->value, 180,
+                               0, forwardAcceleration->adaptedValue());
         } else {
             angle = minAngle(angle, (int) map(sensors->minForwardDistance,
                                               distFullTurn->value, distStartTurn->value,
