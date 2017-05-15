@@ -42,9 +42,7 @@ public:
             }
         }
 
-        if (stopwatch->isLessThan(500)) {
-            power = (int) map(stopwatch->time(), 0, 500, 50, backwardSpeed->value);
-        } else if (stopwatch->isMoreThan(1200)) {
+        if (stopwatch->isMoreThan(1200)) {
             power = backwardSpeed->value + 10;
         } else {
             power = backwardSpeed->value;
@@ -59,10 +57,8 @@ private:
     Timeout *maxTimeout = new Timeout();
 
     bool isBackFinish(SensorsHolder *sensors) const {
-        return (sensors->minForwardDistance > 45) || (sensors->minDistance > 30 && sensors->maxDistance > 55);
+        return (sensors->minForwardDistance > 35) || (sensors->minDistance > 25 && sensors->maxDistance > 45);
     }
 };
-
-//ValueInt Backward::backwardSpeed = ValueInt(Backward::BACKWARD_SPEED);
 
 #endif

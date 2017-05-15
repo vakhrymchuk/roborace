@@ -14,19 +14,19 @@
 class Forward : public Strategy {
 public:
 
-    ValueInt *distStartTurn = new ValueInt(90); // 90
+    ValueInt *distStartTurn = new ValueInt(100); // 90
     ValueInt *distFullTurn = new ValueInt(70); // 85
 
-    ValueInt *turboModeDist = new ValueInt(95); // 70
+    ValueInt *turboModeDist = new ValueInt(90); // 70
     ValueInt *turboTurn = new ValueInt(45); // 20
     ValueInt *turboMaxTurn = new ValueInt(10); // 15
 
-    Adaptation *forwardSpeed = new Adaptation(80, 20, 2); // 80
-    Adaptation *forwardAcceleration = new Adaptation(5, 20, 2);
+    Adaptation *forwardSpeed = new Adaptation(84, 10, 4); // 80
+    Adaptation *forwardAcceleration = new Adaptation(5, 10, 1);
 
     ValueInt *distWall = new ValueInt(10); // 8
 
-    ValueInt *distPersecution = new ValueInt(30);
+    ValueInt *distPersecution = new ValueInt(40);
 
 
     virtual Strategy *init(unsigned int minMs = 500) final override {
@@ -85,7 +85,7 @@ public:
 //                angle = maxAngle(angle, (int) map(sensors->minDistance, 0, 50, 15, 30));
             power = (int) map(sensors->minDistance,
                               8, distPersecution->value,
-                              64, power);
+                              70, power);
             if (!persecution) {
                 persecution = true;
                 persecutionStopwatch->start();
