@@ -14,11 +14,12 @@ public:
         lcd.init();
         lcd.backlight();
         lcd.setCursor(0, 0);
-        lcd.println("Hello, Roborace!");
+        lcd.println("Roborace!");
         lcd.setCursor(0, 1);
         transceiver.init("joy01", lcd);
 
-        delay(2000);
+        delay(500);
+        lcd.clear();
 
         transceiver.message.rotate = 123;
         transceiver.message.logicVoltage = 7.84;
@@ -33,6 +34,7 @@ public:
     void process() {
 
         if (transceiver.receiveWithTimeout(5)) {
+#ifdef DEBUG
             if (serialInterval.isReady()) {
                 Serial.println("Received");
                 Serial.print("\tFL=");
@@ -50,37 +52,24 @@ public:
                 Serial.print("\tEV=");
                 Serial.println(transceiver.message.engineVoltage);
             }
+#endif
         }
 
-        if (displayInterval->isReady()) {
+        if (displayInterval.isReady()) {
+            sprintf(buffer, "%3d L%3dR%3d %3d",
+                    transceiver.message.forwardLeftDistance,
+                    transceiver.message.leftDistance,
+                    transceiver.message.rightDistance,
+                    transceiver.message.forwardRightDistance);
             lcd.setCursor(0, 0);
-            lcd.print("F");
-            lcd.print(transceiver.message.forwardLeftDistance);
-            lcd.print("  ");
+            lcd.print(buffer);
 
-            lcd.setCursor(4, 0);
-            lcd.print("L");
-            lcd.print(transceiver.message.leftDistance);
-            lcd.print("  ");
-
-            lcd.setCursor(8, 0);
-            lcd.print("R");
-            lcd.print(transceiver.message.rightDistance);
-            lcd.print("  ");
-
-            lcd.setCursor(12, 0);
-            lcd.print("F");
-            lcd.print(transceiver.message.forwardRightDistance);
-            lcd.print("  ");
-
+            sprintf(buffer, "A%3d P%3d R%3d",
+                    transceiver.message.angle,
+                    transceiver.message.power,
+                    transceiver.message.rotate);
             lcd.setCursor(0, 1);
-            lcd.print('V');
-            lcd.print(transceiver.message.logicVoltage);
-            lcd.print('/');
-            lcd.print(transceiver.message.engineVoltage);
-            lcd.print(" R");
-            lcd.print(transceiver.message.rotate);
-            lcd.print("    ");
+            lcd.print(buffer);
         }
     }
 
@@ -92,8 +81,11 @@ private:
 
     Joystick joystick = JoystickCorrection(A2, A1, A0);
 
-    Interval *displayInterval = new Interval(1000);
+    Interval displayInterval = Interval(100);
+#ifdef DEBUG
     Interval serialInterval = Interval(500);
+#endif
+    char buffer[17];
 
 };
 

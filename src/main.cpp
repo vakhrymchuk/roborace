@@ -67,7 +67,7 @@ void loop() {
 
 #include "RoboraceJoystick.h"
 
-RoboraceJoystick roboraceJoystick;
+RoboraceJoystick* roboraceJoystick;
 
 void setup() {
 
@@ -76,12 +76,12 @@ void setup() {
     Serial.print(F("free memory="));
     Serial.println(freeMemory());
 #endif
-
-    roboraceJoystick.init();
+    roboraceJoystick = new RoboraceJoystick();
+    roboraceJoystick->init();
 }
 
 void loop() {
-    roboraceJoystick.process();
+    roboraceJoystick->process();
 }
 
 #endif
