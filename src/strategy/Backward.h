@@ -43,7 +43,7 @@ public:
         }
 
         if (stopwatch->isMoreThan(1200)) {
-            power = backwardSpeed->value + 10;
+            power = backwardSpeed->value + 20;
         } else {
             power = backwardSpeed->value;
         }
@@ -57,7 +57,7 @@ private:
     Timeout *maxTimeout = new Timeout();
 
     bool isBackFinish(SensorsHolder *sensors) const {
-        return (sensors->minForwardDistance > 35) || (sensors->minDistance > 25 && sensors->maxDistance > 45);
+        return (sensors->minForwardDistance > 35) || (sensors->minDistance > 25 && sensors->maxDistance > 60);
     }
 };
 
