@@ -23,7 +23,7 @@
 class Roborace {
 public:
 
-    static const int RUN_INTERVAL_MS = 10;
+    static const int RUN_INTERVAL_MS = 20;
 
     Roborace() {
         waitForEngineInit();
@@ -37,8 +37,9 @@ protected:
     Interval *mainLoopChange = new Interval(RUN_INTERVAL_MS);
 
     SensorsHolder *sensors = new SensorsHolder();
-
+#ifndef JOYSTICK_ENABLE
     Mechanics *mechanics = new Mechanics();
+#endif
 
     Forward *forward = new Forward;
     Backward *backward = new Backward;
@@ -77,6 +78,7 @@ void Roborace::initStrategies() {
 
     activeStrategy = forward->init();
 //    activeStrategy = rightWall->init();
+    Serial.println("Strategies inited");
 }
 
 
@@ -91,7 +93,9 @@ void Roborace::loop() {
     sensors->readDistances();
     activeStrategy = activeStrategy->check(sensors);
     activeStrategy->calc(sensors);
+#ifndef JOYSTICK_ENABLE
     activeStrategy->run(mechanics);
+#endif
 
 #ifdef DEBUG
     if (debugInterval.isReady()) {

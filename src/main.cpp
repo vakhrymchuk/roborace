@@ -7,7 +7,6 @@
 
 #define DEBUG true
 
-#ifndef JOYSTICK_ENABLE
 
 #if defined(BLUETOOTH_ENABLE)
 #include "RoboraceBluetooth.h"
@@ -17,6 +16,8 @@
 #include "RoboraceConfigValues.h"
 #elif defined(NRF_ENABLE)
 #include "RoboraceNrf.h"
+#elif defined(JOYSTICK_ENABLE)
+#include "RoboraceJoystick.h"
 #else
 #include "Roborace.h"
 #endif
@@ -32,6 +33,8 @@ Roborace *createRoborace() {
     return new RoboraceConfigValues();
 #elif defined(NRF_ENABLE)
     return new RoboraceNrf();
+#elif defined(JOYSTICK_ENABLE)
+    return new RoboraceJoystick();
 #else
     return new Roborace();
 #endif
@@ -66,26 +69,3 @@ void setup() {
 void loop() {
     roborace->loop();
 }
-
-#else
-
-#include "RoboraceJoystick.h"
-
-RoboraceJoystick* roboraceJoystick;
-
-void setup() {
-
-#ifdef DEBUG
-    Serial.begin(115200);
-    Serial.print(F("free memory="));
-    Serial.println(freeMemory());
-#endif
-    roboraceJoystick = new RoboraceJoystick();
-    roboraceJoystick->init();
-}
-
-void loop() {
-    roboraceJoystick->process();
-}
-
-#endif

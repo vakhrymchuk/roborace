@@ -13,9 +13,11 @@ public:
     static const byte CHIP_SELECT_PIN = 4;
     static const byte CHANNEL = 5;
 
+    Transceiver::Transceiver(Print &print) : print(print) {}
+
     Message message;
 
-    void init(const char *name, Print &print);
+    void init(const char *name);
 
     void send(const char *name);
 
@@ -23,6 +25,7 @@ public:
         nrf24.waitAvailable();
         return receive();
     }
+
     bool receiveWithTimeout(uint16_t timeout) {
         return nrf24.waitAvailableTimeout(timeout) && receive();
     }
@@ -31,17 +34,19 @@ private:
 
     NRF24 nrf24 = NRF24(CHIP_ENABLE_PIN, CHIP_SELECT_PIN);
 
+    Print &print;
+
     bool receive();
 };
 
 void Transceiver::send(const char *name) {
 
     if (!nrf24.setTransmitAddress((uint8_t *) name, strlen(name)))
-        Serial.println(F("setTransmitAddress failed"));
+        print.println(F("setTransmitAddress failed"));
     if (!nrf24.send((uint8_t *) &message, sizeof(Message)))
-        Serial.println(F("send failed"));
+        print.println(F("send failed"));
     if (!nrf24.waitPacketSent()) {
-        Serial.println(F("waitPacketSent failed"));
+        print.println(F("waitPacketSent failed"));
     }
 
 }
@@ -50,14 +55,14 @@ bool Transceiver::receive() {
 
     byte buflen = sizeof(Message);
     if (!nrf24.recv((uint8_t *) &message, &buflen)) {
-        Serial.println(F("read failed"));
+        print.println(F("read failed"));
         return false;
     }
 
     return true;
 }
 
-void Transceiver::init(const char *name, Print &print) {
+void Transceiver::init(const char *name) {
     if (!nrf24.init())
         print.println(F("NRF24 init failed"));
     if (!nrf24.setChannel(CHANNEL))

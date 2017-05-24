@@ -5,6 +5,7 @@
 #include "TimingFilter.h"
 #include "MedianFilter.h"
 #include "Sharp.h"
+#include "remote/Message.h"
 
 /**
  *  _____                                _   _       _     _
@@ -38,6 +39,8 @@ public:
 
     void readDistances();
 
+    void setDistances(Message &message);
+
     bool isSamePlace(unsigned long ms) const;
 
 
@@ -61,6 +64,17 @@ void SensorsHolder::readDistances() {
     rightDistance = rightSensor->getDistance();
     leftDistance = leftSensor->getDistance();
     forwardRightDistance = forwardRightSensor->getDistance();
+
+    calcMaxDistance();
+    calcMinDistance();
+}
+
+void SensorsHolder::setDistances(Message &message) {
+
+    forwardLeftDistance = forwardLeftSensor->updateValue(message.forwardLeftDistance);
+    rightDistance = rightSensor->updateValue(message.rightDistance);
+    leftDistance = leftSensor->updateValue(message.leftDistance);
+    forwardRightDistance = forwardRightSensor->updateValue(message.forwardRightDistance);
 
     calcMaxDistance();
     calcMinDistance();

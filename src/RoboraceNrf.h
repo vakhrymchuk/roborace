@@ -9,24 +9,22 @@ class RoboraceNrf : public Roborace {
 public:
 
     RoboraceNrf() {
-#ifdef DEBUG
-        Print &print = Serial;
-#else
-        PrintFake print;
-#endif
-        transceiver.init("car01", print);
+        transceiver.init("car01");
     }
 
-    void loop() {
-        Roborace::loop();
-
+    void loop() override {
         if (transceiver.receiveWithTimeout(5)) {
-//            mechanics->run(transceiver.message.angle, transceiver.message.power);
+            mechanics->run(transceiver.message.angle, transceiver.message.power);
+            runStopwatch.start();
         }
 
-        if (nrfInterval.isReady()) {
-            transceiver.message.angle = activeStrategy->angle;
-            transceiver.message.power = activeStrategy->power;
+        if (mainLoopChange->isReady()) {
+            sensors->readDistances();
+        }
+
+        if (nrfInterval->isReady()) {
+//            transceiver.message.angle = activeStrategy->angle;
+//            transceiver.message.power = activeStrategy->power;
 
             transceiver.message.forwardRightDistance = sensors->forwardRightDistance;
             transceiver.message.leftDistance = sensors->leftDistance;
@@ -40,13 +38,24 @@ public:
             transceiver.send("joy01");
         }
 
+//        if (runStopwatch.isMoreThan(100)) {
+//            mechanics->stop();
+//        }
+
     }
 
 private:
+#ifdef DEBUG
+    Print &print = Serial;
+#else
+    PrintFake print;
+#endif
 
-    Transceiver transceiver;
+    Transceiver transceiver = Transceiver(print);
 
-    Interval nrfInterval = Interval(200);
+    Interval * nrfInterval = new Interval(200);
+
+    Stopwatch runStopwatch;
 
 };
 
