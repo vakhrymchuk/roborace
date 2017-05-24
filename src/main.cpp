@@ -5,7 +5,7 @@
 #include <Arduino.h>
 #include <MemoryFree.h>
 
-//#define DEBUG true
+#define DEBUG true
 
 #ifndef JOYSTICK_ENABLE
 
@@ -15,6 +15,8 @@
 #include "RoboraceDisplay.h"
 #elif defined(CONFIG_VALUES_ENABLE)
 #include "RoboraceConfigValues.h"
+#elif defined(NRF_ENABLE)
+#include "RoboraceNrf.h"
 #else
 #include "Roborace.h"
 #endif
@@ -28,6 +30,8 @@ Roborace *createRoborace() {
     return new RoboraceDisplay();
 #elif defined(CONFIG_VALUES_ENABLE)
     return new RoboraceConfigValues();
+#elif defined(NRF_ENABLE)
+    return new RoboraceNrf();
 #else
     return new Roborace();
 #endif

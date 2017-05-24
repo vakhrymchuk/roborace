@@ -5,7 +5,6 @@
 #include "value/TimingValue.h"
 #include "mechanics/SensorsHolder.h"
 #include "mechanics/Mechanics.h"
-#include "remote/Transceiver.h"
 #include "strategy/Strategy.h"
 #include "strategy/Forward.h"
 #include "strategy/Backward.h"
@@ -29,9 +28,6 @@ public:
     Roborace() {
         waitForEngineInit();
         initStrategies();
-#ifdef NRF_ENABLE
-        transceiver.init("car01", Serial);
-#endif
     }
 
     virtual void loop();
@@ -43,10 +39,6 @@ protected:
     SensorsHolder *sensors = new SensorsHolder();
 
     Mechanics *mechanics = new Mechanics();
-
-#ifdef NRF_ENABLE
-    Transceiver transceiver;
-#endif
 
     Forward *forward = new Forward;
     Backward *backward = new Backward;
@@ -60,9 +52,6 @@ protected:
 
 #ifdef DEBUG
     Interval debugInterval = Interval(200);
-#endif
-#ifdef NRF_ENABLE
-    Interval nrfInterval = Interval(200);
 #endif
 
 private:
@@ -103,24 +92,6 @@ void Roborace::loop() {
     activeStrategy = activeStrategy->check(sensors);
     activeStrategy->calc(sensors);
     activeStrategy->run(mechanics);
-
-#ifdef NRF_ENABLE
-    if (nrfInterval.isReady()) {
-        transceiver.message.angle = activeStrategy->angle;
-        transceiver.message.power = activeStrategy->power;
-
-        transceiver.message.forwardRightDistance = sensors->forwardRightDistance;
-        transceiver.message.leftDistance = sensors->leftDistance;
-        transceiver.message.rightDistance = sensors->rightDistance;
-        transceiver.message.forwardLeftDistance = sensors->forwardLeftDistance;
-
-        transceiver.message.rotate = mechanics->engine->engineEncoder->getPosition();
-//        transceiver.message.logicVoltage = mechanics->logicVoltage.readFloatKalman();
-//        transceiver.message.engineVoltage = mechanics->engineVoltage.readFloatKalman();
-
-        transceiver.send("joy01");
-    }
-#endif
 
 #ifdef DEBUG
     if (debugInterval.isReady()) {
