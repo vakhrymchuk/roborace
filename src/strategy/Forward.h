@@ -14,19 +14,19 @@
 class Forward : public Strategy {
 public:
 
-    ValueInt *distStartTurn = new ValueInt(100); // 90
+    ValueInt *distStartTurn = new ValueInt(85); // 90
     ValueInt *distFullTurn = new ValueInt(70); // 85
 
-    ValueInt *turboModeDist = new ValueInt(90); // 70
+    ValueInt *turboModeDist = new ValueInt(95); // 70
     ValueInt *turboTurn = new ValueInt(45); // 20
     ValueInt *turboMaxTurn = new ValueInt(10); // 15
 
-    Adaptation *forwardSpeed = new Adaptation(84, 10, 4); // 80
-    Adaptation *forwardAcceleration = new Adaptation(5, 10, 1);
+    Adaptation *forwardSpeed = new Adaptation(74, 10, 4); // 80
+    Adaptation *forwardAcceleration = new Adaptation(10, 10, 4);
 
-    ValueInt *distWall = new ValueInt(10); // 8
+    ValueInt *distWall = new ValueInt(14); // 8
 
-    ValueInt *distPersecution = new ValueInt(40);
+    ValueInt *distPersecution = new ValueInt(50);
 
 
     virtual Strategy *init(unsigned int minMs = 500) final override {
@@ -43,7 +43,7 @@ public:
             if (isWallNear(sensors)) {
                 return backward->init(0);
             }
-            if (sensors->isSamePlace(2000)) {
+            if (sensors->isSamePlace(1500)) {
                 return backward->init(800);
             }
 //            if (persecutionStopwatch->isMoreThan(3000)) {
@@ -107,7 +107,7 @@ private:
     RotationHelper *rotationHelper = new RotationHelper();
 
     bool isWallNear(SensorsHolder *sensors) const {
-        return sensors->forwardLeftDistance < distWall->value || sensors->forwardRightDistance < distWall->value;
+        return sensors->minForwardDistance < distWall->value;
     }
 };
 

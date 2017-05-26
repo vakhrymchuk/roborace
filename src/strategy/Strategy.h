@@ -77,6 +77,7 @@ protected:
 
 private:
     double smooth(int num) const {
+//        return num;
         return round(sqrt(num));
     }
 };

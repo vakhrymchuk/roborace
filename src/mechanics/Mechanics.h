@@ -26,8 +26,8 @@ public:
     ValueInt *turnMaxAngle = new ValueInt(TURN_MAX_ANGLE);
     ValueInt *turnCentralPosition = new ValueInt(85);
 
-    VoltageDivider logicVoltage = VoltageDivider(A6, 2);
-    VoltageDivider engineVoltage = VoltageDivider(A7, 3);
+//    VoltageDivider logicVoltage = VoltageDivider(A6, 2);
+//    VoltageDivider engineVoltage = VoltageDivider(A7, 3);
 
     Mechanics() {
         stop();
