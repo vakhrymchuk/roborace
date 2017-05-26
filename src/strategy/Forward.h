@@ -17,9 +17,9 @@ public:
     ValueInt *distStartTurn = new ValueInt(85); // 90
     ValueInt *distFullTurn = new ValueInt(70); // 85
 
-    ValueInt *turboModeDist = new ValueInt(95); // 70
+    ValueInt *turboModeDist = new ValueInt(85); // 70
     ValueInt *turboTurn = new ValueInt(45); // 20
-    ValueInt *turboMaxTurn = new ValueInt(10); // 15
+    ValueInt *turboMaxTurn = new ValueInt(15); // 15
 
     Adaptation *forwardSpeed = new Adaptation(74, 10, 4); // 80
     Adaptation *forwardAcceleration = new Adaptation(10, 10, 4);
