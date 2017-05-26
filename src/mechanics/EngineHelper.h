@@ -19,7 +19,7 @@ public:
      */
     static const int SIZE = 40;
 
-    ValueInt *maxCorrectionRun = new ValueInt(60); // 50
+    ValueInt *maxCorrectionRun = new ValueInt(70); // 50
     ValueInt *maxCorrectionBrake = new ValueInt(55); // 50
     ValueInt *correctionFactor = new ValueInt(10); // 10
 
