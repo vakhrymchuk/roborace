@@ -14,19 +14,19 @@
 class Forward : public Strategy {
 public:
 
-    ValueInt *distStartTurn = new ValueInt(90); // 90
-    ValueInt *distFullTurn = new ValueInt(80); // 85
+    ValueInt *distStartTurn = new ValueInt(85); // 90
+    ValueInt *distFullTurn = new ValueInt(75); // 85
 
-    ValueInt *turboModeDist = new ValueInt(90); // 70
+    ValueInt *turboModeDist = new ValueInt(85); // 70
     ValueInt *turboTurn = new ValueInt(45); // 20
-    ValueInt *turboMaxTurn = new ValueInt(10); // 15
+    ValueInt *turboMaxTurn = new ValueInt(5); // 15
 
-    Adaptation *forwardSpeed = new Adaptation(74, 10, 4); // 80
-    Adaptation *forwardAcceleration = new Adaptation(10, 10, 4);
+    Adaptation *forwardSpeed = new Adaptation(74, 15, 2); // 80
+    Adaptation *forwardAcceleration = new Adaptation(10, 15, 2);
 
-    ValueInt *distWall = new ValueInt(14); // 8
+    ValueInt *distWall = new ValueInt(12); // 8
 
-    ValueInt *distPersecution = new ValueInt(50);
+    ValueInt *distPersecution = new ValueInt(40);
 
 
     virtual Strategy *init(unsigned int minMs = 500) final override {
@@ -86,7 +86,7 @@ public:
         // уменьшаем скорость вплоть до остановки если везде препятствия
         if (sensors->minDistance < distPersecution->value) {
 //                angle = maxAngle(angle, (int) map(sensors->minDistance, 0, 50, 15, 30));
-            power = (int) map(sensors->minDistance,
+            power = (int) map(sensors->minForwardDistance,
                               8, distPersecution->value,
                               70, power);
             if (!persecution) {

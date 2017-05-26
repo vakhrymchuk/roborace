@@ -24,7 +24,7 @@ public:
     static const int FULL_LEFT = TURN_MAX_ANGLE;
 
     ValueInt *turnMaxAngle = new ValueInt(TURN_MAX_ANGLE);
-    ValueInt *turnCentralPosition = new ValueInt(85);
+    ValueInt *turnCentralPosition = new ValueInt(91);
 
 //    VoltageDivider logicVoltage = VoltageDivider(A6, 2);
 //    VoltageDivider engineVoltage = VoltageDivider(A7, 3);
