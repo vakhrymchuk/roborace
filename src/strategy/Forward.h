@@ -24,7 +24,7 @@ public:
     Adaptation *forwardSpeed = new Adaptation(80, 15, 1); // 80
     Adaptation *forwardAcceleration = new Adaptation(4, 15, 1);
 
-    ValueInt *distWall = new ValueInt(10); // 8
+    ValueInt *distWall = new ValueInt(12);
 
     ValueInt *distPersecution = new ValueInt(40);
 
@@ -43,9 +43,9 @@ public:
             if (isWallNear(sensors)) {
                 return backward->init(0);
             }
-            if (sensors->isSamePlace(2000)) {
-                return backward->init(800);
-            }
+//            if (sensors->isSamePlace(1500)) {
+//                return backward->init(800);
+//            }
 //            if (persecutionStopwatch->isMoreThan(3000)) {
 //                return rightWall->init(5000);
 //            }
@@ -58,9 +58,8 @@ public:
     }
 
     virtual void calc(SensorsHolder *sensors) final override {
-        angle = getAngle(sensors->rightDistance, sensors->leftDistance);
+        angle = getAngleSign(sensors->rightDistance, sensors->leftDistance);
 
-//        power += map(abs(angle), Mechanics::TURN_MAX_ANGLE, 0, 0, 8);
         power = forwardSpeed->adaptedValue();
 
         if (sensors->minForwardDistance > turboModeDist->value) {
@@ -92,7 +91,6 @@ public:
     }
 
     void checkPersecution(const SensorsHolder *sensors) {
-        // уменьшаем скорость вплоть до остановки если везде препятствия
         if (sensors->minDistance < distPersecution->value) {
 //                angle = maxAngle(angle, (int) map(sensors->minDistance, 0, 50, 15, 30));
             power = (int) map(sensors->minForwardDistance,

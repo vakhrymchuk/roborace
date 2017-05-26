@@ -29,13 +29,17 @@ public:
         int borderCenter = 5;
         int borderFullTurn = 30;
         if (sensors->rightDistance > rightDistToWall + borderCenter) {
-            angle = (int) map(sensors->rightDistance, rightDistToWall + borderCenter, rightDistToWall + borderFullTurn,
-                              0, Mechanics::FULL_RIGHT);
+            angle = mapConstrain(sensors->rightDistance,
+                                 rightDistToWall + borderCenter, rightDistToWall + borderFullTurn,
+                                 0, Mechanics::FULL_RIGHT);
         } else if (sensors->forwardRightDistance < forwardDistToWall) {
-            angle = (int) map(sensors->forwardRightDistance, 50, forwardDistToWall, Mechanics::FULL_LEFT, 0);
+            angle = mapConstrain(sensors->forwardRightDistance,
+                                 50, forwardDistToWall,
+                                 Mechanics::FULL_LEFT, 0);
         } else if (sensors->rightDistance < rightDistToWall - borderCenter) {
-            angle = (int) map(sensors->rightDistance, rightDistToWall - borderCenter, rightDistToWall - borderFullTurn,
-                              0, Mechanics::FULL_LEFT);
+            angle = mapConstrain(sensors->rightDistance,
+                                 rightDistToWall - borderCenter, rightDistToWall - borderFullTurn,
+                                 0, Mechanics::FULL_LEFT);
         } else {
             angle = 0;
         }

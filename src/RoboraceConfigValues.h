@@ -45,8 +45,8 @@ void RoboraceConfigValues::initValueEditor() {
     valueEditor.add(forward->distWall, F("DIST WALL"));
     valueEditor.add(forward->distPersecution, F("DIST PERSECUTION"));
 
-    valueEditor.add(forward->turboModeDist, F("TRB DIST ENABLE"));
-    valueEditor.add(forward->turboTurn, F("TRB ANGLE TURN"));
+    valueEditor.add(forward->turboDistStart, F("TRB DIST ENABLE"));
+    valueEditor.add(forward->turboDistFull, F("TRB DIST FULL"));
     valueEditor.add(forward->turboMaxTurn, F("TRB ANGLE MAX"));
 
     valueEditor.add(backward->backwardSpeed, F("BACKWARD SPEED"));

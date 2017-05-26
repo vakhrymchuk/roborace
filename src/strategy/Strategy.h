@@ -57,6 +57,13 @@ protected:
         return sign(45 - (int) degrees(atan2(smooth(right), smooth(left))));
     }
 
+    int getAngleSign(int right, int left) const {
+        right = smooth(right);
+        left = smooth(left);
+        if (right == left) return 0;
+        return right > left ? -1 : 1;
+    }
+
     int minAngle(int angle, int minValue) const {
         if (angle == 0) return minValue;
 
@@ -75,10 +82,14 @@ protected:
         return angle;
     }
 
+    int mapConstrain(long x, long in_min, long in_max, int out_min, int out_max) const {
+        long y = map(x, in_min, in_max, out_min, out_max);
+        return (int) constrain(y, out_min, out_max);
+    }
+
 private:
-    double smooth(int num) const {
-//        return num;
-        return round(sqrt(num));
+    int smooth(int num) const {
+        return (int) round(sqrt(num));
     }
 };
 
