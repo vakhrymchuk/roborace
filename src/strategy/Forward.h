@@ -17,12 +17,12 @@ public:
     ValueInt *distStartTurn = new ValueInt(80); // 90
     ValueInt *distFullTurn = new ValueInt(73); // 85
 
-    ValueInt *turboModeDist = new ValueInt(82); // 70
+    ValueInt *turboModeDist = new ValueInt(80); // 70
     ValueInt *turboTurn = new ValueInt(45); // 20
-    ValueInt *turboMaxTurn = new ValueInt(6); // 15
+    ValueInt *turboMaxTurn = new ValueInt(5); // 15
 
-    Adaptation *forwardSpeed = new Adaptation(76, 20, 1); // 80
-    Adaptation *forwardAcceleration = new Adaptation(11, 20, 1);
+    Adaptation *forwardSpeed = new Adaptation(78, 20, 1); // 80
+    Adaptation *forwardAcceleration = new Adaptation(10, 20, 1);
 
     ValueInt *distWall = new ValueInt(12); // 8
 
@@ -43,9 +43,9 @@ public:
             if (isWallNear(sensors)) {
                 return backward->init(0);
             }
-//            if (sensors->isSamePlace(1500)) {
-//                return backward->init(800);
-//            }
+            if (sensors->isSamePlace(1500)) {
+                return backward->init(800);
+            }
 //            if (persecutionStopwatch->isMoreThan(3000)) {
 //                return rightWall->init(5000);
 //            }
@@ -69,7 +69,7 @@ public:
                                       turboModeDist->value, 150,
                                       turboMaxTurn->value, 0);
 //            angle = maxAngle(angle, turboMaxTurn->value);
-            if (turboStopwatch.isLessThan(1200)) {
+            if (turboStopwatch.isLessThan(1100)) {
                 power += (int) map(sensors->minForwardDistance,
                                    turboModeDist->value, 150,
                                    0, forwardAcceleration->adaptedValue());
