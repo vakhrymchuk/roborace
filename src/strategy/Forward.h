@@ -21,8 +21,8 @@ public:
     ValueInt *turboTurn = new ValueInt(45); // 20
     ValueInt *turboMaxTurn = new ValueInt(6); // 15
 
-    Adaptation *forwardSpeed = new Adaptation(80, 20, 1); // 80
-    Adaptation *forwardAcceleration = new Adaptation(14, 20, 1);
+    Adaptation *forwardSpeed = new Adaptation(76, 20, 1); // 80
+    Adaptation *forwardAcceleration = new Adaptation(11, 20, 1);
 
     ValueInt *distWall = new ValueInt(12); // 8
 
@@ -69,10 +69,17 @@ public:
                                       turboModeDist->value, 150,
                                       turboMaxTurn->value, 0);
 //            angle = maxAngle(angle, turboMaxTurn->value);
-            power += (int) map(sensors->minForwardDistance,
-                               turboModeDist->value, 150,
-                               0, forwardAcceleration->adaptedValue());
+            if (turboStopwatch.isLessThan(1200)) {
+                power += (int) map(sensors->minForwardDistance,
+                                   turboModeDist->value, 150,
+                                   0, forwardAcceleration->adaptedValue());
+            }
+            if (!turbo) {
+                turbo = true;
+                turboStopwatch.start();
+            }
         } else {
+            turbo = false;
             angle = minAngle(angle, (int) map(sensors->minForwardDistance,
                                               distFullTurn->value, distStartTurn->value,
                                               Mechanics::TURN_MAX_ANGLE, 0));
