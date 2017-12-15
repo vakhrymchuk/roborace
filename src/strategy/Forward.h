@@ -14,14 +14,14 @@
 class Forward : public Strategy {
 public:
 
-    ValueInt *distStartTurn = new ValueInt(80); // 90
-    ValueInt *distFullTurn = new ValueInt(73); // 85
+    ValueInt *distStartTurn = new ValueInt(120); // 90
+    ValueInt *distFullTurn = new ValueInt(80); // 85
 
-    ValueInt *turboModeDist = new ValueInt(80); // 70
-    ValueInt *turboTurn = new ValueInt(45); // 20
-    ValueInt *turboMaxTurn = new ValueInt(5); // 15
+    ValueInt *turboModeDist = new ValueInt(120); // 70
+    ValueInt *turboTurn = new ValueInt(20); // 20
+    ValueInt *turboMaxTurn = new ValueInt(10); // 15
 
-    Adaptation *forwardSpeed = new Adaptation(78, 20, 1); // 80
+    Adaptation *forwardSpeed = new Adaptation(80, 20, 1); // 80
     Adaptation *forwardAcceleration = new Adaptation(10, 20, 1);
 
     ValueInt *distWall = new ValueInt(12); // 8
@@ -49,10 +49,10 @@ public:
 //            if (persecutionStopwatch->isMoreThan(3000)) {
 //                return rightWall->init(5000);
 //            }
-//            if (rotationHelper->isCounterClockWise()) {
-//                rotationHelper->reset();
-//                return rotate->init();
-//            }
+            if (rotationHelper->isCounterClockWise()) {
+                rotationHelper->reset();
+                return rotate->init();
+            }
         }
         return this;
     }
@@ -69,7 +69,7 @@ public:
                                       turboModeDist->value, 150,
                                       turboMaxTurn->value, 0);
 //            angle = maxAngle(angle, turboMaxTurn->value);
-            if (turboStopwatch.isLessThan(1100)) {
+            if (turboStopwatch.isLessThan(2000)) {
                 power += (int) map(sensors->minForwardDistance,
                                    turboModeDist->value, 150,
                                    0, forwardAcceleration->adaptedValue());
