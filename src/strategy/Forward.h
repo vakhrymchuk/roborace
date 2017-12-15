@@ -18,11 +18,11 @@ public:
     ValueInt *distFullTurn = new ValueInt(80); // 85
 
     ValueInt *turboModeDist = new ValueInt(120); // 70
-    ValueInt *turboTurn = new ValueInt(20); // 20
-    ValueInt *turboMaxTurn = new ValueInt(10); // 15
+//    ValueInt *turboTurn = new ValueInt(5); // 20
+    ValueInt *turboMaxTurn = new ValueInt(3); // 15
 
-    Adaptation *forwardSpeed = new Adaptation(80, 20, 1); // 80
-    Adaptation *forwardAcceleration = new Adaptation(10, 20, 1);
+    Adaptation *forwardSpeed = new Adaptation(78, 20, 1); // 80
+    Adaptation *forwardAcceleration = new Adaptation(5, 20, 1);
 
     ValueInt *distWall = new ValueInt(12); // 8
 
@@ -66,7 +66,7 @@ public:
         if (sensors->minForwardDistance > turboModeDist->value) {
 //            angle = (int) (angle * 30.0 * turboTurn->value / sensors->maxForwardDistance);
             angle = sign(angle) * (int) map(sensors->minForwardDistance,
-                                      turboModeDist->value, 150,
+                                      turboModeDist->value, 130,
                                       turboMaxTurn->value, 0);
 //            angle = maxAngle(angle, turboMaxTurn->value);
             if (turboStopwatch.isLessThan(2000)) {
