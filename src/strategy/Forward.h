@@ -15,14 +15,14 @@ class Forward : public Strategy {
 public:
 
     ValueInt *distStartTurn = new ValueInt(110); // 90
-    ValueInt *distFullTurn = new ValueInt(90); // 85
+    ValueInt *distFullTurn = new ValueInt(85); // 85
 
-    ValueInt *turboModeDist = new ValueInt(120); // 70
+    ValueInt *turboModeDist = new ValueInt(110); // 70
 //    ValueInt *turboTurn = new ValueInt(5); // 20
     ValueInt *turboMaxTurn = new ValueInt(3); // 15
 
-    Adaptation *forwardSpeed = new Adaptation(74, 20, 1); // 80
-    Adaptation *forwardAcceleration = new Adaptation(4, 20, 1);
+    Adaptation *forwardSpeed = new Adaptation(76, 15, 1); // 80
+    Adaptation *forwardAcceleration = new Adaptation(5, 15, 1);
 
     ValueInt *distWall = new ValueInt(12); // 8
 
