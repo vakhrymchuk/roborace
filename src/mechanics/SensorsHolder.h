@@ -50,7 +50,7 @@ private:
     static TimingFilter *createSensor(const byte pin) {
         DistanceSensor *distanceSensor = new Sharp10_150(pin);
 //        distanceSensor = new MedianFilter(distanceSensor, MedianFilter::ARR_SIZE);
-        distanceSensor = new KalmanFilter(distanceSensor);
+//        distanceSensor = new KalmanFilter(distanceSensor);
         return new TimingFilter(distanceSensor);
     }
 };

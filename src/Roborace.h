@@ -114,8 +114,8 @@ void Roborace::loop() {
         transceiver.message.forwardLeftDistance = sensors->forwardLeftDistance;
 
         transceiver.message.rotate = mechanics->engine->engineEncoder->getPosition();
-        transceiver.message.logicVoltage = mechanics->logicVoltage.readFloatKalman();
-        transceiver.message.engineVoltage = mechanics->engineVoltage.readFloatKalman();
+//        transceiver.message.logicVoltage = mechanics->logicVoltage.readFloatKalman();
+//        transceiver.message.engineVoltage = mechanics->engineVoltage.readFloatKalman();
 
         transceiver.send("joy01");
     }
@@ -135,10 +135,11 @@ void Roborace::loop() {
         Serial.print(sensors->rightDistance);
         Serial.print(F("\tFR = "));
         Serial.print(sensors->forwardRightDistance);
-        Serial.print(F("\tLV = "));
-        Serial.print(mechanics->logicVoltage.readFloatKalman());
-        Serial.print(F("\tEV = "));
-        Serial.println(mechanics->engineVoltage.readFloatKalman());
+//        Serial.print(F("\tLV = "));
+//        Serial.print(mechanics->logicVoltage.readFloatKalman());
+//        Serial.print(F("\tEV = "));
+//        Serial.println(mechanics->engineVoltage.readFloatKalman());
+        Serial.println();
     }
 #endif
 }

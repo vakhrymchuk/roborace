@@ -14,15 +14,15 @@
 class Forward : public Strategy {
 public:
 
-    ValueInt *distStartTurn = new ValueInt(120); // 90
-    ValueInt *distFullTurn = new ValueInt(80); // 85
+    ValueInt *distStartTurn = new ValueInt(110); // 90
+    ValueInt *distFullTurn = new ValueInt(90); // 85
 
     ValueInt *turboModeDist = new ValueInt(120); // 70
 //    ValueInt *turboTurn = new ValueInt(5); // 20
     ValueInt *turboMaxTurn = new ValueInt(3); // 15
 
-    Adaptation *forwardSpeed = new Adaptation(78, 20, 1); // 80
-    Adaptation *forwardAcceleration = new Adaptation(5, 20, 1);
+    Adaptation *forwardSpeed = new Adaptation(74, 20, 1); // 80
+    Adaptation *forwardAcceleration = new Adaptation(4, 20, 1);
 
     ValueInt *distWall = new ValueInt(12); // 8
 
@@ -64,10 +64,11 @@ public:
         power = forwardSpeed->adaptedValue();
 
         if (sensors->minForwardDistance > turboModeDist->value) {
-//            angle = (int) (angle * 30.0 * turboTurn->value / sensors->maxForwardDistance);
+//            angle = (int) (angle * 30.0 / sensors->maxForwardDistance);
             angle = sign(angle) * (int) map(sensors->minForwardDistance,
-                                      turboModeDist->value, 130,
+                                      turboModeDist->value, 140,
                                       turboMaxTurn->value, 0);
+//            angle = 0;
 //            angle = maxAngle(angle, turboMaxTurn->value);
             if (turboStopwatch.isLessThan(2000)) {
                 power += (int) map(sensors->minForwardDistance,
@@ -83,6 +84,7 @@ public:
             angle = minAngle(angle, (int) map(sensors->minForwardDistance,
                                               distFullTurn->value, distStartTurn->value,
                                               Mechanics::TURN_MAX_ANGLE, 0));
+//            angle = maxAngle(angle, 30);
             checkPersecution(sensors);
         }
 
