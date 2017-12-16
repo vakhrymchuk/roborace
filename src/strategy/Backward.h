@@ -38,7 +38,7 @@ public:
         } else {
             if (angle == 0) {
                 angle = -getAngle(sensors->rightDistance, sensors->leftDistance);
-                angle = minAngle(angle, 20);
+                angle = minAngle(angle, 10);
             }
         }
 

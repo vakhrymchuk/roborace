@@ -40,7 +40,7 @@ public:
                 }
                 break;
             case 1:
-                if (/*sensors->rightDistance < 50 && */stopwatch->isLessThan(1800)) {
+                if (/*sensors->rightDistance < 50 && */stopwatch->isLessThan(1200)) {
                     angle = Mechanics::FULL_LEFT;
                     power = -ROTATE_SPEED;
                 } else {
@@ -48,7 +48,7 @@ public:
                 }
                 break;
             case 2:
-                if (/*sensors->rightDistance < 50 &&*/ stopwatch->isLessThan(1000)) {
+                if (/*sensors->rightDistance < 50 &&*/ stopwatch->isLessThan(600)) {
                     angle = Mechanics::FULL_RIGHT;
                     power = ROTATE_SPEED;
                 } else {
