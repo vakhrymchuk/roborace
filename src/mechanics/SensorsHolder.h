@@ -1,10 +1,11 @@
 #ifndef ROBORACE_SENSORS_HOLDER_H
 #define ROBORACE_SENSORS_HOLDER_H
 
+#include <Vl53loxSensor.h>
 #include "KalmanFilter.h"
 #include "TimingFilter.h"
 #include "MedianFilter.h"
-#include "Sharp.h"
+#include "MedianFilterWindow.h"
 #include "../remote/Message.h"
 
 /**
@@ -20,6 +21,9 @@ class SensorsHolder {
 
 public:
 
+    static const bool USE_MEDIAN_FILTER = false;
+    static const bool USE_KALMAN_FILTER = false;
+
     unsigned int forwardLeftDistance, forwardRightDistance;
 
     unsigned int leftDistance, rightDistance;
@@ -31,11 +35,14 @@ public:
     unsigned int minFactor;
 
 
-    TimingFilter *forwardLeftSensor = createSensor(A3);
-    TimingFilter *rightSensor = createSensor(A2);
-    TimingFilter *leftSensor = createSensor(A1);
-    TimingFilter *forwardRightSensor = createSensor(A0);
+    TimingFilter *forwardLeftSensor;
+    TimingFilter *rightSensor;
+    TimingFilter *leftSensor;
+    TimingFilter *forwardRightSensor;
 
+    SensorsHolder() {
+        initSensors();
+    }
 
     void readDistances();
 
@@ -50,12 +57,19 @@ private:
 
     void calcMinDistance();
 
+    void initSensors();
+
     static TimingFilter *createSensor(const byte pin) {
-        DistanceSensor *distanceSensor = new Sharp10_150(pin);
-//        distanceSensor = new MedianFilter(distanceSensor, MedianFilter::ARR_SIZE);
-//        distanceSensor = new KalmanFilter(distanceSensor);
+        DistanceSensor *distanceSensor = new Vl53loxSensor(pin);
+        if (USE_MEDIAN_FILTER) {
+            distanceSensor = new MedianFilter(distanceSensor, MedianFilter::ARR_SIZE);
+        }
+        if (USE_KALMAN_FILTER) {
+            distanceSensor = new KalmanFilter(distanceSensor);
+        }
         return new TimingFilter(distanceSensor);
     }
+
 };
 
 void SensorsHolder::readDistances() {
@@ -104,6 +118,19 @@ bool SensorsHolder::isSamePlace(unsigned long ms) const {
            || forwardRightSensor->isLongerThan(ms)
            || leftSensor->isLongerThan(ms)
            || rightSensor->isLongerThan(ms);
+}
+
+void SensorsHolder::initSensors() {
+    Vl53loxSensor::lowPin(A0);
+    Vl53loxSensor::lowPin(A1);
+    Vl53loxSensor::lowPin(A2);
+    Vl53loxSensor::lowPin(A3);
+
+    forwardLeftSensor = createSensor(A3);
+    rightSensor = createSensor(A2);
+    leftSensor = createSensor(A1);
+    forwardRightSensor = createSensor(A0);
+
 }
 
 #endif

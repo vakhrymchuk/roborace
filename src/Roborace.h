@@ -23,7 +23,7 @@
 class Roborace {
 public:
 
-    static const int RUN_INTERVAL_MS = 20;
+    static const int RUN_INTERVAL_MS = 35;
 
     Roborace() {
         waitForEngineInit();

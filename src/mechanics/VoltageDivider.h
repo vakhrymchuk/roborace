@@ -10,7 +10,7 @@ public:
     }
 
     int readSource() const {
-        return aRead(pin);
+        return analogRead(pin);
     }
 
     float readFloat() const {

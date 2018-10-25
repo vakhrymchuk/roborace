@@ -47,6 +47,9 @@ void setup() {
     ADC_setup();
 #endif
 
+    Wire.begin();
+    Wire.setClock(400000);
+
 #ifdef DEBUG
     Serial.begin(115200);
     Serial.print(F("free memory="));
