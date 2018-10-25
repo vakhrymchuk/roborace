@@ -1,7 +1,7 @@
 #ifndef ROBORACE_ENGINE_ENCODER_H
 #define ROBORACE_ENGINE_ENCODER_H
 
-#include <Timing.h>
+#include <Interval.h>
 
 #define ENCODER_PIN 2
 

@@ -1,7 +1,7 @@
 #ifndef ROBORACE_ROTATION_HELPER_H
 #define ROBORACE_ROTATION_HELPER_H
 
-#include <Timing.h>
+#include <Interval.h>
 
 /**
  * ______      _        _   _             _   _      _

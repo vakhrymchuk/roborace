@@ -3,6 +3,7 @@
 
 #include "Engine.h"
 #include "VoltageDivider.h"
+#include "ServoWrapperPWM.h"
 
 #define TURN_SERVO_PIN SERVO_PIN_B // 10
 #define ENGINE_PIN SERVO_PIN_A // 9

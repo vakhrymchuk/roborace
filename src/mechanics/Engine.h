@@ -1,7 +1,7 @@
 #ifndef ROBORACE_ENGINE_H
 #define ROBORACE_ENGINE_H
 
-#include <ServoWrapperPWM.h>
+#include "PWMServo.h"
 #include "EngineHelper.h"
 #include "EngineEncoder.h"
 
@@ -20,7 +20,7 @@
 class Engine {
 public:
 
-    Engine(ServoWrapperPWM *servo) : servo(servo) {
+    Engine(PWMServo *servo) : servo(servo) {
         stop();
     }
 

@@ -3,10 +3,10 @@
 
 #include <Arduino.h>
 #include "Led.h"
-#include "Timing.h"
-#include "mechanics/Mechanics.h"
-#include "mechanics/SensorsHolder.h"
-#include "Adaptation.h"
+#include "Timeout.h"
+#include "../mechanics/Mechanics.h"
+#include "../mechanics/SensorsHolder.h"
+#include "../Adaptation.h"
 #include "RotationHelper.h"
 
 

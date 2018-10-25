@@ -5,7 +5,7 @@
 #include "TimingFilter.h"
 #include "MedianFilter.h"
 #include "Sharp.h"
-#include "remote/Message.h"
+#include "../remote/Message.h"
 
 /**
  *  _____                                _   _       _     _

@@ -78,7 +78,6 @@ void Roborace::initStrategies() {
 
     activeStrategy = forward->init();
 //    activeStrategy = rightWall->init();
-    Serial.println("Strategies inited");
 }
 
 
@@ -115,6 +114,10 @@ void Roborace::loop() {
 //        Serial.print(mechanics->logicVoltage.readFloatKalman());
 //        Serial.print(F("\tEV = "));
 //        Serial.print(mechanics->engineVoltage.readFloatKalman());
+        Serial.print(F("\tang = "));
+        Serial.print(activeStrategy->angle);
+        Serial.print(F("\tpow = "));
+        Serial.print(activeStrategy->power);
         Serial.println();
     }
 #endif
