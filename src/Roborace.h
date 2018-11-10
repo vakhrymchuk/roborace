@@ -49,8 +49,6 @@ protected:
 
     boolean enabled = true;
 
-    void waitForMainLoop() const;
-
 #ifdef DEBUG
     Interval debugInterval = Interval(200);
 #endif
@@ -83,7 +81,7 @@ void Roborace::initStrategies() {
 
 void Roborace::loop() {
 
-    waitForMainLoop();
+    if (!mainLoopChange->isReady()) return;
 
 #ifdef DEBUG
     unsigned long start = micros();
@@ -119,12 +117,9 @@ void Roborace::loop() {
         Serial.print(F("\tpow = "));
         Serial.print(activeStrategy->power);
         Serial.println();
+        Serial.flush();
     }
 #endif
-}
-
-void Roborace::waitForMainLoop() const {
-    while (!mainLoopChange->isReady()) {}
 }
 
 #endif
