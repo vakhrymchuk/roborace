@@ -83,6 +83,8 @@ void Roborace::loop() {
 
     if (!mainLoopChange->isReady()) return;
 
+#define DEBUG true
+
 #ifdef DEBUG
     unsigned long start = micros();
 #endif
@@ -95,28 +97,19 @@ void Roborace::loop() {
 #endif
 
 #ifdef DEBUG
+    unsigned long finish = micros();
     if (debugInterval.isReady()) {
-        unsigned long finish = micros();
-        Serial.print(F("loop time mcs = "));
-        Serial.print(finish - start);
-
-        Serial.print(F("\tFL = "));
-        Serial.print(sensors->forwardLeftDistance);
-        Serial.print(F("\tL = "));
-        Serial.print(sensors->leftDistance);
-        Serial.print(F("\tR = "));
-        Serial.print(sensors->rightDistance);
-        Serial.print(F("\tFR = "));
-        Serial.print(sensors->forwardRightDistance);
-//        Serial.print(F("\tLV = "));
-//        Serial.print(mechanics->logicVoltage.readFloatKalman());
-//        Serial.print(F("\tEV = "));
-//        Serial.print(mechanics->engineVoltage.readFloatKalman());
-        Serial.print(F("\tang = "));
-        Serial.print(activeStrategy->angle);
-        Serial.print(F("\tpow = "));
-        Serial.print(activeStrategy->power);
-        Serial.println();
+        char buffer[100];
+        sprintf(buffer,
+                "loop mcs =%4lu  FL =%3u  L =%3u  R =%3u  FR =%3u   ang =% 4d  pow =% 4d",
+                finish - start,
+                sensors->forwardLeftDistance,
+                sensors->leftDistance,
+                sensors->rightDistance,
+                sensors->forwardRightDistance,
+                activeStrategy->angle,
+                activeStrategy->power);
+        Serial.println(buffer);
         Serial.flush();
     }
 #endif
