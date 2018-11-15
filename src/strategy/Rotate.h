@@ -14,7 +14,7 @@
 class Rotate : public Strategy {
 public:
 
-    static const int ROTATE_SPEED = 72;
+    static const int ROTATE_SPEED = 90;
 
     virtual Strategy *init(unsigned int minMs = 0) final override {
         Strategy::init(minMs);

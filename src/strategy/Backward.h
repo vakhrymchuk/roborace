@@ -14,7 +14,7 @@
 class Backward : public Strategy {
 public:
 
-    ValueInt *backwardSpeed = new ValueInt(80);
+    ValueInt *backwardSpeed = new ValueInt(85);
 
     virtual Strategy *init(unsigned int minMs = 0) final override {
         Strategy::init(minMs);
@@ -37,7 +37,7 @@ public:
             angle = 0;
         } else {
             if (angle == 0) {
-                angle = -getAngle(sensors->rightDistance, sensors->leftDistance);
+                angle = -getAngleSign(sensors->rightDistance, sensors->leftDistance);
                 angle = minAngle(angle, 10);
             }
         }

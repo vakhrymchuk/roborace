@@ -46,7 +46,7 @@ public:
 
 
 //        angle = Mechanics::FULL_LEFT;
-        power = 72;
+        power = 80;
 
         if (sensors->maxForwardDistance < 30 || sensors->minForwardDistance < 10) {
             angle *= -1;
