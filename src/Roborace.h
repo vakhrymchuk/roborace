@@ -10,6 +10,7 @@
 #include "strategy/Backward.h"
 #include "strategy/Rotate.h"
 #include "strategy/RightWall.h"
+#include "strategy/LeftWall.h"
 
 
 /**
@@ -45,6 +46,7 @@ protected:
     Backward *backward = new Backward;
     Rotate *rotate = new Rotate;
     RightWall *rightWall = new RightWall;
+    LeftWall *leftWall = new LeftWall;
     Strategy *activeStrategy;
 
     boolean enabled = true;
@@ -67,23 +69,24 @@ void Roborace::initStrategies() {
     forward->backward = backward;
     forward->rotate = rotate;
     forward->rightWall = rightWall;
+    forward->leftWall = leftWall;
 
     backward->forward = forward;
 
     rotate->forward = forward;
 
     rightWall->forward = forward;
+    leftWall->forward = forward;
 
     activeStrategy = forward->init();
 //    activeStrategy = rightWall->init();
+//    activeStrategy = leftWall->init();
 }
 
 
 void Roborace::loop() {
 
     if (!mainLoopChange->isReady()) return;
-
-#define DEBUG true
 
 #ifdef DEBUG
     unsigned long start = micros();

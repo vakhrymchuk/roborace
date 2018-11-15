@@ -82,6 +82,11 @@ protected:
         return angle;
     }
 
+    int mapConstrain(int x, int in_min, int in_max, int out_min, int out_max) const {
+        int y = map(x, in_min, in_max, out_min, out_max);
+        return constrain(y, out_min, out_max);
+    }
+
     int mapConstrain(long x, long in_min, long in_max, int out_min, int out_max) const {
         long y = map(x, in_min, in_max, out_min, out_max);
         return (int) constrain(y, out_min, out_max);

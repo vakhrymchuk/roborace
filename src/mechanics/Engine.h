@@ -37,7 +37,7 @@ public:
     }
 
     EngineHelper *engineHelper = new EngineHelper();
-    EngineEncoder * engineEncoder = new EngineEncoder();
+    EngineEncoder *engineEncoder = new EngineEncoder();
 
 private:
     PWMServo *servo;

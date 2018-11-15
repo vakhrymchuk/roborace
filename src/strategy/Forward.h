@@ -47,7 +47,7 @@ public:
 //                return backward->init(800);
 //            }
 //            if (persecutionStopwatch->isMoreThan(3000)) {
-//                return rightWall->init(5000);
+//                return leftWall->init(5000);
 //            }
             if (rotationHelper->isCounterClockWise()) {
                 rotationHelper->reset();
@@ -108,6 +108,7 @@ public:
     Strategy *backward;
     Strategy *rotate;
     Strategy *rightWall;
+    Strategy *leftWall;
 
 private:
 
