@@ -16,15 +16,15 @@ public:
 
     static const int ROTATE_SPEED = 90;
 
-    virtual Strategy *init(unsigned int minMs = 0) final override {
-        Strategy::init(minMs);
+    virtual Strategy *init(Strategy *callback, unsigned int minMs) final override {
+        Strategy::init(callback, minMs);
         stage = 0;
         return this;
     }
 
     virtual Strategy *check(SensorsHolder *sensors) final override {
         if (stage == 3)
-            return forward->init();
+            return callback->init(this, 0);
         return this;
     }
 

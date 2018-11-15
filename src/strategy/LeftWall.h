@@ -7,14 +7,15 @@
 class LeftWall : public Strategy {
 public:
 
-    virtual Strategy *init(unsigned int minMs = 0) {
+    virtual Strategy *init(Strategy *callback, unsigned int minMs = 0) final override {
+        Strategy::init(callback, minMs);
         speed.init();
         return this;
     }
 
     virtual Strategy *check(SensorsHolder *sensors) final override {
         if (minTimeout->isReady() || sensors->minForwardDistance > 100) {
-            return forward->init();
+            return callback->init(this, 2000);
         }
         return this;
     }

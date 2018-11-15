@@ -29,11 +29,12 @@ int sign(T val) {
 class Strategy {
 public:
 
-    virtual Strategy *init(unsigned int minMs = 0) {
+    virtual Strategy *init(Strategy *callback, unsigned int minMs = 0) {
         stopwatch->start();
         minTimeout->start(minMs);
+        Strategy::callback = callback;
         return this;
-    };
+    }
 
     virtual Strategy *check(SensorsHolder *sensors) {
         return this;
@@ -52,6 +53,7 @@ protected:
 
     Stopwatch *stopwatch = new Stopwatch;
     Timeout *minTimeout = new Timeout();
+    Strategy *callback;
 
     int getAngle(int right, int left) const {
         return sign(45 - (int) degrees(atan2(smooth(right), smooth(left))));

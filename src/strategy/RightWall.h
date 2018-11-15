@@ -16,9 +16,14 @@
 class RightWall : public Strategy {
 public:
 
+    virtual Strategy *init(Strategy *callback, unsigned int minMs) final override {
+        Strategy::init(callback, minMs);
+        return this;
+    }
+
     virtual Strategy *check(SensorsHolder *sensors) final override {
         if (minTimeout->isReady() || sensors->minForwardDistance > 100) {
-            return forward->init();
+            return callback->init(this, 0);
         }
         return this;
     }

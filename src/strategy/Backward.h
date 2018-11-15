@@ -16,8 +16,8 @@ public:
 
     ValueInt *backwardSpeed = new ValueInt(85);
 
-    virtual Strategy *init(unsigned int minMs = 0) final override {
-        Strategy::init(minMs);
+    virtual Strategy *init(Strategy *callback, unsigned int minMs) final override {
+        Strategy::init(callback, minMs);
 //        minTimeout->start(500);
         maxTimeout->start(2000);
         return this;
@@ -26,7 +26,7 @@ public:
     virtual Strategy *check(SensorsHolder *sensors) final override {
         if (minTimeout->isReady()) {
             if (maxTimeout->isReady() || isBackFinish(sensors)) {
-                return forward->init();
+                return callback->init(this);
             }
         }
         return this;

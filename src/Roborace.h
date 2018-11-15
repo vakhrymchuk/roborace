@@ -78,7 +78,7 @@ void Roborace::initStrategies() {
     rightWall->forward = forward;
     leftWall->forward = forward;
 
-    activeStrategy = forward->init();
+    activeStrategy = forward->init(nullptr, 0);
 //    activeStrategy = rightWall->init();
 //    activeStrategy = leftWall->init();
 }

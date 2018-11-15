@@ -29,8 +29,8 @@ public:
     ValueInt *distPersecution = new ValueInt(40);
 
 
-    virtual Strategy *init(unsigned int minMs = 500) final override {
-        Strategy::init(minMs);
+    virtual Strategy *init(Strategy *callback, unsigned int minMs) final override {
+        Strategy::init(callback, minMs);
         forwardSpeed->init();
         forwardAcceleration->init();
         persecution = false;
@@ -41,17 +41,17 @@ public:
     virtual Strategy *check(SensorsHolder *sensors) final override {
         if (minTimeout->isReady()) {
             if (isWallNear(sensors)) {
-                return backward->init(0);
+                return backward->init(this, 0);
             }
             if (sensors->isSamePlace(1500)) {
-                return backward->init(800);
+                return backward->init(this, 800);
             }
 //            if (persecutionStopwatch->isMoreThan(3000)) {
-//                return leftWall->init(5000);
+//                return leftWall->init(this, 5000);
 //            }
             if (rotationHelper->isCounterClockWise()) {
                 rotationHelper->reset();
-                return rotate->init();
+                return rotate->init(this);
             }
         }
         return this;
