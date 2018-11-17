@@ -15,14 +15,14 @@ class Forward : public Strategy {
 public:
 
     ValueInt *distStartTurn = new ValueInt(110);
-    ValueInt *distFullTurn = new ValueInt(95);
+    ValueInt *distFullTurn = new ValueInt(90);
 
     ValueInt *turboModeDist = new ValueInt(110);
 //    ValueInt *turboTurn = new ValueInt(5);
-    ValueInt *turboMaxTurn = new ValueInt(4);
+    ValueInt *turboMaxTurn = new ValueInt(1);
 
-    Adaptation *forwardSpeed = new Adaptation(86, 15, 4);
-    Adaptation *forwardAcceleration = new Adaptation(0, 15, 0);
+    Adaptation *forwardSpeed = new Adaptation(90, 15, 1);
+    Adaptation *forwardAcceleration = new Adaptation(4, 15, 0);
 
     ValueInt *distWall = new ValueInt(7);
 
@@ -96,7 +96,7 @@ public:
 //                angle = maxAngle(angle, (int) map(sensors->minDistance, 0, 50, 15, 30));
             power = (int) map(sensors->minForwardDistance,
                               8, distPersecution->value,
-                              70, power);
+                              80, power);
             if (!persecution) {
                 persecution = true;
                 persecutionStopwatch->start();
@@ -122,7 +122,7 @@ private:
     RotationHelper *rotationHelper = new RotationHelper();
 
     bool isWallNear(SensorsHolder *sensors) const {
-        return sensors->minForwardDistance < distWall->value;
+        return sensors->minForwardDistance < distWall->value || sensors->maxForwardDistance < 15;
     }
 };
 
