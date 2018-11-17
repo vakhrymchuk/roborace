@@ -14,15 +14,15 @@
 class Forward : public Strategy {
 public:
 
-    ValueInt *distStartTurn = new ValueInt(110);
-    ValueInt *distFullTurn = new ValueInt(90);
+    ValueInt *distStartTurn = new ValueInt(120);
+    ValueInt *distFullTurn = new ValueInt(100);
 
     ValueInt *turboModeDist = new ValueInt(110);
 //    ValueInt *turboTurn = new ValueInt(5);
-    ValueInt *turboMaxTurn = new ValueInt(1);
+    ValueInt *turboMaxTurn = new ValueInt(0);
 
-    Adaptation *forwardSpeed = new Adaptation(90, 15, 1);
-    Adaptation *forwardAcceleration = new Adaptation(4, 15, 0);
+    Adaptation *forwardSpeed = new Adaptation(86, 15, 4);
+    Adaptation *forwardAcceleration = new Adaptation(4, 15, 1);
 
     ValueInt *distWall = new ValueInt(7);
 
@@ -84,6 +84,7 @@ public:
             angle = minAngle(angle, (int) map(sensors->minForwardDistance,
                                               distFullTurn->value, distStartTurn->value,
                                               Mechanics::TURN_MAX_ANGLE, 0));
+//            if (abs(angle) > 20) {power +=10;}
 //            angle = maxAngle(angle, 30);
             checkPersecution(sensors);
         }
