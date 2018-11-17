@@ -19,9 +19,9 @@ public:
      */
     static const int SIZE = 20;
 
-    ValueInt *maxCorrectionRun = new ValueInt(20); // 50
-    ValueInt *maxCorrectionBrake = new ValueInt(20); // 50
-    ValueInt *correctionFactor = new ValueInt(5); // 10
+    ValueInt *maxCorrectionRun = new ValueInt(80); // 50
+    ValueInt *maxCorrectionBrake = new ValueInt(80); // 50
+    ValueInt *correctionFactor = new ValueInt(10); // 10
 
     EngineHelper() {
         arr = new int[SIZE];
