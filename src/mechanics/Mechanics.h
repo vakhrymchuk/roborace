@@ -20,7 +20,7 @@
 class Mechanics {
 public:
     /** Максимальный угол поворота */
-    static const int TURN_MAX_ANGLE = 32;
+    static const int TURN_MAX_ANGLE = 33;
     static const int FULL_RIGHT = -TURN_MAX_ANGLE;
     static const int FULL_LEFT = TURN_MAX_ANGLE;
 

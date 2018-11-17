@@ -14,17 +14,17 @@
 class Forward : public Strategy {
 public:
 
-    ValueInt *distStartTurn = new ValueInt(100);
-    ValueInt *distFullTurn = new ValueInt(85);
+    ValueInt *distStartTurn = new ValueInt(110);
+    ValueInt *distFullTurn = new ValueInt(95);
 
     ValueInt *turboModeDist = new ValueInt(110);
 //    ValueInt *turboTurn = new ValueInt(5);
-    ValueInt *turboMaxTurn = new ValueInt(10);
+    ValueInt *turboMaxTurn = new ValueInt(4);
 
-    Adaptation *forwardSpeed = new Adaptation(84, 120, 4);
+    Adaptation *forwardSpeed = new Adaptation(86, 15, 4);
     Adaptation *forwardAcceleration = new Adaptation(0, 15, 0);
 
-    ValueInt *distWall = new ValueInt(12);
+    ValueInt *distWall = new ValueInt(7);
 
     ValueInt *distPersecution = new ValueInt(40);
 
@@ -43,9 +43,9 @@ public:
             if (isWallNear(sensors)) {
                 return backward->init(this, 0);
             }
-//            if (sensors->isSamePlace(1500)) {
-//                return backward->init(this, 800);
-//            }
+            if (sensors->isSamePlace(4000)) {
+                return backward->init(this, 800);
+            }
 //            if (persecutionStopwatch->isMoreThan(3000)) {
 //                return leftWall->init(this, 5000);
 //            }
@@ -64,9 +64,10 @@ public:
 
         if (sensors->minForwardDistance > turboModeDist->value) {
 //            angle = (int) (angle * 30.0 / sensors->maxForwardDistance);
-            angle = sign(angle) * (int) map(sensors->minForwardDistance,
-                                            turboModeDist->value, 140,
-                                            turboMaxTurn->value, 0);
+//            angle = angle * (int) map(sensors->minForwardDistance,
+//                                            turboModeDist->value, 120,
+//                                            turboMaxTurn->value, 0);
+                angle = angle * turboMaxTurn->value;
 //            angle = 0;
 //            angle = maxAngle(angle, turboMaxTurn->value);
             if (turboStopwatch.isLessThan(1700)) {
