@@ -15,14 +15,14 @@ class Forward : public Strategy {
 public:
 
     ValueInt *distStartTurn = new ValueInt(100);
-    ValueInt *distFullTurn = new ValueInt(80);
+    ValueInt *distFullTurn = new ValueInt(85);
 
-    ValueInt *turboModeDist = new ValueInt(100);
+    ValueInt *turboModeDist = new ValueInt(110);
 //    ValueInt *turboTurn = new ValueInt(5);
-    ValueInt *turboMaxTurn = new ValueInt(3);
+    ValueInt *turboMaxTurn = new ValueInt(10);
 
-    Adaptation *forwardSpeed = new Adaptation(86, 15, 4);
-    Adaptation *forwardAcceleration = new Adaptation(4, 15, 4);
+    Adaptation *forwardSpeed = new Adaptation(84, 120, 4);
+    Adaptation *forwardAcceleration = new Adaptation(0, 15, 0);
 
     ValueInt *distWall = new ValueInt(12);
 
@@ -43,16 +43,16 @@ public:
             if (isWallNear(sensors)) {
                 return backward->init(this, 0);
             }
-            if (sensors->isSamePlace(1500)) {
-                return backward->init(this, 800);
-            }
+//            if (sensors->isSamePlace(1500)) {
+//                return backward->init(this, 800);
+//            }
 //            if (persecutionStopwatch->isMoreThan(3000)) {
 //                return leftWall->init(this, 5000);
 //            }
-            if (rotationHelper->isCounterClockWise()) {
-                rotationHelper->reset();
-                return rotate->init(this);
-            }
+//            if (rotationHelper->isCounterClockWise()) {
+//                rotationHelper->reset();
+//                return rotate->init(this);
+//            }
         }
         return this;
     }
