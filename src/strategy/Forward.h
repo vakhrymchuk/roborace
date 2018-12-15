@@ -17,12 +17,12 @@ public:
     ValueInt *distStartTurn = new ValueInt(120);
     ValueInt *distFullTurn = new ValueInt(100);
 
-    ValueInt *turboModeDist = new ValueInt(110);
+    ValueInt *turboModeDist = new ValueInt(120);
 //    ValueInt *turboTurn = new ValueInt(5);
-    ValueInt *turboMaxTurn = new ValueInt(0);
+    ValueInt *turboMaxTurn = new ValueInt(10);
 
     Adaptation *forwardSpeed = new Adaptation(86, 15, 4);
-    Adaptation *forwardAcceleration = new Adaptation(4, 15, 1);
+    Adaptation *forwardAcceleration = new Adaptation(4, 15, 4);
 
     ValueInt *distWall = new ValueInt(7);
 
@@ -49,10 +49,10 @@ public:
 //            if (persecutionStopwatch->isMoreThan(3000)) {
 //                return leftWall->init(this, 5000);
 //            }
-//            if (rotationHelper->isCounterClockWise()) {
-//                rotationHelper->reset();
-//                return rotate->init(this);
-//            }
+            if (rotationHelper->isCounterClockWise()) {
+                rotationHelper->reset();
+                return rotate->init(this);
+            }
         }
         return this;
     }
@@ -67,7 +67,7 @@ public:
 //            angle = angle * (int) map(sensors->minForwardDistance,
 //                                            turboModeDist->value, 120,
 //                                            turboMaxTurn->value, 0);
-                angle = angle * turboMaxTurn->value;
+            angle = angle * turboMaxTurn->value;
 //            angle = 0;
 //            angle = maxAngle(angle, turboMaxTurn->value);
             if (turboStopwatch.isLessThan(1700)) {

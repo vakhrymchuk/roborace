@@ -21,14 +21,15 @@ public:
     }
 
     virtual void calc(SensorsHolder *sensors) {
-        int sideDistToWall = 30;
-        int borderCenter = 3;
-        int borderFullTurn = 15;
+        int sideDistToWall = 55;
+        int borderCenter = 5;
+        int borderFullTurn = 20;
 
         int forwardDistToWall = 100;
-        int forwardDistFullTurn = 60;
+        int forwardDistFullTurn = 80;
 
-        if (sensors->forwardLeftDistance < forwardDistToWall) {
+        if (sensors->forwardLeftDistance < forwardDistToWall &&
+            sensors->leftDistance < sideDistToWall + 2 * borderFullTurn) {
             angle = mapConstrain(sensors->forwardLeftDistance,
                                  forwardDistFullTurn, forwardDistToWall,
                                  Mechanics::FULL_RIGHT, 0);
@@ -45,8 +46,11 @@ public:
         }
 
         power = speed.adaptedValue();
+        if (sensors->minForwardDistance > 120) {
+            power += 20;
+        }
 
-        if (sensors->minForwardDistance < 25 || (back && sensors->forwardLeftDistance < 35)) {
+        if (sensors->minForwardDistance < 15 || (back && sensors->forwardLeftDistance < 35)) {
             angle *= -1;
             power = -power;
             back = true;
@@ -59,7 +63,7 @@ public:
     Strategy *forward;
     bool back = false;
 
-    Adaptation speed = Adaptation(80, 20, 4);
+    Adaptation speed = Adaptation(110, 10, 4);
 
 };
 

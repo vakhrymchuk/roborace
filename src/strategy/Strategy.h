@@ -96,7 +96,8 @@ protected:
 
 private:
     int smooth(int num) const {
-        return (int) round(sqrt(num));
+        return num / 8;
+//        return (int) round(sqrt(num));
     }
 };
 
