@@ -19,10 +19,10 @@ public:
 
     ValueInt *turboModeDist = new ValueInt(120);
 //    ValueInt *turboTurn = new ValueInt(5);
-    ValueInt *turboMaxTurn = new ValueInt(10);
+    ValueInt *turboMaxTurn = new ValueInt(9);
 
-    Adaptation *forwardSpeed = new Adaptation(86, 15, 4);
-    Adaptation *forwardAcceleration = new Adaptation(4, 15, 4);
+    Adaptation *forwardSpeed = new Adaptation(86, 30, 4);
+    Adaptation *forwardAcceleration = new Adaptation(0, 15, 0);
 
     ValueInt *distWall = new ValueInt(7);
 
