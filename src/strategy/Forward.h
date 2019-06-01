@@ -19,12 +19,12 @@ public:
 
     ValueInt *turboModeDist = new ValueInt(120);
 //    ValueInt *turboTurn = new ValueInt(5);
-    ValueInt *turboMaxTurn = new ValueInt(9);
+    ValueInt *turboMaxTurn = new ValueInt(15);
 
-    Adaptation *forwardSpeed = new Adaptation(86, 30, 4);
+    Adaptation *forwardSpeed = new Adaptation(84, 15, 0);
     Adaptation *forwardAcceleration = new Adaptation(0, 15, 0);
 
-    ValueInt *distWall = new ValueInt(7);
+    ValueInt *distWall = new ValueInt(8);
 
     ValueInt *distPersecution = new ValueInt(40);
 
@@ -49,10 +49,10 @@ public:
 //            if (persecutionStopwatch->isMoreThan(3000)) {
 //                return leftWall->init(this, 5000);
 //            }
-            if (rotationHelper->isCounterClockWise()) {
-                rotationHelper->reset();
-                return rotate->init(this);
-            }
+//            if (rotationHelper->isCounterClockWise()) {
+//                rotationHelper->reset();
+//                return rotate->init(this);
+//            }
         }
         return this;
     }
@@ -62,7 +62,7 @@ public:
 
         power = forwardSpeed->adaptedValue();
 
-        if (sensors->minForwardDistance > turboModeDist->value) {
+        if (sensors->maxForwardDistance > turboModeDist->value) {
 //            angle = (int) (angle * 30.0 / sensors->maxForwardDistance);
 //            angle = angle * (int) map(sensors->minForwardDistance,
 //                                            turboModeDist->value, 120,
@@ -79,6 +79,10 @@ public:
                 turbo = true;
                 turboStopwatch.start();
             }
+        } else if (sensors->rightDistance > 100 && smooth(sensors->rightDistance) > smooth(sensors->leftDistance)) {
+            angle = Mechanics::FULL_RIGHT;
+        } else if (sensors->leftDistance > 100 && smooth(sensors->leftDistance) > smooth(sensors->rightDistance)) {
+            angle = Mechanics::FULL_LEFT;
         } else {
             turbo = false;
             angle = minAngle(angle, (int) map(sensors->minForwardDistance,
@@ -123,7 +127,7 @@ private:
     RotationHelper *rotationHelper = new RotationHelper();
 
     bool isWallNear(SensorsHolder *sensors) const {
-        return sensors->minForwardDistance < distWall->value || sensors->maxForwardDistance < 15;
+        return sensors->minForwardDistance < distWall->value || sensors->maxForwardDistance < 20;
     }
 };
 

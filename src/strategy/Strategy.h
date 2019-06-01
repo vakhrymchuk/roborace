@@ -94,7 +94,7 @@ protected:
         return (int) constrain(y, out_min, out_max);
     }
 
-private:
+protected:
     int smooth(int num) const {
         return num / 8;
 //        return (int) round(sqrt(num));
