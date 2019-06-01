@@ -50,14 +50,14 @@ public:
 
     bool isSamePlace(unsigned long ms) const;
 
+    void initSensors();
+
 
 private:
 
     void calcMaxDistance();
 
     void calcMinDistance();
-
-    void initSensors();
 
     static TimingFilter *createSensor(const byte pin) {
         DistanceSensor *distanceSensor = new Vl53loxSensor(pin);
