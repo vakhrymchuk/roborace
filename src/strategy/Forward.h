@@ -14,14 +14,14 @@
 class Forward : public Strategy {
 public:
 
-    ValueInt *distStartTurn = new ValueInt(120);
-    ValueInt *distFullTurn = new ValueInt(105);
+    ValueInt *distStartTurn = new ValueInt(110);
+    ValueInt *distFullTurn = new ValueInt(90);
 
     ValueInt *turboModeDist = new ValueInt(120);
 //    ValueInt *turboTurn = new ValueInt(5);
     ValueInt *turboMaxTurn = new ValueInt(6);
 
-    Adaptation *forwardSpeed = new Adaptation(90, 15, 0);
+    Adaptation *forwardSpeed = new Adaptation(90, 15, 1);
     Adaptation *forwardAcceleration = new Adaptation(4, 15, 0);
 
     ValueInt *distWall = new ValueInt(8);
@@ -66,7 +66,7 @@ public:
 
         power = forwardSpeed->adaptedValue();
 
-        if (sensors->maxForwardDistance >= turboModeDist->value) {
+        if (sensors->minForwardDistance >= turboModeDist->value) {
 //            angle = (int) (angle * 30.0 / sensors->maxForwardDistance);
 //            angle = angle * (int) map(sensors->minForwardDistance,
 //                                            turboModeDist->value, 120,
@@ -75,7 +75,7 @@ public:
 //            angle = 0;
 //            angle = maxAngle(angle, turboMaxTurn->value);
             if (turboStopwatch.isLessThan(3000)) {
-                power += (int) map(sensors->minForwardDistance,
+                power += (int) map(sensors->maxForwardDistance,
                                    turboModeDist->value, 150,
                                    0, forwardAcceleration->adaptedValue());
 //                    power += forwardAcceleration->adaptedValue();
