@@ -15,14 +15,14 @@ class Forward : public Strategy {
 public:
 
     ValueInt *distStartTurn = new ValueInt(120);
-    ValueInt *distFullTurn = new ValueInt(100);
+    ValueInt *distFullTurn = new ValueInt(105);
 
     ValueInt *turboModeDist = new ValueInt(120);
 //    ValueInt *turboTurn = new ValueInt(5);
     ValueInt *turboMaxTurn = new ValueInt(6);
 
     Adaptation *forwardSpeed = new Adaptation(90, 15, 2);
-    Adaptation *forwardAcceleration = new Adaptation(8, 15, 0);
+    Adaptation *forwardAcceleration = new Adaptation(4, 15, 0);
 
     ValueInt *distWall = new ValueInt(8);
 
@@ -62,7 +62,7 @@ public:
 
         power = forwardSpeed->adaptedValue();
 
-        if (sensors->maxForwardDistance > turboModeDist->value) {
+        if (sensors->maxForwardDistance >= turboModeDist->value) {
 //            angle = (int) (angle * 30.0 / sensors->maxForwardDistance);
 //            angle = angle * (int) map(sensors->minForwardDistance,
 //                                            turboModeDist->value, 120,
@@ -70,19 +70,22 @@ public:
             angle = angle * turboMaxTurn->value;
 //            angle = 0;
 //            angle = maxAngle(angle, turboMaxTurn->value);
-            if (turboStopwatch.isLessThan(1700)) {
-                power += (int) map(sensors->minForwardDistance,
-                                   turboModeDist->value, 150,
-                                   0, forwardAcceleration->adaptedValue());
-            }
+//            if (turboStopwatch.isLessThan(1700)) {
+//                power += (int) map(sensors->minForwardDistance,
+//                                   turboModeDist->value, 150,
+//                                   0, forwardAcceleration->adaptedValue());
+                    power += forwardAcceleration->adaptedValue();
+//            }
             if (!turbo) {
                 turbo = true;
                 turboStopwatch.start();
             }
         } else if (sensors->rightDistance > 90 && smooth(sensors->rightDistance) > smooth(sensors->leftDistance)) {
+            power -= 10;
             turbo = false;
             angle = Mechanics::FULL_RIGHT;
         } else if (sensors->leftDistance > 90 && smooth(sensors->leftDistance) > smooth(sensors->rightDistance)) {
+            power -= 10;
             turbo = false;
             angle = Mechanics::FULL_LEFT;
         } else {
