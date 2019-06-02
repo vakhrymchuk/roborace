@@ -19,10 +19,10 @@ public:
 
     ValueInt *turboModeDist = new ValueInt(120);
 //    ValueInt *turboTurn = new ValueInt(5);
-    ValueInt *turboMaxTurn = new ValueInt(8);
+    ValueInt *turboMaxTurn = new ValueInt(6);
 
-    Adaptation *forwardSpeed = new Adaptation(90, 15, 0);
-    Adaptation *forwardAcceleration = new Adaptation(0, 15, 0);
+    Adaptation *forwardSpeed = new Adaptation(90, 15, 2);
+    Adaptation *forwardAcceleration = new Adaptation(8, 15, 0);
 
     ValueInt *distWall = new ValueInt(8);
 
@@ -49,10 +49,10 @@ public:
 //            if (persecutionStopwatch->isMoreThan(3000)) {
 //                return leftWall->init(this, 5000);
 //            }
-//            if (rotationHelper->isCounterClockWise()) {
-//                rotationHelper->reset();
-//                return rotate->init(this);
-//            }
+            if (rotationHelper->isCounterClockWise()) {
+                rotationHelper->reset();
+                return rotate->init(this);
+            }
         }
         return this;
     }
@@ -79,10 +79,10 @@ public:
                 turbo = true;
                 turboStopwatch.start();
             }
-        } else if (sensors->rightDistance > 100 && smooth(sensors->rightDistance) > smooth(sensors->leftDistance)) {
+        } else if (sensors->rightDistance > 90 && smooth(sensors->rightDistance) > smooth(sensors->leftDistance)) {
             turbo = false;
             angle = Mechanics::FULL_RIGHT;
-        } else if (sensors->leftDistance > 100 && smooth(sensors->leftDistance) > smooth(sensors->rightDistance)) {
+        } else if (sensors->leftDistance > 90 && smooth(sensors->leftDistance) > smooth(sensors->rightDistance)) {
             turbo = false;
             angle = Mechanics::FULL_LEFT;
         } else {
