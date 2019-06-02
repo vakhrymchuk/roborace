@@ -21,12 +21,16 @@ public:
 //    ValueInt *turboTurn = new ValueInt(5);
     ValueInt *turboMaxTurn = new ValueInt(6);
 
-    Adaptation *forwardSpeed = new Adaptation(90, 15, 2);
+    Adaptation *forwardSpeed = new Adaptation(90, 15, 0);
     Adaptation *forwardAcceleration = new Adaptation(4, 15, 0);
 
     ValueInt *distWall = new ValueInt(8);
 
     ValueInt *distPersecution = new ValueInt(40);
+
+    Stopwatch turnStopwatch;
+    int turnDirection = 0;
+    boolean turn = false;
 
 
     virtual Strategy *init(Strategy *callback, unsigned int minMs) final override {
@@ -70,26 +74,34 @@ public:
             angle = angle * turboMaxTurn->value;
 //            angle = 0;
 //            angle = maxAngle(angle, turboMaxTurn->value);
-//            if (turboStopwatch.isLessThan(1700)) {
-//                power += (int) map(sensors->minForwardDistance,
-//                                   turboModeDist->value, 150,
-//                                   0, forwardAcceleration->adaptedValue());
-                    power += forwardAcceleration->adaptedValue();
-//            }
+            if (turboStopwatch.isLessThan(3000)) {
+                power += (int) map(sensors->minForwardDistance,
+                                   turboModeDist->value, 150,
+                                   0, forwardAcceleration->adaptedValue());
+//                    power += forwardAcceleration->adaptedValue();
+            }
             if (!turbo) {
                 turbo = true;
                 turboStopwatch.start();
             }
+            turn = false;
         } else if (sensors->rightDistance > 90 && smooth(sensors->rightDistance) > smooth(sensors->leftDistance)) {
-            power -= 10;
+            if (!turn) {
+                turn = true;
+                turnStopwatch.start();
+            }
             turbo = false;
             angle = Mechanics::FULL_RIGHT;
         } else if (sensors->leftDistance > 90 && smooth(sensors->leftDistance) > smooth(sensors->rightDistance)) {
-            power -= 10;
+            if (!turn) {
+                turn = true;
+                turnStopwatch.start();
+            }
             turbo = false;
             angle = Mechanics::FULL_LEFT;
         } else {
             turbo = false;
+            turn = false;
             angle = minAngle(angle, (int) map(sensors->minForwardDistance,
                                               distFullTurn->value, distStartTurn->value,
                                               Mechanics::TURN_MAX_ANGLE, 0));
