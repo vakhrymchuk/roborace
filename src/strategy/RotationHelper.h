@@ -34,7 +34,7 @@ public:
     }
 
     void placeVector(int angle, int power) {
-        if (stopwatch->isMoreThanSec(1)) {
+        if (stopwatch->isMoreThan(1, SECOND)) {
             index = (index + 1) % ARR_SIZE;
             arr[index] = 0;
             stopwatch->start();

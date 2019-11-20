@@ -31,7 +31,7 @@ private:
     Stopwatch *stopwatch = new Stopwatch();
 
     void process() {
-        if (stopwatch->isMoreThanSec((const unsigned long) educationTime)) {
+        if (stopwatch->isMoreThan((const unsigned long) educationTime), SECOND) {
             if (testValue > valueInt->value) {
                 valueInt->value = testValue;
                 adapted = true;
