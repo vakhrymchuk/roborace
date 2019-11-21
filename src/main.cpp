@@ -53,8 +53,8 @@ void setup() {
 
 #ifdef DEBUG
     Serial.begin(115200);
-    Serial.print(F("free memory="));
-    Serial.println(freeMemory());
+//    Serial.print(F("free memory="));
+//    Serial.println(freeMemory());
 #endif
 
     roborace = createRoborace();
@@ -65,8 +65,8 @@ void setup() {
 //    }
 
 #ifdef DEBUG
-    Serial.print(F("free memory="));
-    Serial.println(freeMemory());
+//    Serial.print(F("free memory="));
+//    Serial.println(freeMemory());
 #endif
 }
 

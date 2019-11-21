@@ -14,19 +14,19 @@
 class Forward : public Strategy {
 public:
 
-    ValueInt *distStartTurn = new ValueInt(110);
-    ValueInt *distFullTurn = new ValueInt(90);
+    ValueInt *distStartTurn = new ValueInt(80);
+    ValueInt *distFullTurn = new ValueInt(50);
 
-    ValueInt *turboModeDist = new ValueInt(120);
+    ValueInt *turboModeDist = new ValueInt(200);
 //    ValueInt *turboTurn = new ValueInt(5);
     ValueInt *turboMaxTurn = new ValueInt(6);
 
-    Adaptation *forwardSpeed = new Adaptation(80, 15, 1);
+    Adaptation *forwardSpeed = new Adaptation(60, 15, 0);
     Adaptation *forwardAcceleration = new Adaptation(0, 15, 0);
 
     ValueInt *distWall = new ValueInt(8);
 
-    ValueInt *distPersecution = new ValueInt(40);
+    ValueInt *distPersecution = new ValueInt(50);
 
     Stopwatch turnStopwatch;
     int turnDirection = 0;
@@ -106,9 +106,9 @@ public:
                                               distFullTurn->value, distStartTurn->value,
                                               Mechanics::TURN_MAX_ANGLE, 0));
 
-            if (speed > power) {
-                angle = min(angle, 20);
-            }
+//            if (speed > power) {
+//                angle = min(angle, 20);
+//            }
 
 //            if (abs(angle) > 20) {power +=10;}
 //            angle = maxAngle(angle, 30);
