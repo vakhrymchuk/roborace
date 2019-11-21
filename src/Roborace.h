@@ -37,10 +37,11 @@ protected:
 
     Interval *mainLoopChange = new Interval(RUN_INTERVAL_MS);
 
-    SensorsHolder *sensors = new SensorsHolder();
 #ifndef JOYSTICK_ENABLE
     Mechanics *mechanics = new Mechanics();
 #endif
+
+    SensorsHolder *sensors = new SensorsHolder();
 
     Forward *forward = new Forward;
     Backward *backward = new Backward;

@@ -3,7 +3,6 @@
 
 #include "PWMServo.h"
 #include "EngineHelper.h"
-#include "EngineEncoder.h"
 
 /**
  * Run a collector engine as a servo.
@@ -32,18 +31,20 @@ public:
         run(-power);
     }
 
-    void stop(void) {
+    void stop() {
         run(0);
     }
 
+    int getSpeed() {
+        return engineHelper->getSpeed();
+    }
+
     EngineHelper *engineHelper = new EngineHelper();
-    EngineEncoder *engineEncoder = new EngineEncoder();
 
 private:
     PWMServo *servo;
 
     void run(int power) {
-        engineEncoder->getPosition();
         servo->writeMicroseconds(DEFAULT_PULSE_WIDTH + engineHelper->get(power));
     };
 

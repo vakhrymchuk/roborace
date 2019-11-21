@@ -122,6 +122,9 @@ bool SensorsHolder::isSamePlace(unsigned long ms) const {
 }
 
 void SensorsHolder::initSensors() {
+    Vl53l0xSensor::nextAddress = 0x30;
+    Vl53l1xSensor::nextAddress = 0x40;
+
     Vl53l1xSensor::lowPin(A0);
     Vl53l0xSensor::lowPin(A1);
     Vl53l0xSensor::lowPin(A2);

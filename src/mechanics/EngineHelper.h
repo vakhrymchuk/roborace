@@ -41,6 +41,10 @@ public:
         return result;
     }
 
+    int getSpeed() {
+        return sum / SIZE;
+    }
+
 private:
 
     int *arr;

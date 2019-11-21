@@ -21,8 +21,8 @@ public:
 //    ValueInt *turboTurn = new ValueInt(5);
     ValueInt *turboMaxTurn = new ValueInt(6);
 
-    Adaptation *forwardSpeed = new Adaptation(90, 15, 1);
-    Adaptation *forwardAcceleration = new Adaptation(4, 15, 0);
+    Adaptation *forwardSpeed = new Adaptation(80, 15, 1);
+    Adaptation *forwardAcceleration = new Adaptation(0, 15, 0);
 
     ValueInt *distWall = new ValueInt(8);
 
@@ -105,6 +105,11 @@ public:
             angle = minAngle(angle, (int) map(sensors->minForwardDistance,
                                               distFullTurn->value, distStartTurn->value,
                                               Mechanics::TURN_MAX_ANGLE, 0));
+
+            if (speed > power) {
+                angle = min(angle, 20);
+            }
+
 //            if (abs(angle) > 20) {power +=10;}
 //            angle = maxAngle(angle, 30);
             checkPersecution(sensors);

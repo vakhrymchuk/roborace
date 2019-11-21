@@ -44,10 +44,12 @@ public:
 
     void run(Mechanics *mechanics) {
         mechanics->run(angle, power);
+        speed = mechanics->engine->getSpeed();
     }
 
     int angle;
     int power;
+    int speed = 0;
 
 protected:
 
