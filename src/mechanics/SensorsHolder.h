@@ -1,7 +1,8 @@
 #ifndef ROBORACE_SENSORS_HOLDER_H
 #define ROBORACE_SENSORS_HOLDER_H
 
-#include <Vl53loxSensor.h>
+#include <Vl53l0xSensor.h>
+#include <Vl53l1xSensor.h>
 #include "KalmanFilter.h"
 #include "TimingFilter.h"
 #include "MedianFilter.h"
@@ -59,8 +60,8 @@ private:
 
     void calcMinDistance();
 
-    static TimingFilter *createSensor(const byte pin) {
-        DistanceSensor *distanceSensor = new Vl53loxSensor(pin);
+    static TimingFilter *createSensor(DistanceSensor *sensor) {
+        DistanceSensor *distanceSensor = sensor;
         if (USE_MEDIAN_FILTER) {
             distanceSensor = new MedianFilter(distanceSensor, MedianFilter::ARR_SIZE);
         }
@@ -121,15 +122,15 @@ bool SensorsHolder::isSamePlace(unsigned long ms) const {
 }
 
 void SensorsHolder::initSensors() {
-    Vl53loxSensor::lowPin(A0);
-    Vl53loxSensor::lowPin(A1);
-    Vl53loxSensor::lowPin(A2);
-    Vl53loxSensor::lowPin(A3);
+    Vl53l1xSensor::lowPin(A0);
+    Vl53l0xSensor::lowPin(A1);
+    Vl53l0xSensor::lowPin(A2);
+    Vl53l1xSensor::lowPin(A3);
 
-    forwardLeftSensor = createSensor(A3);
-    rightSensor = createSensor(A2);
-    leftSensor = createSensor(A1);
-    forwardRightSensor = createSensor(A0);
+    forwardLeftSensor = createSensor(new Vl53l1xSensor(A3));
+    rightSensor = createSensor(new Vl53l0xSensor(A2));
+    leftSensor = createSensor(new Vl53l0xSensor(A1));
+    forwardRightSensor = createSensor(new Vl53l1xSensor(A0));
 
 }
 

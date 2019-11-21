@@ -3,9 +3,10 @@
  */
 
 #include <Arduino.h>
-#include <MemoryFree.h>
+#include <Wire.h>
+//#include <MemoryFree.h>
 
-#define DEBUG true
+//#define DEBUG true
 
 
 #if defined(BLUETOOTH_ENABLE)
