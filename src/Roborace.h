@@ -7,6 +7,7 @@
 #include "mechanics/Mechanics.h"
 #include "strategy/Strategy.h"
 #include "strategy/Forward.h"
+#include "strategy/Turbo.h"
 #include "strategy/Backward.h"
 #include "strategy/Rotate.h"
 #include "strategy/RightWall.h"
@@ -44,6 +45,7 @@ protected:
     SensorsHolder *sensors = new SensorsHolder();
 
     Forward *forward = new Forward;
+    Turbo *turbo = new Turbo;
     Backward *backward = new Backward;
     Rotate *rotate = new Rotate;
     RightWall *rightWall = new RightWall;
@@ -67,10 +69,13 @@ private:
 
 
 void Roborace::initStrategies() {
+    forward->turbo = turbo;
     forward->backward = backward;
     forward->rotate = rotate;
     forward->rightWall = rightWall;
     forward->leftWall = leftWall;
+
+    turbo->forward = forward;
 
     backward->forward = forward;
 

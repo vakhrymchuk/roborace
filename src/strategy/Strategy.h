@@ -68,7 +68,7 @@ protected:
         return right > left ? -1 : 1;
     }
 
-    int minAngle(int angle, int minValue) const {
+    int limitMinAngle(int angle, int minValue) const {
         if (angle == 0) return minValue;
 
         if (abs(angle) < minValue) {
@@ -78,7 +78,7 @@ protected:
         return angle;
     }
 
-    int maxAngle(int angle, int maxValue) const {
+    int limitMaxAngle(int angle, int maxValue) const {
         if (abs(angle) > maxValue) {
             return (sign<int>(angle) * maxValue);
         }

@@ -6,14 +6,14 @@
 class IntervalValue {
 public:
 
-    IntervalValue(ValueInt *value) : value(value) { }
+    explicit IntervalValue(ValueInt *value) : value(value) { }
 
     bool isReady() {
-        bool value = millis() >= msReady;
-        if (value) {
+        bool ready = millis() >= msReady;
+        if (ready) {
             recalculate();
         }
-        return value;
+        return ready;
     }
 
     void recalculate() {

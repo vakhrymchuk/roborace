@@ -17,12 +17,9 @@ public:
     ValueInt *distStartTurn = new ValueInt(80);
     ValueInt *distFullTurn = new ValueInt(50);
 
-    ValueInt *turboModeDist = new ValueInt(200);
-//    ValueInt *turboTurn = new ValueInt(5);
-    ValueInt *turboMaxTurn = new ValueInt(6);
+    ValueInt *turboModeDist = new ValueInt(150);
 
     Adaptation *forwardSpeed = new Adaptation(60, 15, 0);
-    Adaptation *forwardAcceleration = new Adaptation(0, 15, 0);
 
     ValueInt *distWall = new ValueInt(8);
 
@@ -36,7 +33,6 @@ public:
     virtual Strategy *init(Strategy *callback, unsigned int minMs) final override {
         Strategy::init(callback, minMs);
         forwardSpeed->init();
-        forwardAcceleration->init();
         persecution = false;
 //        rotationHelper->reset();
         return this;
@@ -57,6 +53,9 @@ public:
                 rotationHelper->reset();
                 return rotate->init(this);
             }
+            if (sensors->minForwardDistance >= turboModeDist->value) {
+                return turbo;
+            }
         }
         return this;
     }
@@ -66,61 +65,44 @@ public:
 
         power = forwardSpeed->adaptedValue();
 
-        if (sensors->minForwardDistance >= turboModeDist->value) {
-//            angle = (int) (angle * 30.0 / sensors->maxForwardDistance);
-//            angle = angle * (int) map(sensors->minForwardDistance,
-//                                            turboModeDist->value, 120,
-//                                            turboMaxTurn->value, 0);
-            angle = angle * turboMaxTurn->value;
-//            angle = 0;
-//            angle = maxAngle(angle, turboMaxTurn->value);
-            if (turboStopwatch.isLessThan(3000)) {
-                power += (int) map(sensors->maxForwardDistance,
-                                   turboModeDist->value, 150,
-                                   0, forwardAcceleration->adaptedValue());
-//                    power += forwardAcceleration->adaptedValue();
-            }
-            if (!turbo) {
-                turbo = true;
-                turboStopwatch.start();
-            }
-            turn = false;
-        } else if (sensors->rightDistance > 90 && smooth(sensors->rightDistance) > smooth(sensors->leftDistance)) {
+        if (sensors->rightDistance > 90 && smooth(sensors->rightDistance) > smooth(sensors->leftDistance)) {
             if (!turn) {
                 turn = true;
                 turnStopwatch.start();
             }
-            turbo = false;
             angle = Mechanics::FULL_RIGHT;
         } else if (sensors->leftDistance > 90 && smooth(sensors->leftDistance) > smooth(sensors->rightDistance)) {
             if (!turn) {
                 turn = true;
                 turnStopwatch.start();
             }
-            turbo = false;
             angle = Mechanics::FULL_LEFT;
         } else {
-            turbo = false;
-            turn = false;
-            angle = minAngle(angle, (int) map(sensors->minForwardDistance,
-                                              distFullTurn->value, distStartTurn->value,
-                                              Mechanics::TURN_MAX_ANGLE, 0));
+            normalMode(sensors);
+        }
+        checkPersecution(sensors);
+
+        rotationHelper->placeVector(angle, power);
+    }
+
+
+    void normalMode(const SensorsHolder *sensors) {
+        turn = false;
+        int minAngle = (int) map(sensors->minForwardDistance,
+                                 distFullTurn->value, distStartTurn->value,
+                                 Mechanics::TURN_MAX_ANGLE, 0);
+        angle = limitMinAngle(angle, minAngle);
 
 //            if (speed > power) {
 //                angle = min(angle, 20);
 //            }
 
 //            if (abs(angle) > 20) {power +=10;}
-//            angle = maxAngle(angle, 30);
-            checkPersecution(sensors);
-        }
-
-        rotationHelper->placeVector(angle, power);
     }
 
     void checkPersecution(const SensorsHolder *sensors) {
         if (sensors->minDistance < distPersecution->value) {
-//                angle = maxAngle(angle, (int) map(sensors->minDistance, 0, 50, 15, 30));
+//                angle = limitMaxAngle(angle, (int) map(sensors->minDistance, 0, 50, 15, 30));
             power = (int) map(sensors->minForwardDistance,
                               8, distPersecution->value,
                               80, power);
@@ -133,15 +115,13 @@ public:
         }
     }
 
+    Strategy *turbo;
     Strategy *backward;
     Strategy *rotate;
     Strategy *rightWall;
     Strategy *leftWall;
 
 private:
-
-    bool turbo = false;
-    Stopwatch turboStopwatch;
 
     bool persecution = false;
     Stopwatch *persecutionStopwatch = new Stopwatch();
