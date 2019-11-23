@@ -14,7 +14,7 @@
 class Backward : public Strategy {
 public:
 
-    ValueInt *backwardSpeed = new ValueInt(90);
+    ValueInt *backwardSpeed = new ValueInt(96);
 
     virtual Strategy *init(Strategy *callback, unsigned int minMs) final override {
         Strategy::init(callback, minMs);

@@ -25,15 +25,15 @@ public:
     static const bool USE_MEDIAN_FILTER = false;
     static const bool USE_KALMAN_FILTER = false;
 
-    unsigned int forwardLeftDistance, forwardRightDistance;
+    int forwardLeftDistance, forwardRightDistance;
 
-    unsigned int leftDistance, rightDistance;
+    int leftDistance, rightDistance;
 
-    unsigned int minForwardDistance, maxForwardDistance;
+    int minForwardDistance, maxForwardDistance;
 
-    unsigned int maxDistance, minDistance;
+    int maxDistance, minDistance;
 
-    unsigned int minFactor;
+    int minFactor;
 
 
     TimingFilter *forwardLeftSensor;

@@ -6,12 +6,12 @@
 class Turbo : public Strategy {
 public:
 
-    ValueInt *turboModeDist = new ValueInt(140);
+    ValueInt *turboModeDist = new ValueInt(200);
 
     //    ValueInt *turboTurn = new ValueInt(5);
-    ValueInt *turboMaxTurn = new ValueInt(5);
+    ValueInt *turboMaxTurn = new ValueInt(8);
 
-    ValueInt *speed = new ValueInt(120);
+    ValueInt *speed = new ValueInt(70);
 
 
     Adaptation *forwardAcceleration = new Adaptation(0, 15, 0);
@@ -40,13 +40,21 @@ public:
 //                           0, forwardAcceleration->adaptedValue());
 
 
-        angle = getAngleSign(sensors->rightDistance, sensors->leftDistance);
+//        angle = getAngleSign(sensors->rightDistance, sensors->leftDistance);
 
 //        angle = angle * (int) map(sensors->minForwardDistance,
 //                                  turboModeDist->value, 150,
 //                                  turboMaxTurn->value, 0);
 //            angle = angle * turboMaxTurn->value;
-        angle = limitMaxAngle(angle, turboMaxTurn->value);
+        if (sensors->rightDistance > sensors->leftDistance) {
+            angle = -turboMaxTurn->value;
+        } else {
+            angle = turboMaxTurn->value;
+        }
+
+
+
+//        angle = limitMaxAngle(angle, turboMaxTurn->value);
 
     }
 
