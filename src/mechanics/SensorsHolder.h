@@ -32,9 +32,10 @@ public:
 
     int minForwardDistance, maxForwardDistance;
 
+    int minSideDistance, maxSideDistance;
+
     int maxDistance, minDistance;
 
-    int minFactor;
 
 
     TimingFilter *forwardLeftSensor;
@@ -101,19 +102,14 @@ void SensorsHolder::setDistances(Message &message) {
 
 void SensorsHolder::calcMaxDistance() {
     maxForwardDistance = max(forwardLeftDistance, forwardRightDistance);
-
-    maxDistance = max(maxForwardDistance, leftDistance);
-    maxDistance = max(maxDistance, rightDistance);
+    maxSideDistance = max(leftDistance, rightDistance);
+    maxDistance = max(maxForwardDistance, maxSideDistance);
 }
 
 void SensorsHolder::calcMinDistance() {
     minForwardDistance = min(forwardLeftDistance, forwardRightDistance);
-
-    minDistance = min(minForwardDistance, leftDistance);
-    minDistance = min(minDistance, rightDistance);
-
-    minFactor = min(minForwardDistance, 2 * leftDistance);
-    minFactor = min(minFactor, 2 * rightDistance);
+    minSideDistance = min(leftDistance, rightDistance);
+    minDistance = min(minForwardDistance, minSideDistance);
 }
 
 
