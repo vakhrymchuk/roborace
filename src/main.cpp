@@ -3,7 +3,7 @@
  */
 
 #include <Arduino.h>
-#include <Wire.h>
+//#include <Wire.h>
 //#include <MemoryFree.h>
 
 //#define DEBUG true
@@ -20,7 +20,9 @@
 #elif defined(JOYSTICK_ENABLE)
 #include "RoboraceJoystick.h"
 #else
+
 #include "Roborace.h"
+
 #endif
 
 Roborace *roborace;
@@ -48,8 +50,10 @@ void setup() {
     ADC_setup();
 #endif
 
+#ifdef VL53
     Wire.begin();
     Wire.setClock(400000);
+#endif
 
 #ifdef DEBUG
     Serial.begin(115200);
