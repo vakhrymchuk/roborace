@@ -1,9 +1,10 @@
 #ifndef ROBORACE_SENSORS_HOLDER_H
 #define ROBORACE_SENSORS_HOLDER_H
 
-#include <Vl53l0xSensor.h>
-#include <Vl53l1xSensor.h>
+//#include <Vl53l0xSensor.h>
+//#include <Vl53l1xSensor.h>
 #include "KalmanFilter.h"
+#include <Sharp.h>
 #include "TimingFilter.h"
 #include "MedianFilter.h"
 #include "MedianFilterWindow.h"
@@ -22,8 +23,8 @@ class SensorsHolder {
 
 public:
 
-    static const bool USE_MEDIAN_FILTER = false;
-    static const bool USE_KALMAN_FILTER = false;
+    static const bool USE_MEDIAN_FILTER = true;
+    static const bool USE_KALMAN_FILTER = true;
 
     int forwardLeftDistance, forwardRightDistance;
 
@@ -42,7 +43,8 @@ public:
     TimingFilter *forwardRightSensor;
 
     SensorsHolder() {
-        initSensors();
+//        initVl53Sensors();
+        initSharpSensors();
     }
 
     void readDistances();
@@ -50,8 +52,6 @@ public:
     void setDistances(Message &message);
 
     bool isSamePlace(unsigned long ms) const;
-
-    void initSensors();
 
 
 private:
@@ -63,7 +63,7 @@ private:
     static TimingFilter *createSensor(DistanceSensor *sensor) {
         DistanceSensor *distanceSensor = sensor;
         if (USE_MEDIAN_FILTER) {
-            distanceSensor = new MedianFilter(distanceSensor, MedianFilter::ARR_SIZE);
+            distanceSensor = new MedianFilterWindow(distanceSensor, MedianFilter::ARR_SIZE);
         }
         if (USE_KALMAN_FILTER) {
             distanceSensor = new KalmanFilter(distanceSensor);
@@ -71,6 +71,9 @@ private:
         return new TimingFilter(distanceSensor);
     }
 
+    void initVl53Sensors();
+
+    void initSharpSensors();
 };
 
 void SensorsHolder::readDistances() {
@@ -121,20 +124,26 @@ bool SensorsHolder::isSamePlace(unsigned long ms) const {
            || rightSensor->isLongerThan(ms);
 }
 
-void SensorsHolder::initSensors() {
-    Vl53l0xSensor::nextAddress = 0x30;
-    Vl53l1xSensor::nextAddress = 0x40;
+void SensorsHolder::initSharpSensors() {
+    forwardLeftSensor = createSensor(new Sharp10_150(A3));
+    rightSensor = createSensor(new Sharp10_150(A2));
+    leftSensor = createSensor(new Sharp10_150(A1));
+    forwardRightSensor = createSensor(new Sharp10_150(A0));
+}
 
-    Vl53l1xSensor::lowPin(A0);
-    Vl53l0xSensor::lowPin(A1);
-    Vl53l0xSensor::lowPin(A2);
-    Vl53l1xSensor::lowPin(A3);
-
-    forwardLeftSensor = createSensor(new Vl53l1xSensor(A3));
-    rightSensor = createSensor(new Vl53l0xSensor(A2));
-    leftSensor = createSensor(new Vl53l0xSensor(A1));
-    forwardRightSensor = createSensor(new Vl53l1xSensor(A0));
-
+void SensorsHolder::initVl53Sensors() {
+//    Vl53l0xSensor::nextAddress = 0x30;
+//    Vl53l1xSensor::nextAddress = 0x40;
+//
+//    Vl53l1xSensor::lowPin(A0);
+//    Vl53l0xSensor::lowPin(A1);
+//    Vl53l0xSensor::lowPin(A2);
+//    Vl53l1xSensor::lowPin(A3);
+//
+//    forwardLeftSensor = createSensor(new Vl53l1xSensor(A3));
+//    rightSensor = createSensor(new Vl53l0xSensor(A2));
+//    leftSensor = createSensor(new Vl53l0xSensor(A1));
+//    forwardRightSensor = createSensor(new Vl53l1xSensor(A0));
 }
 
 #endif

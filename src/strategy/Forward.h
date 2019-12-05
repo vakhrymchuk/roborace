@@ -2,6 +2,8 @@
 #define ROBORACE_FORWARD_H
 
 #include "Strategy.h"
+#include "Adaptation.h"
+#include "RotationHelper.h"
 
 /**
  *  ______ ___________ _    _  ___  ____________
@@ -14,12 +16,12 @@
 class Forward : public Strategy {
 public:
 
-    ValueInt *distStartTurn = new ValueInt(120);
-    ValueInt *distFullTurn = new ValueInt(70);
+    ValueInt *distStartTurn = new ValueInt(100);
+    ValueInt *distFullTurn = new ValueInt(60);
 
-    ValueInt *turboModeDist = new ValueInt(250);
+    ValueInt *turboModeDist = new ValueInt(120);
 
-    Adaptation *forwardSpeed = new Adaptation(64, 25, 0);
+    Adaptation *forwardSpeed = new Adaptation(72, 25, 0);
 
     ValueInt *distWall = new ValueInt(10);
 
@@ -50,7 +52,7 @@ public:
                 return rotate->init(this);
             }
             if (sensors->minForwardDistance >= turboModeDist->value) {
-                return turbo;
+                return turbo->init(this);
             }
         }
         return this;

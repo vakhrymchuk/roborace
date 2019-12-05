@@ -4,18 +4,21 @@
 #include "Strategy.h"
 
 class Turbo : public Strategy {
-public:
 
-    ValueInt *turboModeDist = new ValueInt(200);
+private:
 
-    //    ValueInt *turboTurn = new ValueInt(5);
-    ValueInt *turboMaxTurn = new ValueInt(8);
+    ValueInt *turboModeDisableDist = new ValueInt(110);
 
-    ValueInt *speed = new ValueInt(70);
+    ValueInt *turboMaxTurn = new ValueInt(5);
 
+    ValueInt *speed = new ValueInt(80);
 
     Adaptation *forwardAcceleration = new Adaptation(0, 15, 0);
 
+
+public:
+
+    Strategy *forward;
 
 
     virtual Strategy *init(Strategy *callback, unsigned int minMs) final override {
@@ -58,12 +61,10 @@ public:
 
     }
 
-    Strategy *forward;
-
 private:
 
     bool isTurboFinish(SensorsHolder *sensors) const {
-        return sensors->minForwardDistance < turboModeDist->value;
+        return sensors->minForwardDistance < turboModeDisableDist->value;
     }
 };
 

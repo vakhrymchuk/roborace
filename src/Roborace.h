@@ -25,7 +25,7 @@
 class Roborace {
 public:
 
-    static const int RUN_INTERVAL_MS = 35;
+    static const int RUN_INTERVAL_MS = 20;
 
     Roborace() {
         waitForEngineInit();
@@ -84,7 +84,7 @@ void Roborace::initStrategies() {
     rightWall->forward = forward;
     leftWall->forward = forward;
 
-    activeStrategy = forward->init(nullptr, 0);
+    activeStrategy = forward->init(nullptr, 1000);
 //    activeStrategy = rightWall->init();
 //    activeStrategy = leftWall->init(leftWall);
 }
@@ -99,10 +99,10 @@ void Roborace::loop() {
 #endif
 
     sensors->readDistances();
-    if (sensors->isSamePlace(6000)) {
-        mechanics->stop();
-        sensors->initSensors();
-    }
+//    if (sensors->isSamePlace(6000)) {
+//        mechanics->stop();
+//        sensors->initSensors();
+//    }
     activeStrategy = activeStrategy->check(sensors);
     activeStrategy->calc(sensors);
 #ifndef JOYSTICK_ENABLE
