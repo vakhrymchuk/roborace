@@ -71,15 +71,19 @@ public:
 
 
     void normalMode(const SensorsHolder *sensors) {
-        int minAngle = (int) map(sensors->minForwardDistance,
-                                 distFullTurn->value, distStartTurn->value,
-                                 Mechanics::TURN_MAX_ANGLE, 0);
+        int minAngle = mapConstrain(sensors->minForwardDistance,
+                                    distFullTurn->value, distStartTurn->value,
+                                    Mechanics::TURN_MAX_ANGLE, 0);
         angle = limitMinAngle(angle, minAngle);
 //        angle = angle * minAngle;
 
 //            if (speed > power) {
 //                angle = min(angle, 20);
 //            }
+
+        if (stopwatch->isLessThan(300, MS)) {
+            angle = min(angle, 15);
+        }
 
 //            if (abs(angle) > 20) {power +=10;}
     }
@@ -113,7 +117,9 @@ private:
     RotationHelper *rotationHelper = new RotationHelper();
 
     bool isWallNear(SensorsHolder *sensors) const {
-        return sensors->minForwardDistance < distWall->value || sensors->maxForwardDistance < 30;
+        return sensors->minForwardDistance < distWall->value
+               || sensors->maxForwardDistance < 20
+               || sensors->minDistance < 30;
     }
 };
 

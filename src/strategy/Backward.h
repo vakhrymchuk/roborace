@@ -14,16 +14,16 @@
 class Backward : public Strategy {
 public:
 
-    ValueInt *backwardSpeed = new ValueInt(96);
+    ValueInt *backwardSpeed = new ValueInt(90);
 
-    virtual Strategy *init(Strategy *callback, unsigned int minMs) final override {
+    virtual Strategy *init(Strategy *callback, unsigned int minMs) final {
         Strategy::init(callback, minMs);
 //        minTimeout->start(500);
         maxTimeout->start(2000);
         return this;
     }
 
-    virtual Strategy *check(SensorsHolder *sensors) final override {
+    virtual Strategy *check(SensorsHolder *sensors) final {
         if (minTimeout->isReady()) {
             if (maxTimeout->isReady() || isBackFinish(sensors)) {
                 return callback->init(this);
@@ -32,8 +32,8 @@ public:
         return this;
     }
 
-    virtual void calc(SensorsHolder *sensors) final override {
-        if (stopwatch->isLessThan(200) || stopwatch->isMoreThan(1200)) {
+    virtual void calc(SensorsHolder *sensors) final {
+        if (stopwatch->isLessThan(500) || stopwatch->isMoreThan(1200)) {
             angle = 0;
         } else {
             if (angle == 0) {
@@ -42,7 +42,9 @@ public:
             }
         }
 
-        if (stopwatch->isMoreThan(1200)) {
+        if (stopwatch->isLessThan(400)) {
+            power = 0;
+        } else if (stopwatch->isMoreThan(1200)) {
             power = backwardSpeed->value + 20;
         } else {
             power = backwardSpeed->value;
@@ -57,7 +59,7 @@ private:
     Timeout *maxTimeout = new Timeout();
 
     bool isBackFinish(SensorsHolder *sensors) const {
-        return (sensors->minForwardDistance > 40) || (sensors->minDistance > 25 && sensors->maxDistance > 60);
+        return (sensors->minForwardDistance > 40) || (sensors->minForwardDistance > 15 && sensors->maxDistance > 60);
     }
 };
 

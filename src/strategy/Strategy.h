@@ -1,13 +1,9 @@
 #ifndef ROBORACE_STRATEGY_H
 #define ROBORACE_STRATEGY_H
 
-#include <Arduino.h>
-#include "Led.h"
 #include "Timeout.h"
 #include "../mechanics/Mechanics.h"
 #include "../mechanics/SensorsHolder.h"
-#include "../Adaptation.h"
-#include "RotationHelper.h"
 
 
 template<typename T>
@@ -27,6 +23,17 @@ int sign(T val) {
  *                              |___/ |___/
  */
 class Strategy {
+protected:
+
+    int angle = 0;
+    int power = 0;
+    int speed = 0;
+
+
+    Stopwatch *stopwatch = new Stopwatch;
+    Timeout *minTimeout = new Timeout();
+    Strategy *callback;
+
 public:
 
     virtual Strategy *init(Strategy *callback, unsigned int minMs = 0) {
@@ -40,35 +47,23 @@ public:
         return this;
     }
 
-    virtual void calc(SensorsHolder *sensors) {};
+    virtual void calc(SensorsHolder *sensors) = 0;
 
     void run(Mechanics *mechanics) {
         mechanics->run(angle, power);
         speed = mechanics->engine->getSpeed();
     }
 
-    int angle;
-    int power;
-    int speed = 0;
-
-protected:
-
-    Stopwatch *stopwatch = new Stopwatch;
-    Timeout *minTimeout = new Timeout();
-    Strategy *callback;
-
-    int getAngle(int right, int left) const {
-        return sign(45 - (int) degrees(atan2(smooth(right), smooth(left))));
+    static int getAngle(int right, int left) {
+        return 45 - degrees(atan2(right, left));
     }
 
-    int getAngleSign(int right, int left) const {
-        right = smooth(right);
-        left = smooth(left);
-        if (right == left) return 0;
+    static int getAngleSign(int right, int left) {
+        if (smoothEquals(right, left)) return 0;
         return right > left ? -1 : 1;
     }
 
-    int limitMinAngle(int angle, int minValue) const {
+    static int limitMinAngle(int angle, int minValue) {
         if (angle == 0) return minValue;
 
         if (abs(angle) < minValue) {
@@ -78,7 +73,7 @@ protected:
         return angle;
     }
 
-    int limitMaxAngle(int angle, int maxValue) const {
+    static int limitMaxAngle(int angle, int maxValue) {
         if (abs(angle) > maxValue) {
             return (sign<int>(angle) * maxValue);
         }
@@ -86,20 +81,24 @@ protected:
         return angle;
     }
 
-    int mapConstrain(int x, int in_min, int in_max, int out_min, int out_max) const {
+    static int mapConstrain(int x, int in_min, int in_max, int out_min, int out_max) {
         int y = map(x, in_min, in_max, out_min, out_max);
         return constrain(y, out_min, out_max);
     }
 
-    int mapConstrain(long x, long in_min, long in_max, int out_min, int out_max) const {
+    static int mapConstrain(long x, long in_min, long in_max, int out_min, int out_max) {
         long y = map(x, in_min, in_max, out_min, out_max);
         return (int) constrain(y, out_min, out_max);
     }
 
-protected:
-    int smooth(int num) const {
-        return num / 8;
-//        return (int) round(sqrt(num));
+
+    static bool smoothEquals(int right, int left) {
+        return fabs(sqrt(right) - sqrt(left)) <= 1.0;
+    }
+
+    static unsigned short smooth(unsigned short num) {
+//        return num >> 3;
+        return (unsigned short) sqrt(num);
     }
 };
 
