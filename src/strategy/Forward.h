@@ -14,6 +14,10 @@
  *  \_|    \___/\_| \_|\/  \/\_| |_/\_| \_|___/
  */
 class Forward : public Strategy {
+private:
+
+    int rotation = 0;
+
 public:
 
     ValueInt *distStartTurn = new ValueInt(100);
@@ -28,18 +32,18 @@ public:
     ValueInt *distPersecution = new ValueInt(50);
 
 
-    virtual Strategy *init(Strategy *callback, unsigned int minMs) final override {
+    virtual Strategy *init(Strategy *callback, unsigned int minMs, int param = 0) final {
         Strategy::init(callback, minMs);
         forwardSpeed->init();
         persecution = false;
-//        rotationHelper->reset();
+        rotation = 0;
         return this;
     }
 
-    virtual Strategy *check(SensorsHolder *sensors) final override {
+    virtual Strategy *check(SensorsHolder *sensors) final {
         if (minTimeout->isReady()) {
             if (isWallNear(sensors)) {
-                return backward->init(this, 0);
+                return backward->init(this, 0, rotation);
             }
             if (sensors->isSamePlace(4000)) {
                 return backward->init(this, 600);
@@ -58,7 +62,7 @@ public:
         return this;
     }
 
-    virtual void calc(SensorsHolder *sensors) final override {
+    virtual void calc(SensorsHolder *sensors) final {
         angle = getAngleSign(sensors->rightDistance, sensors->leftDistance);
 
         power = forwardSpeed->adaptedValue();
@@ -85,7 +89,14 @@ public:
             angle = min(angle, 15);
         }
 
-//            if (abs(angle) > 20) {power +=10;}
+        if (sensors->leftDistance > 80) {
+            rotation = Mechanics::FULL_LEFT;
+        } else if (sensors->rightDistance > 80) {
+            rotation = Mechanics::FULL_RIGHT;
+        } else {
+            rotation = 0;
+        }
+
     }
 
     void checkPersecution(const SensorsHolder *sensors) {

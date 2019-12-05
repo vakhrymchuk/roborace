@@ -21,13 +21,13 @@ public:
     Strategy *forward;
 
 
-    virtual Strategy *init(Strategy *callback, unsigned int minMs) final override {
+    virtual Strategy *init(Strategy *callback, unsigned int minMs, int param = 0) final {
         Strategy::init(callback, minMs);
         forwardAcceleration->init();
         return this;
     }
 
-    virtual Strategy *check(SensorsHolder *sensors) final override {
+    virtual Strategy *check(SensorsHolder *sensors) final {
         if (minTimeout->isReady()) {
             if (isTurboFinish(sensors)) {
                 return callback->init(this);
@@ -36,7 +36,7 @@ public:
         return this;
     }
 
-    virtual void calc(SensorsHolder *sensors) final override {
+    virtual void calc(SensorsHolder *sensors) final {
         power = speed->value;
 //        power += (int) map(sensors->maxForwardDistance,
 //                           turboModeDist->value, 400,

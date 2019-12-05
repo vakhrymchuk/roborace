@@ -12,14 +12,17 @@
  * \____/\_| |_/\____/\_| \_/\/  \/\_| |_/\_| \_|___/
  */
 class Backward : public Strategy {
+private:
+    int rotation = 0;
 public:
 
     ValueInt *backwardSpeed = new ValueInt(90);
 
-    virtual Strategy *init(Strategy *callback, unsigned int minMs) final {
+    virtual Strategy *init(Strategy *callback, unsigned int minMs, int param = 0) final {
         Strategy::init(callback, minMs);
 //        minTimeout->start(500);
         maxTimeout->start(2000);
+        rotation = param;
         return this;
     }
 
@@ -33,13 +36,16 @@ public:
     }
 
     virtual void calc(SensorsHolder *sensors) final {
-        if (stopwatch->isLessThan(500) || stopwatch->isMoreThan(1200)) {
+        if (stopwatch->isLessThan(500)) {
             angle = 0;
-        } else {
-            if (angle == 0) {
-                angle = -getAngleSign(sensors->rightDistance, sensors->leftDistance);
-                angle = limitMinAngle(angle, 10);
+        } else if (stopwatch->isLessThan(1500)) {
+            if (rotation != 0) {
+                angle = -rotation;
+            } else {
+                angle = -getAngle(sensors->rightDistance, sensors->leftDistance);
             }
+        } else {
+            angle = 0;
         }
 
         if (stopwatch->isLessThan(400)) {

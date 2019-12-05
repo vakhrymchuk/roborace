@@ -36,7 +36,7 @@ protected:
 
 public:
 
-    virtual Strategy *init(Strategy *callback, unsigned int minMs = 0) {
+    virtual Strategy *init(Strategy *callback, unsigned int minMs = 0, int param = 0) {
         stopwatch->start();
         minTimeout->start(minMs);
         Strategy::callback = callback;
