@@ -18,7 +18,7 @@ public:
 
     /** Время круга */
     static const int ARR_SIZE = 10;
-    static const int TURN_ON_SECOND = 300;
+    static const int TURN_ON_SECOND = 350;
     static const int ROTATE_THRESHOLD_VALUE = ARR_SIZE * TURN_ON_SECOND;
 
     RotationHelper() {

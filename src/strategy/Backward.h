@@ -38,7 +38,7 @@ public:
     virtual void calc(SensorsHolder *sensors) final {
         if (stopwatch->isLessThan(100)) {
             angle = 0;
-        } else if (stopwatch->isLessThan(1000)) {
+        } else if (stopwatch->isLessThan(2000)) {
             if (rotation != 0) {
                 angle = -rotation;
             } else {

@@ -11,7 +11,7 @@ private:
 
     ValueInt *turboMaxTurn = new ValueInt(10);
 
-    ValueInt *speed = new ValueInt(64);
+    ValueInt *speed = new ValueInt(60);
 
     Adaptation *forwardAcceleration = new Adaptation(0, 15, 0);
 

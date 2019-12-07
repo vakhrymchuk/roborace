@@ -14,7 +14,7 @@
 class Rotate : public Strategy {
 public:
 
-    static const int ROTATE_SPEED = 80;
+    static const int ROTATE_SPEED = 70;
 
     virtual Strategy *init(Strategy *callback, unsigned int minMs, int param = 0) final {
         Strategy::init(callback, minMs);
@@ -32,7 +32,7 @@ public:
 
         switch (stage) {
             case 0:
-                if (/*sensors->leftDistance > 10 && */stopwatch->isLessThan(1000)) {
+                if (/*sensors->leftDistance > 10 && */stopwatch->isLessThan(800)) {
                     angle = Mechanics::FULL_RIGHT;
                     power = ROTATE_SPEED;
                 } else {
@@ -40,7 +40,7 @@ public:
                 }
                 break;
             case 1:
-                if (/*sensors->rightDistance < 50 && */stopwatch->isLessThan(1200)) {
+                if (/*sensors->rightDistance < 50 && */stopwatch->isLessThan(1000)) {
                     angle = Mechanics::FULL_LEFT;
                     power = -ROTATE_SPEED;
                 } else {
@@ -48,7 +48,7 @@ public:
                 }
                 break;
             case 2:
-                if (/*sensors->rightDistance < 50 &&*/ stopwatch->isLessThan(600)) {
+                if (/*sensors->rightDistance < 50 &&*/ stopwatch->isLessThan(400)) {
                     angle = Mechanics::FULL_RIGHT;
                     power = ROTATE_SPEED;
                 } else {

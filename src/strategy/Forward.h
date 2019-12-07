@@ -21,7 +21,7 @@ private:
 public:
 
     ValueInt *distStartTurn = new ValueInt(130);
-    ValueInt *distFullTurn = new ValueInt(110);
+    ValueInt *distFullTurn = new ValueInt(120);
 
     ValueInt *turboModeDist = new ValueInt(130);
 
@@ -51,7 +51,7 @@ public:
 //            if (persecutionStopwatch->isMoreThan(3000)) {
 //                return leftWall->init(this, 5000);
 //            }
-            if (rotationHelper->isCounterClockWise()) {
+            if (rotationHelper->isClockWise()) {
                 rotationHelper->reset();
                 return rotate->init(this);
             }
@@ -81,9 +81,9 @@ public:
 //            angle = min(angle, 15);
 //        }
 
-        if (sensors->leftDistance > 80) {
+        if (sensors->leftDistance > 70) {
             rotation = Mechanics::FULL_LEFT;
-        } else if (sensors->rightDistance > 80) {
+        } else if (sensors->rightDistance > 70) {
             rotation = Mechanics::FULL_RIGHT;
         } else {
             rotation = 0;
