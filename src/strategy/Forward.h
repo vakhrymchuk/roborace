@@ -20,12 +20,12 @@ private:
 
 public:
 
-    ValueInt *distStartTurn = new ValueInt(100);
-    ValueInt *distFullTurn = new ValueInt(60);
+    ValueInt *distStartTurn = new ValueInt(130);
+    ValueInt *distFullTurn = new ValueInt(110);
 
-    ValueInt *turboModeDist = new ValueInt(120);
+    ValueInt *turboModeDist = new ValueInt(130);
 
-    Adaptation *forwardSpeed = new Adaptation(72, 25, 0);
+    Adaptation *forwardSpeed = new Adaptation(56, 25, 0);
 
     ValueInt *distWall = new ValueInt(10);
 
@@ -43,7 +43,7 @@ public:
     virtual Strategy *check(SensorsHolder *sensors) final {
         if (minTimeout->isReady()) {
             if (isWallNear(sensors)) {
-                return backward->init(this, 0, rotation);
+                return backward->init(this, 500, rotation);
             }
             if (sensors->isSamePlace(4000)) {
                 return backward->init(this, 600);
@@ -63,31 +63,23 @@ public:
     }
 
     virtual void calc(SensorsHolder *sensors) final {
-        angle = getAngleSign(sensors->rightDistance, sensors->leftDistance);
 
-        power = forwardSpeed->adaptedValue();
+        if (sensors->minForwardDistance < distStartTurn->value) {
 
-        normalMode(sensors);
-//        checkPersecution(sensors);
+            angle = getAngleSign(sensors->rightDistance, sensors->leftDistance);
 
-        rotationHelper->placeVector(angle, power);
-    }
-
-
-    void normalMode(const SensorsHolder *sensors) {
-        int minAngle = mapConstrain(sensors->minForwardDistance,
-                                    distFullTurn->value, distStartTurn->value,
-                                    Mechanics::TURN_MAX_ANGLE, 0);
-        angle = limitMinAngle(angle, minAngle);
-//        angle = angle * minAngle;
-
+            int minAngle = map(sensors->minForwardDistance,
+                                            distStartTurn->value, distFullTurn->value,
+                                            0, Mechanics::TURN_MAX_ANGLE);
+            angle = angle * minAngle;
+        }
 //            if (speed > power) {
 //                angle = min(angle, 20);
 //            }
 
-        if (stopwatch->isLessThan(300, MS)) {
-            angle = min(angle, 15);
-        }
+//        if (stopwatch->isLessThan(300, MS)) {
+//            angle = min(angle, 15);
+//        }
 
         if (sensors->leftDistance > 80) {
             rotation = Mechanics::FULL_LEFT;
@@ -97,7 +89,12 @@ public:
             rotation = 0;
         }
 
+        power = forwardSpeed->adaptedValue();
+//        checkPersecution(sensors);
+
+        rotationHelper->placeVector(angle, power);
     }
+
 
     void checkPersecution(const SensorsHolder *sensors) {
         if (sensors->minDistance < distPersecution->value) {
@@ -129,8 +126,9 @@ private:
 
     bool isWallNear(SensorsHolder *sensors) const {
         return sensors->minForwardDistance < distWall->value
-               || sensors->maxForwardDistance < 20
-               || sensors->minDistance < 30;
+//               || sensors->maxForwardDistance < 10
+//               || sensors->minDistance < 20
+               ;
     }
 };
 

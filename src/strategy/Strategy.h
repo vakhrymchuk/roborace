@@ -23,7 +23,7 @@ int sign(T val) {
  *                              |___/ |___/
  */
 class Strategy {
-protected:
+public:
 
     int angle = 0;
     int power = 0;
@@ -93,7 +93,7 @@ public:
 
 
     static bool smoothEquals(int right, int left) {
-        return fabs(sqrt(right) - sqrt(left)) <= 1.0;
+        return abs(right - left) <= 10;
     }
 
     static unsigned short smooth(unsigned short num) {

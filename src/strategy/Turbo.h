@@ -7,11 +7,11 @@ class Turbo : public Strategy {
 
 private:
 
-    ValueInt *turboModeDisableDist = new ValueInt(110);
+    ValueInt *turboModeDisableDist = new ValueInt(125);
 
-    ValueInt *turboMaxTurn = new ValueInt(5);
+    ValueInt *turboMaxTurn = new ValueInt(10);
 
-    ValueInt *speed = new ValueInt(80);
+    ValueInt *speed = new ValueInt(64);
 
     Adaptation *forwardAcceleration = new Adaptation(0, 15, 0);
 

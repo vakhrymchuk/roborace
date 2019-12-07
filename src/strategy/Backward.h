@@ -36,21 +36,21 @@ public:
     }
 
     virtual void calc(SensorsHolder *sensors) final {
-        if (stopwatch->isLessThan(500)) {
+        if (stopwatch->isLessThan(100)) {
             angle = 0;
-        } else if (stopwatch->isLessThan(1500)) {
+        } else if (stopwatch->isLessThan(1000)) {
             if (rotation != 0) {
                 angle = -rotation;
             } else {
-                angle = -getAngle(sensors->rightDistance, sensors->leftDistance);
+                angle = -20 * getAngleSign(sensors->rightDistance, sensors->leftDistance);
             }
         } else {
             angle = 0;
         }
 
-        if (stopwatch->isLessThan(400)) {
+        if (stopwatch->isLessThan(100)) {
             power = 0;
-        } else if (stopwatch->isMoreThan(1200)) {
+        } else if (stopwatch->isMoreThan(1000)) {
             power = backwardSpeed->value + 20;
         } else {
             power = backwardSpeed->value;
@@ -65,7 +65,7 @@ private:
     Timeout *maxTimeout = new Timeout();
 
     bool isBackFinish(SensorsHolder *sensors) const {
-        return (sensors->minForwardDistance > 40) || (sensors->minForwardDistance > 15 && sensors->maxDistance > 60);
+        return sensors->minForwardDistance > 25 && sensors->maxDistance > 80;
     }
 };
 

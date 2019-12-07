@@ -114,14 +114,15 @@ void Roborace::loop() {
     if (debugInterval.isReady()) {
         char buffer[100];
         sprintf(buffer,
-                "loop mcs =%4lu  FL =%3u  L =%3u  R =%3u  FR =%3u   ang =% 4d  pow =% 4d",
+                "loop mcs =%4lu  FL =%3u  L =%3u  R =%3u  FR =%3u   ang =% 4d  pow =% 4d minfrd =% 4d",
                 finish - start,
                 sensors->forwardLeftDistance,
                 sensors->leftDistance,
                 sensors->rightDistance,
                 sensors->forwardRightDistance,
                 activeStrategy->angle,
-                activeStrategy->power);
+                activeStrategy->power,
+                sensors->minForwardDistance);
         Serial.println(buffer);
         Serial.flush();
     }
