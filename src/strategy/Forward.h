@@ -25,9 +25,9 @@ public:
 
     ValueInt *turboModeDist = new ValueInt(130);
 
-    Adaptation *forwardSpeed = new Adaptation(56, 25, 0);
+    Adaptation *forwardSpeed = new Adaptation(60, 25, 0);
 
-    ValueInt *distWall = new ValueInt(10);
+    ValueInt *distWall = new ValueInt(15);
 
     ValueInt *distPersecution = new ValueInt(50);
 
