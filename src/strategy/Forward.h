@@ -25,9 +25,9 @@ public:
 
     ValueInt *turboModeDist = new ValueInt(130);
 
-    Adaptation *forwardSpeed = new Adaptation(60, 25, 0);
+    Adaptation *forwardSpeed = new Adaptation(64, 25, 0);
 
-    ValueInt *distWall = new ValueInt(15);
+    ValueInt *distWall = new ValueInt(12);
 
     ValueInt *distPersecution = new ValueInt(50);
 
@@ -90,7 +90,7 @@ public:
         }
 
         power = forwardSpeed->adaptedValue();
-//        checkPersecution(sensors);
+        checkPersecution(sensors);
 
         rotationHelper->placeVector(angle, power);
     }
@@ -100,8 +100,8 @@ public:
         if (sensors->minDistance < distPersecution->value) {
 //                angle = limitMaxAngle(angle, (int) map(sensors->minDistance, 0, 50, 15, 30));
             power = (int) map(sensors->minForwardDistance,
-                              8, distPersecution->value,
-                              80, power);
+                              10, distPersecution->value,
+                              60, power);
             if (!persecution) {
                 persecution = true;
                 persecutionStopwatch->start();
@@ -125,7 +125,8 @@ private:
     RotationHelper *rotationHelper = new RotationHelper();
 
     bool isWallNear(SensorsHolder *sensors) const {
-        return sensors->minForwardDistance < distWall->value
+        return sensors->minForwardDistance < distWall->value && sensors->forwardLeftSensor->isLongerThan(100)
+        && sensors->forwardRightSensor->isLongerThan(100)
 //               || sensors->maxForwardDistance < 10
 //               || sensors->minDistance < 20
                ;
