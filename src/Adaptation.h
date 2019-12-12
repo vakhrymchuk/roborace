@@ -6,9 +6,11 @@ public:
 
     ValueInt *valueInt;
 
-    Adaptation(const int value = 0, const int educationTime = 10, const int step = 1) : educationTime(educationTime),
-                                                                                        step(step) {
+    Adaptation(const int value = 0, const int educationTime = 10, const int step = 1) :
+            educationTime(educationTime),
+            step(step) {
         valueInt = new ValueInt(value);
+        init();
     }
 
     void init() {
@@ -31,7 +33,7 @@ private:
     Stopwatch *stopwatch = new Stopwatch();
 
     void process() {
-        if (stopwatch->isMoreThan((const unsigned long) educationTime), SECOND) {
+        if (stopwatch->isMoreThan(educationTime, SECOND)) {
             if (testValue > valueInt->value) {
                 valueInt->value = testValue;
                 adapted = true;
