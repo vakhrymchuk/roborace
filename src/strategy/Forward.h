@@ -51,7 +51,7 @@ public:
 //            if (persecutionStopwatch->isMoreThan(3000)) {
 //                return leftWall->init(this, 5000);
 //            }
-            if (rotationHelper->isClockWise()) {
+            if (rotationHelper->isCounterClockWise()) {
                 rotationHelper->reset();
                 return rotate->init(this);
             }
