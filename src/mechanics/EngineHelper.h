@@ -15,7 +15,7 @@ class EngineHelper {
 public:
 
     /**
-     * 40*10ms = 400 ms
+     * 16*20ms = 320 ms
      */
     static const int SIZE = 20;
 
@@ -24,9 +24,8 @@ public:
     ValueInt *correctionFactor = new ValueInt(5); // 10
 
     EngineHelper() {
-        arr = new int[SIZE];
-        for (int i = 0; i < SIZE; i++) {
-            arr[i] = 0;
+        for (long & i : arr) {
+            i = 0;
         }
     }
 
@@ -41,13 +40,13 @@ public:
         return result;
     }
 
-    int getSpeed() {
+    int getSpeed() const {
         return sum / SIZE;
     }
 
 private:
 
-    int *arr;
+    long arr[SIZE];
 
     int sum = 0;
 
@@ -63,7 +62,7 @@ private:
     }
 
     int getCorrection(int power) const {
-        int correction = correctionFactor->value * (power * SIZE - sum) / SIZE;
+        int correction = correctionFactor->value * (power - getSpeed()) ;
         if (power > 0) {
             return constrain(correction, -maxCorrectionBrake->value, maxCorrectionRun->value);
         }
