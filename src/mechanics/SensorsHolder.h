@@ -1,15 +1,22 @@
-#ifndef ROBORACE_SENSORS_HOLDER_H
-#define ROBORACE_SENSORS_HOLDER_H
+#pragma once
 
-//#include <Vl53l0xSensor.h>
-//#include <Vl53l1xSensor.h>
 #include "KalmanFilter.h"
-#include <Sharp.h>
 #include "TimingFilter.h"
 #include "MedianFilter.h"
 #include "MedianFilterWindow.h"
-#include "../remote/Message.h"
-//#include "TimingFilter.h"
+
+#if defined VL53
+
+#include <TCA9548A.h>
+#include <Vl53l0xSensorI2cMux.h>
+#include <Vl53l1xSensorI2cMux.h>
+
+#elif defined SHARP_SENSORS
+
+#include <ADC.h>
+#include <Sharp.h>
+
+#endif
 
 /**
  *  _____                                _   _       _     _
@@ -28,8 +35,8 @@ public:
     static const bool USE_KALMAN_FILTER = false;
 
     int forwardLeftDistance, forwardRightDistance;
-
     int leftDistance, rightDistance;
+    int left45Distance, right45Distance;
 
     int minForwardDistance, maxForwardDistance;
 
@@ -37,24 +44,23 @@ public:
 
     int maxDistance, minDistance;
 
-
-
+#if defined VL53
+    TCA9548A i2cMux;
+#endif
+    TimingFilter *forwardRightSensor;
     TimingFilter *forwardLeftSensor;
     TimingFilter *rightSensor;
     TimingFilter *leftSensor;
-    TimingFilter *forwardRightSensor;
+    TimingFilter *right45Sensor;
+    TimingFilter *left45Sensor;
 
     SensorsHolder() {
-//        initVl53Sensors();
-        initSharpSensors();
+        initSensors();
     }
 
     void readDistances();
 
-    void setDistances(Message &message);
-
     bool isSamePlace(unsigned long ms) const;
-
 
 private:
 
@@ -73,28 +79,18 @@ private:
         return new TimingFilter(distanceSensor);
     }
 
-    void initVl53Sensors();
+    void initSensors();
 
-    void initSharpSensors();
 };
 
 void SensorsHolder::readDistances() {
 
+    forwardRightDistance = forwardRightSensor->getDistance();
     forwardLeftDistance = forwardLeftSensor->getDistance();
     rightDistance = rightSensor->getDistance();
     leftDistance = leftSensor->getDistance();
-    forwardRightDistance = forwardRightSensor->getDistance();
-
-    calcMaxDistance();
-    calcMinDistance();
-}
-
-void SensorsHolder::setDistances(Message &message) {
-
-    forwardLeftDistance = forwardLeftSensor->updateValue(message.forwardLeftDistance);
-    rightDistance = rightSensor->updateValue(message.rightDistance);
-    leftDistance = leftSensor->updateValue(message.leftDistance);
-    forwardRightDistance = forwardRightSensor->updateValue(message.forwardRightDistance);
+    right45Distance = right45Sensor->getDistance();
+    left45Distance = left45Sensor->getDistance();
 
     calcMaxDistance();
     calcMinDistance();
@@ -103,13 +99,13 @@ void SensorsHolder::setDistances(Message &message) {
 
 void SensorsHolder::calcMaxDistance() {
     maxForwardDistance = max(forwardLeftDistance, forwardRightDistance);
-    maxSideDistance = max(leftDistance, rightDistance);
+    maxSideDistance = max(left45Distance, right45Distance);
     maxDistance = max(maxForwardDistance, maxSideDistance);
 }
 
 void SensorsHolder::calcMinDistance() {
     minForwardDistance = min(forwardLeftDistance, forwardRightDistance);
-    minSideDistance = min(leftDistance, rightDistance);
+    minSideDistance = min(left45Distance, right45Distance);
     minDistance = min(minForwardDistance, minSideDistance);
 }
 
@@ -121,26 +117,24 @@ bool SensorsHolder::isSamePlace(unsigned long ms) const {
            || rightSensor->isLongerThan(ms);
 }
 
-void SensorsHolder::initSharpSensors() {
+
+void SensorsHolder::initSensors() {
+#if defined FREE_RUN_MODE
+    ADC_setup();
+#endif
+#if defined SHARP_SENSORS
     forwardLeftSensor = createSensor(new Sharp10_150(A3));
     rightSensor = createSensor(new Sharp10_150(A2));
     leftSensor = createSensor(new Sharp10_150(A1));
     forwardRightSensor = createSensor(new Sharp10_150(A0));
-}
-
-void SensorsHolder::initVl53Sensors() {
-//    Vl53l0xSensor::nextAddress = 0x30;
-//    Vl53l1xSensor::nextAddress = 0x40;
-//
-//    Vl53l1xSensor::lowPin(A0);
-//    Vl53l0xSensor::lowPin(A1);
-//    Vl53l0xSensor::lowPin(A2);
-//    Vl53l1xSensor::lowPin(A3);
-//
-//    forwardLeftSensor = createSensor(new Vl53l1xSensor(A3));
-//    rightSensor = createSensor(new Vl53l0xSensor(A2));
-//    leftSensor = createSensor(new Vl53l0xSensor(A1));
-//    forwardRightSensor = createSensor(new Vl53l1xSensor(A0));
-}
-
+#elif defined VL53
+    i2cMux.begin(Wire);
+    i2cMux.closeAll();
+    forwardRightSensor = createSensor(new Vl53l1xSensorI2cMux(0, &i2cMux));
+    forwardLeftSensor = createSensor(new Vl53l1xSensorI2cMux(1, &i2cMux));
+    rightSensor = createSensor(new Vl53l0xSensorI2cMux(2, &i2cMux));
+    leftSensor = createSensor(new Vl53l0xSensorI2cMux(3, &i2cMux));
+    right45Sensor = createSensor(new Vl53l0xSensorI2cMux(4, &i2cMux));
+    left45Sensor = createSensor(new Vl53l0xSensorI2cMux(5, &i2cMux));
 #endif
+}

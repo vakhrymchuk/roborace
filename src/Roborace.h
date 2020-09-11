@@ -94,7 +94,7 @@ void Roborace::loop() {
     sensors->readDistances();
 //    if (sensors->isSamePlace(6000)) {
 //        mechanics->stop();
-//        sensors->initVl53Sensors();
+//        sensors->initSensors();
 //    }
     activeStrategy = activeStrategy->check(sensors);
     activeStrategy->calc(sensors);
@@ -105,15 +105,17 @@ void Roborace::loop() {
     if (debugInterval.isReady()) {
         char buffer[100];
         sprintf(buffer,
-                "loop mcs =%4lu  FL =%3u  L =%3u  R =%3u  FR =%3u   ang =% 4d  pow =% 4d minfrd =% 4d",
+                "loop mcs =%4lu  FR =%3u  FL =%3u  R =%3u  L =%3u  R45 =%3u  L45 =%3u   ang =% 4d  pow =% 4d",
                 finish - start,
-                sensors->forwardLeftDistance,
-                sensors->leftDistance,
-                sensors->rightDistance,
                 sensors->forwardRightDistance,
+                sensors->forwardLeftDistance,
+                sensors->rightDistance,
+                sensors->leftDistance,
+                sensors->right45Distance,
+                sensors->left45Distance,
                 activeStrategy->angle,
-                activeStrategy->power,
-                sensors->minForwardDistance);
+                activeStrategy->power
+        );
         Serial.println(buffer);
         Serial.flush();
     }

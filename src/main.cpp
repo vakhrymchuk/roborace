@@ -12,10 +12,6 @@ Roborace *roborace;
 
 void setup() {
 
-#ifdef FREE_RUN_MODE
-    ADC_setup();
-#endif
-
 #ifdef VL53
     Wire.begin();
     Wire.setClock(400000);
