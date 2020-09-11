@@ -38,9 +38,7 @@ protected:
 
     Interval *mainLoopChange = new Interval(RUN_INTERVAL_MS);
 
-#ifndef JOYSTICK_ENABLE
     Mechanics *mechanics = new Mechanics();
-#endif
 
     SensorsHolder *sensors = new SensorsHolder();
 
@@ -101,13 +99,11 @@ void Roborace::loop() {
     sensors->readDistances();
 //    if (sensors->isSamePlace(6000)) {
 //        mechanics->stop();
-//        sensors->initSensors();
+//        sensors->initVl53Sensors();
 //    }
     activeStrategy = activeStrategy->check(sensors);
     activeStrategy->calc(sensors);
-#ifndef JOYSTICK_ENABLE
     activeStrategy->run(mechanics);
-#endif
 
 #ifdef DEBUG
     unsigned long finish = micros();

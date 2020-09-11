@@ -1,6 +1,6 @@
-.pioenvs
+.pio
+cmake-build*
 CMakeListsPrivate.txt
-.piolibdeps
-.idea
 CMakeLists.txt
+.idea
 docs
