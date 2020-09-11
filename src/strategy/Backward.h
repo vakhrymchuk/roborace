@@ -21,7 +21,7 @@ public:
     virtual Strategy *init(Strategy *callback, unsigned int minMs, int param = 0) final {
         Strategy::init(callback, minMs);
 //        minTimeout->start(500);
-        maxTimeout->start(2000);
+        maxTimeout->start(3000);
         rotation = param;
         return this;
     }
@@ -38,11 +38,11 @@ public:
     virtual void calc(SensorsHolder *sensors) final {
         if (stopwatch->isLessThan(100)) {
             angle = 0;
-        } else if (stopwatch->isLessThan(2000)) {
+        } else if (stopwatch->isLessThan(3000)) {
             if (rotation != 0) {
                 angle = -rotation;
             } else {
-                angle = -20 * getAngleSign(sensors->rightDistance, sensors->leftDistance);
+                angle = -30 * getAngleSign(sensors->rightDistance, sensors->leftDistance);
             }
         } else {
             angle = 0;
@@ -65,7 +65,7 @@ private:
     Timeout *maxTimeout = new Timeout();
 
     bool isBackFinish(SensorsHolder *sensors) const {
-        return sensors->minForwardDistance > 25 && sensors->maxDistance > 80;
+        return sensors->minForwardDistance > 25 && sensors->maxDistance > 100;
     }
 };
 

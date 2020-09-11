@@ -45,42 +45,53 @@ public:
             if (isWallNear(sensors)) {
                 return backward->init(this, 500, rotation);
             }
-            if (sensors->isSamePlace(4000)) {
-                return backward->init(this, 600);
-            }
+//            if (sensors->isSamePlace(4000)) {
+//                return backward->init(this, 600);
+//            }
 //            if (persecutionStopwatch->isMoreThan(3000)) {
 //                return leftWall->init(this, 5000);
 //            }
-            if (rotationHelper->isCounterClockWise()) {
-                rotationHelper->reset();
-                return rotate->init(this);
-            }
-            if (sensors->minForwardDistance >= turboModeDist->value) {
-                return turbo->init(this);
-            }
+//            if (rotationHelper->isCounterClockWise()) {
+//                rotationHelper->reset();
+//                return rotate->init(this);
+//            }
+//            if (sensors->minForwardDistance >= turboModeDist->value) {
+//                return turbo->init(this);
+//            }
         }
         return this;
     }
 
     virtual void calc(SensorsHolder *sensors) final {
 
-        if (sensors->minForwardDistance < distStartTurn->value) {
-
-            angle = getAngleSign(sensors->rightDistance, sensors->leftDistance);
-
-            int minAngle = map(sensors->minForwardDistance,
-                                            distStartTurn->value, distFullTurn->value,
-                                            0, Mechanics::TURN_MAX_ANGLE);
-            angle = angle * minAngle;
+        if (sensors->maxForwardDistance < 100) {
+            if (sensors->leftDistance < sensors->rightDistance) {
+                angle = Mechanics::FULL_RIGHT;
+            } else {
+                angle = Mechanics::FULL_LEFT;
+            }
         }
-//            if (speed > power) {
+
+
+
+
+//        if (sensors->minForwardDistance < distStartTurn->value) {
+//
+//            angle = getAngleSign(sensors->rightDistance, sensors->leftDistance);
+//
+//            int minAngle = map(sensors->minForwardDistance,
+//                                            distStartTurn->value, distFullTurn->value,
+//                                            0, Mechanics::TURN_MAX_ANGLE);
+//            angle = angle * minAngle;
+//        }
+//    if (speed > power) {
 //                angle = min(angle, 20);
 //            }
-
+//
 //        if (stopwatch->isLessThan(300, MS)) {
 //            angle = min(angle, 15);
 //        }
-
+/*
         if (sensors->leftDistance > 70) {
             rotation = Mechanics::FULL_LEFT;
         } else if (sensors->rightDistance > 70) {
@@ -88,11 +99,11 @@ public:
         } else {
             rotation = 0;
         }
-
+*/
         power = forwardSpeed->adaptedValue();
-        checkPersecution(sensors);
+//        checkPersecution(sensors);
 
-        rotationHelper->placeVector(angle, power);
+//        rotationHelper->placeVector(angle, power);
     }
 
 
@@ -126,10 +137,10 @@ private:
 
     bool isWallNear(SensorsHolder *sensors) const {
         return sensors->minForwardDistance < distWall->value && sensors->forwardLeftSensor->isLongerThan(100)
-        && sensors->forwardRightSensor->isLongerThan(100)
+               && sensors->forwardRightSensor->isLongerThan(100)
 //               || sensors->maxForwardDistance < 10
 //               || sensors->minDistance < 20
-               ;
+                ;
     }
 };
 

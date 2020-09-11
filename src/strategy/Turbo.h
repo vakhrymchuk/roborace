@@ -9,11 +9,11 @@ private:
 
     ValueInt *turboModeDisableDist = new ValueInt(125);
 
-    ValueInt *turboMaxTurn = new ValueInt(11);
+    ValueInt *turboMaxTurn = new ValueInt(5);
 
-    ValueInt *speed = new ValueInt(68);
+    ValueInt *speed = new ValueInt(64);
 
-    Adaptation *forwardAcceleration = new Adaptation(0, 15, 0);
+    Adaptation *forwardAcceleration = new Adaptation(4, 15, 0);
 
 
 public:
