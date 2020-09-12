@@ -2,10 +2,9 @@
 #define ROBORACE_H
 
 #include <Arduino.h>
-#include "value/TimingValue.h"
+#include "value/ValueBase.h"
 #include "mechanics/SensorsHolder.h"
 #include "mechanics/Mechanics.h"
-#include "strategy/Strategy.h"
 #include "strategy/Forward.h"
 #include "strategy/Turbo.h"
 #include "strategy/Backward.h"
@@ -28,7 +27,7 @@ public:
     static const int RUN_INTERVAL_MS = 20;
 
     Roborace() {
-        waitForEngineInit();
+        mechanics->init();
         initStrategies();
     }
 
@@ -57,10 +56,6 @@ protected:
 #endif
 
 private:
-
-    void waitForEngineInit() const {
-        delay(1500);
-    }
 
     void initStrategies();
 };

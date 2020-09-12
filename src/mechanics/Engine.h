@@ -19,8 +19,15 @@
 class Engine {
 public:
 
+    static const int ENGINE_INIT_DELAY = 1500;
+
     Engine(PWMServo *servo) : servo(servo) {
         stop();
+    }
+
+    void init(){
+        stop();
+        delay(ENGINE_INIT_DELAY);
     }
 
     void forward(int power) {

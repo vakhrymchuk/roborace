@@ -41,6 +41,10 @@ public:
         run(0, 0);
     }
 
+    void init() const {
+        engine->init();
+    }
+
     void run(int angle, int power) {
         turnWheels(angle);
         engine->forward(power);
