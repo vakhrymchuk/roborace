@@ -81,6 +81,9 @@ private:
 
     void initSensors();
 
+    Vl53l1xSensorI2cMux *createSensor1(int channel) const;
+
+    Vl53l0xSensorI2cMux *createSensor0(int channel) const;
 };
 
 void SensorsHolder::readDistances() {
@@ -130,11 +133,24 @@ void SensorsHolder::initSensors() {
 #elif defined VL53
     i2cMux.begin(Wire);
     i2cMux.closeAll();
-    forwardRightSensor = createSensor(new Vl53l1xSensorI2cMux(0, &i2cMux));
-    forwardLeftSensor = createSensor(new Vl53l1xSensorI2cMux(1, &i2cMux));
-    rightSensor = createSensor(new Vl53l0xSensorI2cMux(2, &i2cMux));
-    leftSensor = createSensor(new Vl53l0xSensorI2cMux(3, &i2cMux));
-    right45Sensor = createSensor(new Vl53l0xSensorI2cMux(4, &i2cMux));
-    left45Sensor = createSensor(new Vl53l0xSensorI2cMux(5, &i2cMux));
+    forwardRightSensor = createSensor(createSensor1(5));
+    forwardLeftSensor = createSensor(createSensor1(1));
+    rightSensor = createSensor(createSensor0(7));
+    leftSensor = createSensor(createSensor0(0));
+    right45Sensor = createSensor(createSensor0(2));
+    left45Sensor = createSensor(createSensor0(4));
+
 #endif
+}
+
+Vl53l0xSensorI2cMux *SensorsHolder::createSensor0(int channel) const {
+    Vl53l0xSensorI2cMux *sensor = new Vl53l0xSensorI2cMux(channel, &i2cMux);
+    sensor->initSensor();
+    return sensor;
+}
+
+Vl53l1xSensorI2cMux *SensorsHolder::createSensor1(int channel) const {
+    Vl53l1xSensorI2cMux *sensor = new Vl53l1xSensorI2cMux(channel, &i2cMux);
+    sensor->initSensor();
+    return sensor;
 }
