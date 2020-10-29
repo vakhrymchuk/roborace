@@ -4,9 +4,10 @@
 
 #include <Arduino.h>
 #include <Wire.h>
-#include "Roborace.h"
 
 //#define DEBUG true
+
+#include "Roborace.h"
 
 Roborace *roborace;
 

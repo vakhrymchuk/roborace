@@ -25,7 +25,7 @@ public:
         stop();
     }
 
-    void init(){
+    void init() const {
         stop();
         delay(ENGINE_INIT_DELAY);
     }
@@ -38,7 +38,7 @@ public:
         run(-power);
     }
 
-    void stop() {
+    void stop() const {
         run(0);
     }
 
@@ -51,7 +51,7 @@ public:
 private:
     PWMServo *servo;
 
-    void run(int power) {
+    void run(int power) const {
         servo->writeMicroseconds(DEFAULT_PULSE_WIDTH + engineHelper->get(power));
     };
 
