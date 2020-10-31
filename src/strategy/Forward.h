@@ -20,12 +20,12 @@ private:
 
 public:
 
-    ValueInt *distStartTurn = new ValueInt(120);
-    ValueInt *distFullTurn = new ValueInt(80);
+    ValueInt *distStartTurn = new ValueInt(130);
+    ValueInt *distFullTurn = new ValueInt(90);
 
-    ValueInt *turboModeDist = new ValueInt(120);
+    ValueInt *turboModeDist = new ValueInt(180);
 
-    Adaptation *forwardSpeed = new Adaptation(50, 20, 1);
+    Adaptation *forwardSpeed = new Adaptation(56, 20, 1);
 
     ValueInt *distWall = new ValueInt(15);
 
@@ -85,11 +85,20 @@ public:
             angle = getAngleSign(sensors->rightDistance + sensors->right45Distance,
                                  sensors->leftDistance + sensors->left45Distance);
 
-            int minAngle = map(sensors->minForwardDistance,
+            int minAngle = map(sensors->maxForwardDistance,
                                distStartTurn->value, distFullTurn->value,
                                0, Mechanics::TURN_MAX_ANGLE);
             angle = angle * minAngle;
+        } else {
+            angle = getAngleSign( sensors->right45Distance,
+                                  sensors->left45Distance);
+
+            int minAngle = map(sensors->maxForwardDistance,
+                               100, 200,
+                               10, 0);
+            angle = angle * minAngle;
         }
+
 //        if (speed > power) {
 //            angle = min(angle, 20);
 //        }

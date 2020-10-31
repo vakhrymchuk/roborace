@@ -26,6 +26,7 @@ void setup() {
 #endif
 
     roborace = new Roborace();
+    delay(3000);
 
     wdt_enable(WDTO_1S);
 

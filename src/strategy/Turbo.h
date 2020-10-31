@@ -7,9 +7,9 @@ class Turbo : public Strategy {
 
 private:
 
-    ValueInt *turboModeDisableDist = new ValueInt(120);
+    ValueInt *turboModeDisableDist = new ValueInt(150);
 
-    ValueInt *turboMaxTurn = new ValueInt(2);
+    ValueInt *turboMaxTurn = new ValueInt(8);
 
     ValueInt *speed = new ValueInt(56);
 
@@ -39,10 +39,11 @@ public:
     virtual void calc(SensorsHolder *sensors) final {
         power = speed->value;
 
-        int sum = sensors->leftDistance + sensors->left45Distance /*+ sensors->forwardLeftDistance*/
-                  - sensors->rightDistance - sensors->right45Distance /*- sensors->forwardRightDistance*/;
+        int sum = /*sensors->leftDistance +*/ sensors->left45Distance /*+ sensors->forwardLeftDistance*/
+                  /*- sensors->rightDistance*/ - sensors->right45Distance /*- sensors->forwardRightDistance*/;
 
-        angle = map(sum, -120, 120, -turboMaxTurn->value, turboMaxTurn->value);
+        angle = map(sum, -100, 100, -turboMaxTurn->value, turboMaxTurn->value);
+        angle = constrain(angle, -turboMaxTurn->value, turboMaxTurn->value);
 
 //        if (sensors->minForwardDistance > 150) {
 //            power = speed->value + 4;
