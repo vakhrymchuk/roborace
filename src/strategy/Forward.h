@@ -20,14 +20,14 @@ private:
 
 public:
 
-    ValueInt *distStartTurn = new ValueInt(130);
-    ValueInt *distFullTurn = new ValueInt(120);
+    ValueInt *distStartTurn = new ValueInt(120);
+    ValueInt *distFullTurn = new ValueInt(80);
 
-    ValueInt *turboModeDist = new ValueInt(130);
+    ValueInt *turboModeDist = new ValueInt(120);
 
-    Adaptation *forwardSpeed = new Adaptation(64, 25, 4);
+    Adaptation *forwardSpeed = new Adaptation(50, 20, 1);
 
-    ValueInt *distWall = new ValueInt(12);
+    ValueInt *distWall = new ValueInt(15);
 
     ValueInt *distPersecution = new ValueInt(50);
 
@@ -45,49 +45,55 @@ public:
             if (isWallNear(sensors)) {
                 return backward->init(this, 500, rotation);
             }
-//            if (sensors->isSamePlace(4000)) {
-//                return backward->init(this, 600);
-//            }
+            if (sensors->isSamePlace(4000)) {
+                return backward->init(this, 600);
+            }
 //            if (persecutionStopwatch->isMoreThan(3000)) {
 //                return leftWall->init(this, 5000);
 //            }
-//            if (rotationHelper->isCounterClockWise()) {
-//                rotationHelper->reset();
-//                return rotate->init(this);
-//            }
-//            if (sensors->minForwardDistance >= turboModeDist->value) {
-//                return turbo->init(this);
-//            }
+            if (rotationHelper->isCounterClockWise()) {
+                rotationHelper->reset();
+                return rotate->init(this);
+            }
+            if (sensors->maxForwardDistance >= turboModeDist->value) {
+                return turbo->init(this);
+            }
         }
         return this;
     }
 
     virtual void calc(SensorsHolder *sensors) final {
 
-        if (sensors->maxForwardDistance < 100) {
-            if (sensors->leftDistance < sensors->rightDistance) {
-                angle = Mechanics::FULL_RIGHT;
-            } else {
-                angle = Mechanics::FULL_LEFT;
-            }
-        }
 
-
-
-
-//        if (sensors->minForwardDistance < distStartTurn->value) {
+//            int sum = sensors->leftDistance + sensors->left45Distance /*+ sensors->forwardLeftDistance*/
+//                      - sensors->rightDistance - sensors->right45Distance /*- sensors->forwardRightDistance*/;
 //
-//            angle = getAngleSign(sensors->rightDistance, sensors->leftDistance);
-//
-//            int minAngle = map(sensors->minForwardDistance,
-//                                            distStartTurn->value, distFullTurn->value,
-//                                            0, Mechanics::TURN_MAX_ANGLE);
-//            angle = angle * minAngle;
-//        }
-//    if (speed > power) {
-//                angle = min(angle, 20);
+//            angle = map(sum, -120, 120, Mechanics::FULL_RIGHT, Mechanics::FULL_LEFT);
+
+        power = forwardSpeed->adaptedValue();
+
+//            if (sensors->leftDistance + sensors->left45Distance <
+//                sensors->rightDistance + sensors->right45Distance) {
+//                angle = Mechanics::FULL_RIGHT;
+//            } else {
+//                angle = Mechanics::FULL_LEFT;
 //            }
-//
+
+
+        if (sensors->maxForwardDistance < distStartTurn->value) {
+
+            angle = getAngleSign(sensors->rightDistance + sensors->right45Distance,
+                                 sensors->leftDistance + sensors->left45Distance);
+
+            int minAngle = map(sensors->minForwardDistance,
+                               distStartTurn->value, distFullTurn->value,
+                               0, Mechanics::TURN_MAX_ANGLE);
+            angle = angle * minAngle;
+        }
+//        if (speed > power) {
+//            angle = min(angle, 20);
+//        }
+
 //        if (stopwatch->isLessThan(300, MS)) {
 //            angle = min(angle, 15);
 //        }
@@ -100,10 +106,10 @@ public:
             rotation = 0;
         }
 */
-        power = forwardSpeed->adaptedValue();
-//        checkPersecution(sensors);
 
-//        rotationHelper->placeVector(angle, power);
+        checkPersecution(sensors);
+
+        rotationHelper->placeVector(angle, power);
     }
 
 
@@ -112,7 +118,7 @@ public:
 //                angle = limitMaxAngle(angle, (int) map(sensors->minDistance, 0, 50, 15, 30));
             power = (int) map(sensors->minForwardDistance,
                               10, distPersecution->value,
-                              60, power);
+                              50, power);
             if (!persecution) {
                 persecution = true;
                 persecutionStopwatch->start();

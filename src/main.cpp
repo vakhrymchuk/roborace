@@ -4,6 +4,7 @@
 
 #include <Arduino.h>
 #include <Wire.h>
+#include <avr/wdt.h>
 
 //#define DEBUG true
 
@@ -12,6 +13,8 @@
 Roborace *roborace;
 
 void setup() {
+
+
 
 #ifdef VL53
     Wire.begin();
@@ -24,8 +27,11 @@ void setup() {
 
     roborace = new Roborace();
 
+    wdt_enable(WDTO_1S);
+
 }
 
 void loop() {
+    wdt_reset();
     roborace->loop();
 }

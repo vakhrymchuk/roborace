@@ -92,10 +92,10 @@ void Roborace::loop() {
 #endif
 
     sensors->readDistances();
-//    if (sensors->isSamePlace(6000)) {
-//        mechanics->stop();
-//        sensors->initSensors();
-//    }
+    if (sensors->isSamePlace(6000)) {
+        mechanics->stop();
+        sensors->initSensors();
+    }
     activeStrategy = activeStrategy->check(sensors);
     activeStrategy->calc(sensors);
     activeStrategy->run(mechanics);

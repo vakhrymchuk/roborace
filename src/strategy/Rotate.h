@@ -14,7 +14,7 @@
 class Rotate : public Strategy {
 public:
 
-    static const int ROTATE_SPEED = 70;
+    static const int ROTATE_SPEED = 60;
 
     virtual Strategy *init(Strategy *callback, unsigned int minMs, int param = 0) final {
         Strategy::init(callback, minMs);

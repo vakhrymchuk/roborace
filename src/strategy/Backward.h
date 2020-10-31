@@ -16,7 +16,7 @@ private:
     int rotation = 0;
 public:
 
-    ValueInt *backwardSpeed = new ValueInt(90);
+    ValueInt *backwardSpeed = new ValueInt(70);
 
     virtual Strategy *init(Strategy *callback, unsigned int minMs, int param = 0) final {
         Strategy::init(callback, minMs);
@@ -65,7 +65,7 @@ private:
     Timeout *maxTimeout = new Timeout();
 
     bool isBackFinish(SensorsHolder *sensors) const {
-        return sensors->minForwardDistance > 25 && sensors->maxDistance > 100;
+        return sensors->minForwardDistance > 25 && sensors->maxDistance > 50;
     }
 };
 

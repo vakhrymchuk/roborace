@@ -31,7 +31,7 @@ class SensorsHolder {
 
 public:
 
-    static const bool USE_MEDIAN_FILTER = false;
+    static const bool USE_MEDIAN_FILTER = true;
     static const bool USE_KALMAN_FILTER = false;
 
     int forwardLeftDistance, forwardRightDistance;
@@ -58,6 +58,8 @@ public:
         initSensors();
     }
 
+    void initSensors();
+
     void readDistances();
 
     bool isSamePlace(unsigned long ms) const;
@@ -78,8 +80,6 @@ private:
         }
         return new TimingFilter(distanceSensor);
     }
-
-    void initSensors();
 
     Vl53l1xSensorI2cMux *createSensor1(int channel) const;
 
