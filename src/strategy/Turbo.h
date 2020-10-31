@@ -9,9 +9,9 @@ private:
 
     ValueInt *turboModeDisableDist = new ValueInt(150);
 
-    ValueInt *turboMaxTurn = new ValueInt(8);
+    ValueInt *turboMaxTurn = new ValueInt(10);
 
-    ValueInt *speed = new ValueInt(56);
+    ValueInt *speed = new ValueInt(60);
 
 //    Adaptation *forwardAcceleration = new Adaptation(4, 15, 0);
 
@@ -39,8 +39,8 @@ public:
     virtual void calc(SensorsHolder *sensors) final {
         power = speed->value;
 
-        int sum = /*sensors->leftDistance +*/ sensors->left45Distance /*+ sensors->forwardLeftDistance*/
-                  /*- sensors->rightDistance*/ - sensors->right45Distance /*- sensors->forwardRightDistance*/;
+        int sum = sensors->leftDistance + sensors->left45Distance/5 /*+ sensors->forwardLeftDistance / 3*/
+                  - sensors->rightDistance - sensors->right45Distance/5 /*- sensors->forwardRightDistance / 3*/;
 
         angle = map(sum, -100, 100, -turboMaxTurn->value, turboMaxTurn->value);
         angle = constrain(angle, -turboMaxTurn->value, turboMaxTurn->value);

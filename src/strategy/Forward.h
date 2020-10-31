@@ -23,7 +23,7 @@ public:
     ValueInt *distStartTurn = new ValueInt(130);
     ValueInt *distFullTurn = new ValueInt(90);
 
-    ValueInt *turboModeDist = new ValueInt(180);
+    ValueInt *turboModeDist = new ValueInt(130);
 
     Adaptation *forwardSpeed = new Adaptation(56, 20, 1);
 
@@ -65,8 +65,8 @@ public:
     virtual void calc(SensorsHolder *sensors) final {
 
 
-//            int sum = sensors->leftDistance + sensors->left45Distance /*+ sensors->forwardLeftDistance*/
-//                      - sensors->rightDistance - sensors->right45Distance /*- sensors->forwardRightDistance*/;
+            int sum = sensors->leftDistance + sensors->left45Distance /*+ sensors->forwardLeftDistance*/
+                      - sensors->rightDistance - sensors->right45Distance /*- sensors->forwardRightDistance*/;
 //
 //            angle = map(sum, -120, 120, Mechanics::FULL_RIGHT, Mechanics::FULL_LEFT);
 
@@ -79,7 +79,32 @@ public:
 //                angle = Mechanics::FULL_LEFT;
 //            }
 
+        if (sensors->rightDistance > 90) {
+            angle = Mechanics::FULL_RIGHT;
+        } else if (sensors->leftDistance > 90) {
+            angle = Mechanics::FULL_LEFT;
+        } else if ( sensors->right45Distance > 100) {
+            angle = -25;
+        } else if (sensors->left45Distance > 100) {
+            angle = 25;
+        } else {
+//            angle = getAngleSign(sensors->rightDistance + sensors->right45Distance,
+//                                 sensors->leftDistance + sensors->left45Distance);
 
+//            int minAngle = map(sensors->maxForwardDistance,
+//                               100, 200,
+//                               10, 0);
+
+            int maxTurn = 15;
+
+            int minAngle = map(sum, -200, 200, -maxTurn, maxTurn);
+
+            angle = angle * minAngle;
+            angle = constrain(angle, -maxTurn, maxTurn);
+        }
+
+
+/*
         if (sensors->maxForwardDistance < distStartTurn->value) {
 
             angle = getAngleSign(sensors->rightDistance + sensors->right45Distance,
@@ -90,14 +115,15 @@ public:
                                0, Mechanics::TURN_MAX_ANGLE);
             angle = angle * minAngle;
         } else {
-            angle = getAngleSign( sensors->right45Distance,
-                                  sensors->left45Distance);
+            angle = getAngleSign(sensors->rightDistance + sensors->right45Distance,
+                                 sensors->leftDistance + sensors->left45Distance);
 
             int minAngle = map(sensors->maxForwardDistance,
                                100, 200,
                                10, 0);
             angle = angle * minAngle;
-        }
+            angle = constrain(angle, -10, 10);
+        }*/
 
 //        if (speed > power) {
 //            angle = min(angle, 20);
