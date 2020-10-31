@@ -20,12 +20,12 @@
 class Mechanics {
 public:
     /** Максимальный угол поворота */
-    static const int TURN_MAX_ANGLE = 36;
+    static const int TURN_MAX_ANGLE = 38;
     static const int FULL_RIGHT = -TURN_MAX_ANGLE;
     static const int FULL_LEFT = TURN_MAX_ANGLE;
 
     ValueInt *turnMaxAngle = new ValueInt(TURN_MAX_ANGLE);
-    ValueInt *turnCentralPosition = new ValueInt(93); // 93
+    ValueInt *turnCentralPosition = new ValueInt(94); // 93
 
 //    VoltageDivider logicVoltage = VoltageDivider(A6, 2);
 //    VoltageDivider engineVoltage = VoltageDivider(A7, 3);

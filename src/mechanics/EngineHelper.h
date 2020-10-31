@@ -17,7 +17,7 @@ public:
     /** 20*20ms = 400 ms */
     static const int SIZE = 20;
 
-    ValueInt *maxCorrectionRun = new ValueInt(20); // 50
+    ValueInt *maxCorrectionRun = new ValueInt(30); // 50
     ValueInt *maxCorrectionBrake = new ValueInt(20); // 50
     ValueInt *correctionFactor = new ValueInt(5); // 10
 

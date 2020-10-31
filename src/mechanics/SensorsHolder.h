@@ -31,7 +31,7 @@ class SensorsHolder {
 
 public:
 
-    static const bool USE_MEDIAN_FILTER = true;
+    static const bool USE_MEDIAN_FILTER = false;
     static const bool USE_KALMAN_FILTER = false;
 
     int forwardLeftDistance, forwardRightDistance;

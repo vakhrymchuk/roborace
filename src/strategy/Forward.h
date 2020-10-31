@@ -84,9 +84,9 @@ public:
         } else if (sensors->leftDistance > 90) {
             angle = Mechanics::FULL_LEFT;
         } else if ( sensors->right45Distance > 100) {
-            angle = -25;
+            angle = Mechanics::FULL_RIGHT;
         } else if (sensors->left45Distance > 100) {
-            angle = 25;
+            angle = Mechanics::FULL_LEFT;
         } else {
 //            angle = getAngleSign(sensors->rightDistance + sensors->right45Distance,
 //                                 sensors->leftDistance + sensors->left45Distance);

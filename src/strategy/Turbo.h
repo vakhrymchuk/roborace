@@ -7,13 +7,13 @@ class Turbo : public Strategy {
 
 private:
 
-    ValueInt *turboModeDisableDist = new ValueInt(150);
+    ValueInt *turboModeDisableDist = new ValueInt(130);
 
     ValueInt *turboMaxTurn = new ValueInt(10);
 
     ValueInt *speed = new ValueInt(60);
 
-//    Adaptation *forwardAcceleration = new Adaptation(4, 15, 0);
+    Adaptation *forwardAcceleration = new Adaptation(4, 20, 1);
 
 
 public:
@@ -39,8 +39,8 @@ public:
     virtual void calc(SensorsHolder *sensors) final {
         power = speed->value;
 
-        int sum = sensors->leftDistance + sensors->left45Distance/5 /*+ sensors->forwardLeftDistance / 3*/
-                  - sensors->rightDistance - sensors->right45Distance/5 /*- sensors->forwardRightDistance / 3*/;
+        int sum = sensors->leftDistance/2 + sensors->left45Distance /*+ sensors->forwardLeftDistance / 3*/
+                  - sensors->rightDistance/2 - sensors->right45Distance /*- sensors->forwardRightDistance / 3*/;
 
         angle = map(sum, -100, 100, -turboMaxTurn->value, turboMaxTurn->value);
         angle = constrain(angle, -turboMaxTurn->value, turboMaxTurn->value);
@@ -50,9 +50,9 @@ public:
 //        }
 
 
-//        power += (int) map(sensors->maxForwardDistance,
-//                           turboModeDist->value, 400,
-//                           0, forwardAcceleration->adaptedValue());
+        power += (int) map(sensors->maxForwardDistance,
+                           turboModeDisableDist->value, 200,
+                           0, forwardAcceleration->adaptedValue());
 
 
 //        angle = getAngleSign(sensors->rightDistance, sensors->leftDistance);
