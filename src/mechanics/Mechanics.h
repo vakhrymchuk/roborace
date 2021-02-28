@@ -2,6 +2,7 @@
 
 #include "Engine.h"
 #include "VoltageDivider.h"
+#include <value/Param.h>
 
 #define TURN_SERVO_PIN GPIO_NUM_12
 #define ENGINE_PIN GPIO_NUM_14
@@ -22,8 +23,8 @@ public:
     static const int FULL_RIGHT = -TURN_MAX_ANGLE;
     static const int FULL_LEFT = TURN_MAX_ANGLE;
 
-    ValueInt *turnMaxAngle = new ValueInt(TURN_MAX_ANGLE);
-    ValueInt *turnCentralPosition = new ValueInt(94); // 93
+    Param *turnMaxAngle = new Param(TURN_MAX_ANGLE);
+    Param *turnCentralPosition = new Param(94); // 93
 
     VoltageDivider battery = VoltageDivider(GPIO_NUM_2, 10);
 

@@ -1,6 +1,7 @@
 #ifndef ROBORACE_FORWARD_H
 #define ROBORACE_FORWARD_H
 
+#include <value/Param.h>
 #include "Strategy.h"
 #include "Adaptation.h"
 #include "RotationHelper.h"
@@ -20,16 +21,16 @@ private:
 
 public:
 
-    ValueInt *distStartTurn = new ValueInt(110);
-    ValueInt *distFullTurn = new ValueInt(80);
+    Param *distStartTurn = new Param(110);
+    Param *distFullTurn = new Param(80);
 
-    ValueInt *turboModeDist = new ValueInt(110);
+    Param *turboModeDist = new Param(110);
 
     Adaptation *forwardSpeed = new Adaptation(56, 20, 4);
 
-    ValueInt *distWall = new ValueInt(15);
+    Param *distWall = new Param(15);
 
-    ValueInt *distPersecution = new ValueInt(50);
+    Param *distPersecution = new Param(50);
 
 
     virtual Strategy *init(Strategy *callback, unsigned int minMs, int param = 0) final {
@@ -42,22 +43,22 @@ public:
 
     virtual Strategy *check(SensorsHolder *sensors) final {
         if (minTimeout->isReady()) {
-            if (isWallNear(sensors)) {
-                return backward->init(this, 500, rotation);
-            }
-            if (sensors->isSamePlace(4000)) {
-                return backward->init(this, 600);
-            }
+//            if (isWallNear(sensors)) {
+//                return backward->init(this, 500, rotation);
+//            }
+//            if (sensors->isSamePlace(4000)) {
+//                return backward->init(this, 600);
+//            }
 //            if (persecutionStopwatch->isMoreThan(3000)) {
 //                return leftWall->init(this, 5000);
 //            }
-            if (rotationHelper->isCounterClockWise()) {
-                rotationHelper->reset();
-                return rotate->init(this);
-            }
-            if (sensors->maxForwardDistance >= turboModeDist->value) {
-                return turbo->init(this);
-            }
+//            if (rotationHelper->isCounterClockWise()) {
+//                rotationHelper->reset();
+//                return rotate->init(this);
+//            }
+//            if (sensors->maxForwardDistance >= turboModeDist->value) {
+//                return turbo->init(this);
+//            }
         }
         return this;
     }

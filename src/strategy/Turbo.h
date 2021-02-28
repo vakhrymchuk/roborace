@@ -9,11 +9,11 @@ public:
 
     static const int MAX_DIST = 200;
 
-    ValueInt *turboModeDisableDist = new ValueInt(110);
+    Param *turboModeDisableDist = new Param(110);
 
-    ValueInt *turboMaxTurn = new ValueInt(4);
+    Param *turboMaxTurn = new Param(4);
 
-    ValueInt *speed = new ValueInt(60);
+    Param *speed = new Param(60);
 
     Adaptation *forwardAcceleration = new Adaptation(20, 20, 4);
 
