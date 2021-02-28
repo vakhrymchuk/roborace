@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <link href="https://fonts.googleapis.com/css?family=Khand|Overpass+Mono" rel="stylesheet">
+    <title>Roborace Subaru Control</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Khand, sans-serif;
+            background: #ffffff;
+            color: #1f2532;
+            font-size: 4vmin;
+        }
+
+        #root {
+            height: 100vh;
+        }
+
+        #header {
+            font-size: 6vmin;
+            text-align: center;
+        }
+
+        #menu {
+            flex-grow: 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 15vw;
+        }
+
+        #control, #config {
+            vertical-align: top;
+            width: 40%;
+        }
+
+        #buttons {
+            padding: 1vw 0;
+            bottom: 0;
+            width: 100vw;
+        }
+
+        #chart {
+            width: 40vw;
+        }
+
+        .block {
+            display: inline-block;
+            padding: 0 10px
+        }
+
+        input {
+            font-family: Khand, sans-serif;
+            font-size: 3vmin;
+        }
+
+        input[type=number] {
+            width: 100px;
+        }
+
+        @media screen and (max-width: 900px) {
+            body {
+                font-size: 5vmin;
+            }
+
+            #chart {
+                width: 85vw;
+            }
+
+            #control, #config {
+                width: 90%;
+            }
+
+            input {
+                font-size: 5vmin;
+            }
+        }
+
+        /* Style the tab */
+        .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+        }
+
+        /* Style the buttons inside the tab */
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+            font-size: 3vmin;
+        }
+
+        /* Change background color of buttons on hover */
+        .tab button:hover {
+            background-color: #ddd;
+        }
+
+        /* Create an active/current tablink class */
+        .tab button.active {
+            background-color: #ccc;
+        }
+
+        /* Style the tab content */
+        .tabcontent {
+            display: none;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-top: none;
+        }
+
+    </style>
+</head>
+<body>
+<div id="root">
+    <div id="header">Subaru Control</div>
+    <div id="content">
+
+    </div>
+
+    <div id="buttons">
+        <div id="chart" class="block">
+            <canvas id="myChart" width="500" height="400"></canvas>
+        </div>
+        <div id="control" class="block" style="display: none;width:50vw">
+
+            <div class="tab">
+                <button class="tablinks" onclick="openCity(event, 'Main')" id="main-tab">Main</button>
+                <button class="tablinks" onclick="openCity(event, 'Forward')">Forward</button>
+                <button class="tablinks" onclick="openCity(event, 'Back')">Back</button>
+            </div>
+
+            <div id="Main" class="tabcontent active">
+                <label><input type="number" id="ws-interval" class="param" value="500"> ws-interval</label><br>
+                <label><input type="number" id="main-interval" class="param" value="20"> main-interval</label><br>
+            </div>
+
+            <div id="Forward" class="tabcontent">
+                <label><input type="number" id="forward-speed" class="param" value="54"> forward-speed</label><br>
+                <label><input type="number" id="start-turn-dist" class="param" value="110"> start-turn-dist</label><br>
+                <label><input type="number" id="full-turn-dist" class="param" value="80"> full-turn-dist</label><br>
+                <label><input type="number" id="turbo-mode-dist" class="param" value="110"> turbo-mode-dist</label><br>
+                <label><input type="number" id="wall-dist" class="param" value="15"> wall-dist</label><br>
+                <label><input type="number" id="persecution-dist" class="param" value="50"> persecution-dist</label><br>
+            </div>
+
+            <div id="Back" class="tabcontent">
+                <h3>Tokyo</h3>
+                <p>Tokyo is the capital of Japan.</p>
+            </div>
+            <input type="button" class="btn-command" id="btn-send" value="Send" data-command="SEND">
+        </div>
+
+
+        <div id="config" class="block">
+            <input type="text" id="ip" value="ws://192.168.1.215/ws">
+            <input type="button" id="btn-connect" value="Connect">
+        </div>
+    </div>
+</div>
+<script src="Chart.min.js"></script>
+<script>
+    (function () {
+
+
+        Chart.defaults.global.animation.duration = 10;
+
+        const ctx = document.getElementById('myChart').getContext('2d');
+        const myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['L', 'L45', 'FL', 'FC', 'FR', 'R45', 'R'],
+                datasets: [{
+                    label: 'Distance',
+                    data: [],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                duration: 10,
+                // responsive: true,
+                // maintainAspectRatio: false,
+                // responsiveAnimationDuration: 0,
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            suggestedMax: 120
+                        }
+                    }]
+                }
+            }
+        });
+
+
+        let socket;
+
+        let wsReconnectTimeoutId = null;
+
+        document.querySelector('#btn-connect').addEventListener('click', function () {
+            createConnection();
+        });
+
+        function processData(data) {
+            // document.getElementById('content').innerHTML = JSON.stringify(data);
+
+            if (data['t'] === 'd' || data['t'] === undefined) {
+                myChart.data.datasets[0].data = [
+                    data['l'], data['l45'], data['fl'], data['fc'],
+                    data['fr'], data['r45'], data['r'],
+                ];
+                document.getElementById('content').innerHTML = 'angle = ' + data['a'] + ' power = ' +  data['p'];
+            } else if (data['t'] === 'p') {
+                document.getElementById('content').innerHTML = JSON.stringify(data);
+            }
+            myChart.update();
+
+        }
+
+        const button = document.querySelector('#btn-send');
+
+        function getIntFromInput(selectors) {
+            console.log(selectors);
+            return parseInt(document.querySelector(selectors).value);
+        }
+
+        button.addEventListener('click', function (event) {
+            const data = {
+                'ws-interval': getIntFromInput('#ws-interval'),
+                'main-interval': getIntFromInput('#main-interval'),
+                'forward-speed': getIntFromInput('#forward-speed'),
+                'start-turn-dist': getIntFromInput('#start-turn-dist'),
+                'full-turn-dist': getIntFromInput('#full-turn-dist'),
+                'turbo-mode-dist': getIntFromInput('#turbo-mode-dist'),
+                'wall-dist': getIntFromInput('#wall-dist'),
+                'persecution-dist': getIntFromInput('#persecution-dist'),
+            };
+            console.log(data);
+            socket && socket.send(JSON.stringify(data));
+        });
+
+        let params = document.getElementsByClassName("param");
+        for (let i = 0; i < params.length; i++) {
+            params[i].onblur = function (event) {
+                const data = {};
+                data[params[i].id] = params[i].value;
+                console.log(data);
+                socket && socket.send(JSON.stringify(data));
+
+            };
+        }
+
+
+        createConnection();
+
+
+        function createConnection() {
+            const url = document.querySelector('#ip').value;
+            socket = new WebSocket(url);
+
+            function onOpen(event) {
+                console.log('connected', event);
+                document.querySelector('#config').setAttribute('style', 'display: none');
+                document.querySelector('#control').setAttribute('style', 'display: visible');
+            }
+
+            function onClose(event) {
+                console.log('disconnected', event);
+
+                removeListeners();
+                reconnect();
+            }
+
+            function onError(event) {
+                console.error('error', event);
+
+                removeListeners();
+                reconnect();
+            }
+
+            function onMessage(event) {
+                let data;
+
+                try {
+                    data = JSON.parse(event.data);
+                    // console.log(data);
+                } catch (error) {
+                    console.error('Message should have JSON format');
+                    return;
+                }
+
+                processData(data);
+            }
+
+            function removeListeners() {
+                socket.removeEventListener('open', onOpen);
+                socket.removeEventListener('close', onClose);
+                socket.removeEventListener('error', onError);
+                socket.removeEventListener('message', onMessage);
+            }
+
+            socket.addEventListener('open', onOpen);
+            socket.addEventListener('close', onClose);
+            socket.addEventListener('error', onError);
+            socket.addEventListener('message', onMessage);
+        }
+
+        function reconnect() {
+            if (wsReconnectTimeoutId) {
+                clearTimeout(wsReconnectTimeoutId);
+            }
+
+            console.log('attempt to reconnect');
+
+            wsReconnectTimeoutId = setTimeout(createConnection, 1000);
+        }
+    })();
+</script>
+
+<script>
+    function openCity(evt, cityName) {
+        let tabContent = document.getElementsByClassName("tabcontent");
+        for (let i = 0; i < tabContent.length; i++) {
+            tabContent[i].style.display = "none";
+        }
+        let tabLinks = document.getElementsByClassName("tablinks");
+        for (let i = 0; i < tabLinks.length; i++) {
+            tabLinks[i].className = tabLinks[i].className.replace(" active", "");
+        }
+        document.getElementById(cityName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+
+    document.getElementById("main-tab").click();
+</script>
+</body>
+</html>

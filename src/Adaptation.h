@@ -6,7 +6,7 @@ public:
 
     ValueInt *valueInt;
 
-    Adaptation(const int value = 0, const int educationTime = 10, const int step = 1) :
+    explicit Adaptation(const int value = 0, const int educationTime = 10, const int step = 1) :
             educationTime(educationTime),
             step(step) {
         valueInt = new ValueInt(value);
@@ -24,6 +24,11 @@ public:
     }
 
     bool adapted = false;
+
+    void resetValue(int value) {
+        valueInt->value = value;
+        init();
+    }
 
 private:
     int testValue;

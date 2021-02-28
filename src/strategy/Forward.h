@@ -20,12 +20,12 @@ private:
 
 public:
 
-    ValueInt *distStartTurn = new ValueInt(130);
-    ValueInt *distFullTurn = new ValueInt(90);
+    ValueInt *distStartTurn = new ValueInt(110);
+    ValueInt *distFullTurn = new ValueInt(80);
 
-    ValueInt *turboModeDist = new ValueInt(130);
+    ValueInt *turboModeDist = new ValueInt(110);
 
-    Adaptation *forwardSpeed = new Adaptation(56, 20, 1);
+    Adaptation *forwardSpeed = new Adaptation(56, 20, 4);
 
     ValueInt *distWall = new ValueInt(15);
 
@@ -64,87 +64,21 @@ public:
 
     virtual void calc(SensorsHolder *sensors) final {
 
-
-            int sum = sensors->leftDistance + sensors->left45Distance /*+ sensors->forwardLeftDistance*/
-                      - sensors->rightDistance - sensors->right45Distance /*- sensors->forwardRightDistance*/;
-//
-//            angle = map(sum, -120, 120, Mechanics::FULL_RIGHT, Mechanics::FULL_LEFT);
-
         power = forwardSpeed->adaptedValue();
 
-//            if (sensors->leftDistance + sensors->left45Distance <
-//                sensors->rightDistance + sensors->right45Distance) {
-//                angle = Mechanics::FULL_RIGHT;
-//            } else {
-//                angle = Mechanics::FULL_LEFT;
-//            }
+        int sum = -sensors->right45Distance - sensors->rightDistance / 2
+                  + sensors->left45Distance + sensors->leftDistance / 2;
 
-        if (sensors->rightDistance > 90) {
-            angle = Mechanics::FULL_RIGHT;
-        } else if (sensors->leftDistance > 90) {
-            angle = Mechanics::FULL_LEFT;
-        } else if ( sensors->right45Distance > 100) {
-            angle = Mechanics::FULL_RIGHT;
-        } else if (sensors->left45Distance > 100) {
-            angle = Mechanics::FULL_LEFT;
-        } else {
-//            angle = getAngleSign(sensors->rightDistance + sensors->right45Distance,
-//                                 sensors->leftDistance + sensors->left45Distance);
+        sum = constrain(sum, -100, 100);
 
-//            int minAngle = map(sensors->maxForwardDistance,
-//                               100, 200,
-//                               10, 0);
-
-            int maxTurn = 15;
-
-            int minAngle = map(sum, -200, 200, -maxTurn, maxTurn);
-
-            angle = angle * minAngle;
-            angle = constrain(angle, -maxTurn, maxTurn);
-        }
+        angle = (int) map(sum, -100, 100, Mechanics::FULL_RIGHT, Mechanics::FULL_LEFT);
 
 
-/*
-        if (sensors->maxForwardDistance < distStartTurn->value) {
+        Serial.printf("sum = %d  angle = %d  power = %d \n", sum, angle, power);
 
-            angle = getAngleSign(sensors->rightDistance + sensors->right45Distance,
-                                 sensors->leftDistance + sensors->left45Distance);
+//        checkPersecution(sensors);
 
-            int minAngle = map(sensors->maxForwardDistance,
-                               distStartTurn->value, distFullTurn->value,
-                               0, Mechanics::TURN_MAX_ANGLE);
-            angle = angle * minAngle;
-        } else {
-            angle = getAngleSign(sensors->rightDistance + sensors->right45Distance,
-                                 sensors->leftDistance + sensors->left45Distance);
-
-            int minAngle = map(sensors->maxForwardDistance,
-                               100, 200,
-                               10, 0);
-            angle = angle * minAngle;
-            angle = constrain(angle, -10, 10);
-        }*/
-
-//        if (speed > power) {
-//            angle = min(angle, 20);
-//        }
-
-//        if (stopwatch->isLessThan(300, MS)) {
-//            angle = min(angle, 15);
-//        }
-/*
-        if (sensors->leftDistance > 70) {
-            rotation = Mechanics::FULL_LEFT;
-        } else if (sensors->rightDistance > 70) {
-            rotation = Mechanics::FULL_RIGHT;
-        } else {
-            rotation = 0;
-        }
-*/
-
-        checkPersecution(sensors);
-
-        rotationHelper->placeVector(angle, power);
+//        rotationHelper->placeVector(angle, power);
     }
 
 

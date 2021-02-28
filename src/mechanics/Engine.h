@@ -1,7 +1,7 @@
 #ifndef ROBORACE_ENGINE_H
 #define ROBORACE_ENGINE_H
 
-#include "PWMServo.h"
+#include "ServoWrapper.h"
 #include "EngineHelper.h"
 
 /**
@@ -21,13 +21,13 @@ public:
 
     static const int ENGINE_INIT_DELAY = 1500;
 
-    Engine(PWMServo *servo) : servo(servo) {
+    explicit Engine(ServoWrapper *servo) : servo(servo) {
         stop();
+        finishInit = millis() + ENGINE_INIT_DELAY;
     }
 
     void init() const {
         stop();
-        delay(ENGINE_INIT_DELAY);
     }
 
     void forward(int power) {
@@ -49,9 +49,12 @@ public:
     EngineHelper *engineHelper = new EngineHelper();
 
 private:
-    PWMServo *servo;
+    ServoWrapper *servo;
+    unsigned long finishInit;
 
     void run(int power) const {
+        if (millis() < finishInit) power = 0;
+
         servo->writeMicroseconds(DEFAULT_PULSE_WIDTH + engineHelper->get(power));
     };
 

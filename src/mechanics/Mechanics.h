@@ -1,12 +1,10 @@
-#ifndef ROBORACE_MECHANICS_H
-#define ROBORACE_MECHANICS_H
+#pragma once
 
 #include "Engine.h"
 #include "VoltageDivider.h"
-#include "ServoWrapperPWM.h"
 
-#define TURN_SERVO_PIN SERVO_PIN_B // 10
-#define ENGINE_PIN SERVO_PIN_A // 9
+#define TURN_SERVO_PIN GPIO_NUM_12
+#define ENGINE_PIN GPIO_NUM_14
 
 /**
  * ___  ___          _                 _
@@ -27,15 +25,14 @@ public:
     ValueInt *turnMaxAngle = new ValueInt(TURN_MAX_ANGLE);
     ValueInt *turnCentralPosition = new ValueInt(94); // 93
 
-//    VoltageDivider logicVoltage = VoltageDivider(A6, 2);
-//    VoltageDivider engineVoltage = VoltageDivider(A7, 3);
+    VoltageDivider battery = VoltageDivider(GPIO_NUM_2, 10);
 
     Mechanics() {
         stop();
     }
 
-    Engine *engine = new Engine(new ServoWrapperPWM(ENGINE_PIN));
-    ServoWrapperPWM *turnServo = new ServoWrapperPWM(TURN_SERVO_PIN);
+    Engine *engine = new Engine(new ServoWrapper(ENGINE_PIN));
+    ServoWrapper *turnServo = new ServoWrapper(TURN_SERVO_PIN);
 
     void stop() {
         run(0, 0);
@@ -63,5 +60,3 @@ public:
         engine->backward(power);
     }
 };
-
-#endif

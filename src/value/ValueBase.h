@@ -76,7 +76,7 @@ public:
         byte data[sizeof(int)];
         memcpy(data, &value, sizeof(value));
         for (unsigned int i = 0; i < sizeof(data); ++i) {
-            EEPROM.update(address++, data[i]);
+// TODO fix           EEPROM.update(address++, data[i]);
         }
     };
 };

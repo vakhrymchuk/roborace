@@ -18,6 +18,33 @@
 
 #endif
 
+
+byte checkWire(TwoWire wire) {
+    byte working = 0;
+    byte count = 0;
+    wire.begin();
+//    for (byte i = 8; i < 120; i++) {
+    for (byte i = 0x28; i < 0x71; i++) {
+        wire.beginTransmission(i);
+        if (wire.endTransmission() == 0) {
+//            Serial.print("Found address: ");
+            Serial.print(i, DEC);
+            Serial.print(" (0x");
+            Serial.print(i, HEX);
+            Serial.print(") ");
+            count++;
+            delay(10);
+            working = i;
+        }
+    }
+//    Serial.println("Done.");
+    Serial.print("Found ");
+    Serial.print(count, DEC);
+    Serial.println(" device(s).");
+//    wire.end();
+    return working;
+}
+
 /**
  *  _____                                _   _       _     _
  * /  ___|                              | | | |     | |   | |
@@ -34,7 +61,7 @@ public:
     static const bool USE_MEDIAN_FILTER = false;
     static const bool USE_KALMAN_FILTER = false;
 
-    int forwardLeftDistance, forwardRightDistance;
+    int forwardLeftDistance, forwardRightDistance, forwardCenterDistance;
     int leftDistance, rightDistance;
     int left45Distance, right45Distance;
 
@@ -45,20 +72,23 @@ public:
     int maxDistance, minDistance;
 
 #if defined VL53
-    TCA9548A i2cMux;
+    TCA9548A *i2cMux;
 #endif
     TimingFilter *forwardRightSensor;
     TimingFilter *forwardLeftSensor;
+    TimingFilter *forwardCenterSensor;
     TimingFilter *rightSensor;
     TimingFilter *leftSensor;
     TimingFilter *right45Sensor;
     TimingFilter *left45Sensor;
 
+public:
+
     SensorsHolder() {
-        initSensors();
+        createSensors();
     }
 
-    void initSensors();
+    void createSensors();
 
     void readDistances();
 
@@ -81,15 +111,18 @@ private:
         return new TimingFilter(distanceSensor);
     }
 
-    Vl53l1xSensorI2cMux *createSensor1(int channel) const;
+    Vl53l1xSensorI2cMux *createSensor1(byte channel) const;
 
-    Vl53l0xSensorI2cMux *createSensor0(int channel) const;
+    Vl53l0xSensorI2cMux *createSensor0(byte channel) const;
 };
 
 void SensorsHolder::readDistances() {
 
+//    checkWire(Wire);
+
     forwardRightDistance = forwardRightSensor->getDistance();
     forwardLeftDistance = forwardLeftSensor->getDistance();
+    forwardCenterDistance = forwardCenterSensor->getDistance();
     rightDistance = rightSensor->getDistance();
     leftDistance = leftSensor->getDistance();
     right45Distance = right45Sensor->getDistance();
@@ -102,12 +135,14 @@ void SensorsHolder::readDistances() {
 
 void SensorsHolder::calcMaxDistance() {
     maxForwardDistance = max(forwardLeftDistance, forwardRightDistance);
+    maxForwardDistance = max(maxForwardDistance, forwardCenterDistance);
     maxSideDistance = max(left45Distance, right45Distance);
     maxDistance = max(maxForwardDistance, maxSideDistance);
 }
 
 void SensorsHolder::calcMinDistance() {
     minForwardDistance = min(forwardLeftDistance, forwardRightDistance);
+//    minForwardDistance = min(minForwardDistance, forwardCenterDistance);
     minSideDistance = min(left45Distance, right45Distance);
     minDistance = min(minForwardDistance, minSideDistance);
 }
@@ -121,7 +156,7 @@ bool SensorsHolder::isSamePlace(unsigned long ms) const {
 }
 
 
-void SensorsHolder::initSensors() {
+void SensorsHolder::createSensors() {
 #if defined FREE_RUN_MODE
     ADC_setup();
 #endif
@@ -131,26 +166,32 @@ void SensorsHolder::initSensors() {
     leftSensor = createSensor(new Sharp10_150(A1));
     forwardRightSensor = createSensor(new Sharp10_150(A0));
 #elif defined VL53
-    i2cMux.begin(Wire);
-    i2cMux.closeAll();
-    forwardRightSensor = createSensor(createSensor1(5));
-    forwardLeftSensor = createSensor(createSensor1(1));
+//    checkWire(Wire);
+
+    i2cMux = new TCA9548A();
+    i2cMux->begin(Wire);
+    i2cMux->closeAll();
+    forwardRightSensor = createSensor(createSensor0(5));
+    forwardLeftSensor = createSensor(createSensor0(1));
+    forwardCenterSensor = createSensor(createSensor1(3));
     rightSensor = createSensor(createSensor0(7));
-    leftSensor = createSensor(createSensor0(0));
     right45Sensor = createSensor(createSensor0(2));
     left45Sensor = createSensor(createSensor0(4));
-
+    leftSensor = createSensor(createSensor0(0));
+#endif
+#ifdef DEBUG
+    Serial.println(F("Sensors inited"));
 #endif
 }
 
-Vl53l0xSensorI2cMux *SensorsHolder::createSensor0(int channel) const {
-    Vl53l0xSensorI2cMux *sensor = new Vl53l0xSensorI2cMux(channel, &i2cMux);
+Vl53l0xSensorI2cMux *SensorsHolder::createSensor0(const byte channel) const {
+    auto *sensor = new Vl53l0xSensorI2cMux(channel, i2cMux);
     sensor->initSensor();
     return sensor;
 }
 
-Vl53l1xSensorI2cMux *SensorsHolder::createSensor1(int channel) const {
-    Vl53l1xSensorI2cMux *sensor = new Vl53l1xSensorI2cMux(channel, &i2cMux);
+Vl53l1xSensorI2cMux *SensorsHolder::createSensor1(const byte channel) const {
+    auto *sensor = new Vl53l1xSensorI2cMux(channel, i2cMux);
     sensor->initSensor();
     return sensor;
 }

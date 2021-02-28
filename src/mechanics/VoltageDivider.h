@@ -5,6 +5,8 @@
 
 class VoltageDivider {
 public:
+    static constexpr double ADC_VOLTAGE = 3.3;
+
     VoltageDivider(const byte pin, const byte degree) : pin(pin), degree(degree) {
         value.set(readFloat());
     }
@@ -14,7 +16,7 @@ public:
     }
 
     float readFloat() const {
-        return degree * readSource() * 5.0 / 1024;
+        return degree * readSource() * ADC_VOLTAGE / 1024;
     }
 
     float readFloatKalman() {

@@ -5,15 +5,17 @@
 
 class Turbo : public Strategy {
 
-private:
+public:
 
-    ValueInt *turboModeDisableDist = new ValueInt(130);
+    static const int MAX_DIST = 200;
 
-    ValueInt *turboMaxTurn = new ValueInt(10);
+    ValueInt *turboModeDisableDist = new ValueInt(110);
+
+    ValueInt *turboMaxTurn = new ValueInt(4);
 
     ValueInt *speed = new ValueInt(60);
 
-    Adaptation *forwardAcceleration = new Adaptation(4, 20, 1);
+    Adaptation *forwardAcceleration = new Adaptation(20, 20, 4);
 
 
 public:
@@ -37,10 +39,10 @@ public:
     }
 
     virtual void calc(SensorsHolder *sensors) final {
-        power = speed->value;
 
-        int sum = sensors->leftDistance/2 + sensors->left45Distance /*+ sensors->forwardLeftDistance / 3*/
-                  - sensors->rightDistance/2 - sensors->right45Distance /*- sensors->forwardRightDistance / 3*/;
+
+        int sum = sensors->leftDistance / 2 + sensors->left45Distance + sensors->forwardLeftDistance / 10
+                  - sensors->rightDistance / 2 - sensors->right45Distance - sensors->forwardRightDistance / 10;
 
         angle = map(sum, -100, 100, -turboMaxTurn->value, turboMaxTurn->value);
         angle = constrain(angle, -turboMaxTurn->value, turboMaxTurn->value);
@@ -50,25 +52,10 @@ public:
 //        }
 
 
+        power = speed->value;
         power += (int) map(sensors->maxForwardDistance,
-                           turboModeDisableDist->value, 200,
+                           turboModeDisableDist->value, MAX_DIST,
                            0, forwardAcceleration->adaptedValue());
-
-
-//        angle = getAngleSign(sensors->rightDistance, sensors->leftDistance);
-
-//        angle = angle * (int) map(sensors->minForwardDistance,
-//                                  turboModeDist->value, 150,
-//                                  turboMaxTurn->value, 0);
-//            angle = angle * turboMaxTurn->value;
-//        if (sensors->rightDistance + sensors->right45Distance >
-//            sensors->leftDistance + sensors->left45Distance) {
-//            angle = -turboMaxTurn->value;
-//        } else {
-//            angle = turboMaxTurn->value;
-//        }
-
-//        angle = limitMaxAngle(angle, turboMaxTurn->value);
 
     }
 

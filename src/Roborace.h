@@ -25,6 +25,7 @@ class Roborace {
 public:
 
     static const int RUN_INTERVAL_MS = 20;
+    unsigned int fps = 0;
 
     Roborace() {
         mechanics->init();
@@ -35,7 +36,7 @@ public:
 
 protected:
 
-    Interval *mainLoopChange = new Interval(RUN_INTERVAL_MS);
+    IntervalValue *mainLoopChange = new IntervalValue(new ValueInt(RUN_INTERVAL_MS));
 
     Mechanics *mechanics = new Mechanics();
 
@@ -45,8 +46,8 @@ protected:
     Turbo *turbo = new Turbo;
     Backward *backward = new Backward;
     Rotate *rotate = new Rotate;
-    RightWall *rightWall = new RightWall;
-    LeftWall *leftWall = new LeftWall;
+//    RightWall *rightWall = new RightWall;
+//    LeftWall *leftWall = new LeftWall;
     Strategy *activeStrategy;
 
     boolean enabled = true;
@@ -65,8 +66,8 @@ void Roborace::initStrategies() {
     forward->turbo = turbo;
     forward->backward = backward;
     forward->rotate = rotate;
-    forward->rightWall = rightWall;
-    forward->leftWall = leftWall;
+//    forward->rightWall = rightWall;
+//    forward->leftWall = leftWall;
 
     turbo->forward = forward;
 
@@ -74,8 +75,8 @@ void Roborace::initStrategies() {
 
     rotate->forward = forward;
 
-    rightWall->forward = forward;
-    leftWall->forward = forward;
+//    rightWall->forward = forward;
+//    leftWall->forward = forward;
 
     activeStrategy = forward->init(nullptr, 1000);
 //    activeStrategy = rightWall->init();
@@ -87,37 +88,44 @@ void Roborace::loop() {
 
     if (!mainLoopChange->isReady()) return;
 
+    fps++;
 #ifdef DEBUG
     unsigned long start = micros();
 #endif
 
     sensors->readDistances();
-    if (sensors->isSamePlace(6000)) {
-        mechanics->stop();
-        sensors->initSensors();
-    }
+    unsigned long finish = micros();
+
+//    if (sensors->isSamePlace(6000)) {
+//        mechanics->stop();
+//        sensors->createSensors();
+//    }
     activeStrategy = activeStrategy->check(sensors);
     activeStrategy->calc(sensors);
     activeStrategy->run(mechanics);
 
 #ifdef DEBUG
-    unsigned long finish = micros();
+
     if (debugInterval.isReady()) {
-        char buffer[100];
+        char buffer[200];
+        fps = fps * 1000 / debugInterval.getInterval();
         sprintf(buffer,
-                "loop mcs =%4lu  FR =%3u  FL =%3u  R =%3u  L =%3u  R45 =%3u  L45 =%3u   ang =% 4d  pow =% 4d",
+                "loop fps = %u mcs = %4lu  L =%3u  L45 =%3u  FL =%3u  FC =%3u  FR =%3u  R45 =%3u  R =%3u   ang =% 4d  pow =% 4d",
+                fps,
                 finish - start,
-                sensors->forwardRightDistance,
-                sensors->forwardLeftDistance,
-                sensors->rightDistance,
                 sensors->leftDistance,
-                sensors->right45Distance,
                 sensors->left45Distance,
+                sensors->forwardLeftDistance,
+                sensors->forwardCenterDistance,
+                sensors->forwardRightDistance,
+                sensors->right45Distance,
+                sensors->rightDistance,
                 activeStrategy->angle,
                 activeStrategy->power
         );
         Serial.println(buffer);
         Serial.flush();
+        fps = 0;
     }
 #endif
 }
