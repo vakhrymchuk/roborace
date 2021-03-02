@@ -1,13 +1,16 @@
 #pragma once
 
-#include <KalmanFilterType.h>
+#include <mechanics/KalmanFilterType.h>
 
 class VoltageDivider {
 public:
-    static constexpr double ADC_VOLTAGE = 3.3;
+    static constexpr float ADC_VOLTAGE = 3.3;
+    static const int ADC_BITS = 4096;
+    static constexpr float ADC_KOEF = ADC_VOLTAGE / ADC_BITS;
 
     VoltageDivider(const byte pin, const byte degree) : pin(pin), degree(degree) {
         value.set(readFloat());
+        pinMode(pin, INPUT);
     }
 
     int readSource() const {
@@ -15,7 +18,7 @@ public:
     }
 
     float readFloat() const {
-        return degree * readSource() * ADC_VOLTAGE / 1024;
+        return ADC_KOEF * (float) (degree * readSource());
     }
 
     float readFloatKalman() {

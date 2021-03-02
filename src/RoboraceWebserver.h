@@ -82,9 +82,9 @@ public:
         paramHolder->add(mechanics->turnCentralPosition);
         paramHolder->add(mechanics->turnMaxAngle);
         paramHolder->add(mechanics->powerEnabled);
-        paramHolder->add(mechanics->engine->engineHelper->correctionFactor);
-        paramHolder->add(mechanics->engine->engineHelper->maxCorrectionRun);
-        paramHolder->add(mechanics->engine->engineHelper->maxCorrectionBrake);
+        paramHolder->add(mechanics->engine->speedCorrector->correctionFactor);
+        paramHolder->add(mechanics->engine->speedCorrector->maxCorrectionRun);
+        paramHolder->add(mechanics->engine->speedCorrector->maxCorrectionBrake);
 
         paramHolder->readAllEeprom();
     }
@@ -115,6 +115,7 @@ public:
         doc["p"] = activeStrategy->power;
         doc["s"] = mechanics->engine->getSpeed();
         doc["f"] = fpsLastValue;
+        doc["v"] = mechanics->battery.readFloatKalman();
         return doc;
     }
 

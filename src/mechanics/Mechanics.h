@@ -2,10 +2,11 @@
 
 #include "Engine.h"
 #include "VoltageDivider.h"
-#include <value/Param.h>
+#include "value/Param.h"
 
 #define TURN_SERVO_PIN GPIO_NUM_12
 #define ENGINE_PIN GPIO_NUM_14
+#define BATTERY_VOLTAGE_PIN GPIO_NUM_35
 
 class Mechanics {
 public:
@@ -20,14 +21,14 @@ public:
     Param *turnMaxAngle = new Param(TURN_MAX_ANGLE, "servo-max-turn", "mechanics");
     Param *turnCentralPosition = new Param(94, "servo-center", "mechanics");
 
-    VoltageDivider battery = VoltageDivider(GPIO_NUM_2, 10);
+    VoltageDivider battery = VoltageDivider(BATTERY_VOLTAGE_PIN, 10);
 
     Mechanics() {
         stop();
     }
 
-    Engine *engine = new Engine(new ServoWrapper(ENGINE_PIN));
-    ServoWrapper *turnServo = new ServoWrapper(TURN_SERVO_PIN);
+    Engine *engine = new Engine(new ServoWrapperEsp32(ENGINE_PIN));
+    ServoWrapperEsp32 *turnServo = new ServoWrapperEsp32(TURN_SERVO_PIN);
 
     void stop() {
         run(0, 0);
@@ -39,16 +40,14 @@ public:
 
     void run(int angle, int power) {
         turnWheels(angle);
-        if (!powerEnabled) power = 0;
+        if (!powerEnabled->value) power = 0;
         engine->forward(power);
     }
 
 private:
-    void turnWheels(int angle) {
-        if (!servoEnabled) {
-            angle = 0;
-            Serial.println("Servo is disabled!");
-        }
+    void turnWheels(int angle) const {
+        if (!servoEnabled->value) angle = 0;
+
         int a = constrain(angle, -turnMaxAngle->value, turnMaxAngle->value);
         turnServo->write(turnCentralPosition->value + a);
     }

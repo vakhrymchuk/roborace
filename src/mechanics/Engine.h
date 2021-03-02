@@ -1,7 +1,8 @@
 #pragma once
 
-#include "ServoWrapper.h"
-#include "EngineHelper.h"
+#include <Timeout.h>
+#include "ServoWrapperEsp32.h"
+#include "SpeedCorrector.h"
 
 /**
  * Run a collector engine as a servo.
@@ -11,9 +12,9 @@ public:
 
     static const int ENGINE_INIT_DELAY = 1500;
 
-    explicit Engine(ServoWrapper *servo) : servo(servo) {
+    explicit Engine(ServoWrapperEsp32 *servo) : servo(servo) {
         stop();
-        finishInit = millis() + ENGINE_INIT_DELAY;
+        finishTimeout.start(ENGINE_INIT_DELAY);
     }
 
     void init() const {
@@ -32,20 +33,20 @@ public:
         run(0);
     }
 
-    int getSpeed() {
-        return engineHelper->getSpeed();
+    int getSpeed() const {
+        return speedCorrector->getSpeed();
     }
 
-    EngineHelper *engineHelper = new EngineHelper();
+    SpeedCorrector *speedCorrector = new SpeedCorrector();
 
 private:
-    ServoWrapper *servo;
-    unsigned long finishInit;
+    ServoWrapperEsp32 *servo;
+    Timeout finishTimeout;
 
     void run(int power) const {
-        if (millis() < finishInit) power = 0;
+        if (!finishTimeout.isReady()) power = 0;
 
-        servo->writeMicroseconds(DEFAULT_PULSE_WIDTH + engineHelper->get(power));
+        servo->writeMicroseconds(DEFAULT_PULSE_WIDTH + speedCorrector->get(power));
     };
 
 };

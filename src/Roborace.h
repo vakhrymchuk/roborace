@@ -40,7 +40,7 @@ protected:
     Rotate *rotate = new Rotate;
 //    RightWall *rightWall = new RightWall;
 //    LeftWall *leftWall = new LeftWall;
-    Strategy *activeStrategy;
+    Strategy *activeStrategy = forward;
 
     boolean enabled = true;
 
@@ -108,7 +108,7 @@ void Roborace::loop() {
     if (debugInterval->isReady()) {
 
         Serial.printf(
-                "loop fps = %u ms = %4lu read0 = %4lu read1 = %4lu    L =%3u  L45 =%3u  FL =%3u  FC =%3u  FR =%3u  R45 =%3u  R =%3u   ang =% 4d  pow =% 4d\n",
+                "loop fps = %u ms = %4lu read0 = %4lu read1 = %4lu    L =%3u  L45 =%3u  FL =%3u  FC =%3u  FR =%3u  R45 =%3u  R =%3u   ang =% 4d  pow =% 4d  v=%.2f\n",
                 fpsLastValue,
                 loopTime,
                 sensors->read0Time,
@@ -121,7 +121,8 @@ void Roborace::loop() {
                 sensors->right45Distance,
                 sensors->rightDistance,
                 activeStrategy->angle,
-                activeStrategy->power
+                activeStrategy->power,
+                mechanics->battery.readFloatKalman()
         );
     }
 #endif

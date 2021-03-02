@@ -1,17 +1,17 @@
 #pragma once
 
 
-class EngineHelper {
+class SpeedCorrector {
 public:
 
     /** 20*20ms = 400 ms */
     static const int SIZE = 20;
 
-    Param *maxCorrectionRun = new Param(5, "correction-run", "mechanics");
-    Param *maxCorrectionBrake = new Param(5, "correction-brake", "mechanics");
-    Param *correctionFactor = new Param(5, "correction-factor", "mechanics");
+    Param *maxCorrectionRun = new Param(10, "correction-run", "mechanics");
+    Param *maxCorrectionBrake = new Param(10, "correction-brake", "mechanics");
+    Param *correctionFactor = new Param(1, "correction-factor", "mechanics");
 
-    EngineHelper() {
+    SpeedCorrector() {
         for (int &i : arr) {
             i = 0;
         }
@@ -51,9 +51,6 @@ private:
 
     int getCorrection(int power) const {
         int correction = correctionFactor->value * (power - getSpeed());
-        if (power > 0) {
-            return constrain(correction, -maxCorrectionBrake->value, maxCorrectionRun->value);
-        }
-        return constrain(correction, -maxCorrectionRun->value, maxCorrectionBrake->value);
+        return constrain(correction, -maxCorrectionBrake->value, maxCorrectionRun->value);
     }
 };

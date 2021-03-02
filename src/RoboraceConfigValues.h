@@ -27,9 +27,9 @@ void RoboraceConfigValues::initValueEditor() {
 //    valueEditor->add(mechanics->turnMaxAngle, "TURN MAX ANGLE");
 //    valueEditor->add(mechanics->turnCentralPosition, "TURN CENTRAL POSITION");
 
-//    valueEditor->add(mechanics->engine->engineHelper->maxCorrectionRun, "ENG MAX COR RUN");
-//    valueEditor->add(mechanics->engine->engineHelper->maxCorrectionBrake, "ENG MAX COR BRAKE");
-//    valueEditor->add(mechanics->engine->engineHelper->correctionFactor, "ENG COR FACTOR");
+//    valueEditor->add(mechanics->engine->speedCorrector->maxCorrectionRun, "ENG MAX COR RUN");
+//    valueEditor->add(mechanics->engine->speedCorrector->maxCorrectionBrake, "ENG MAX COR BRAKE");
+//    valueEditor->add(mechanics->engine->speedCorrector->correctionFactor, "ENG COR FACTOR");
 
 //    valueEditor->add(&kalmanFactorValue, "KALMAN FACTOR");
 

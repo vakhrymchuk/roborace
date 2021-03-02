@@ -109,9 +109,11 @@
                 data['l'], data['l45'], data['fl'], data['fc'],
                 data['fr'], data['r45'], data['r'], data['f'],
             ];
-            document.getElementById('content').innerHTML = 'angle = ' + data['a']
+            document.getElementById('content').innerHTML =
+                'angle = ' + data['a']
                 + ' power = ' + data['p']
-                + ' turboSpeed = ' + data['s']
+                + ' speed = ' + data['s']
+                + ' voltage = ' + data['v'].toFixed(1)
             ;
         } else if (data['t'] === 'p') {
             createTabs(data);
