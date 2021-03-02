@@ -1,19 +1,11 @@
-#ifndef ROBORACE_FORWARD_H
-#define ROBORACE_FORWARD_H
+#pragma once
 
 #include <value/Param.h>
 #include "Strategy.h"
 #include "Adaptation.h"
 #include "RotationHelper.h"
 
-/**
- *  ______ ___________ _    _  ___  ____________
- *  |  ___|  _  | ___ \ |  | |/ _ \ | ___ \  _  \
- *  | |_  | | | | |_/ / |  | / /_\ \| |_/ / | | |
- *  |  _| | | | |    /| |/\| |  _  ||    /| | | |
- *  | |   \ \_/ / |\ \\  /\  / | | || |\ \| |/ /
- *  \_|    \___/\_| \_|\/  \/\_| |_/\_| \_|___/
- */
+
 class Forward : public Strategy {
 private:
 
@@ -21,16 +13,19 @@ private:
 
 public:
 
-    Param *distStartTurn = new Param(110);
-    Param *distFullTurn = new Param(80);
+//    Param *distFullTurn = new Param(80);
+    Param *side45SensorsKoef = new Param(100, "side-45-sensors-koef", "forward");
+    Param *sideSensorsKoef = new Param(10, "side-sensors-koef", "forward");
+    Param *maxSum = new Param(100, "max-sum", "forward");
 
-    Param *turboModeDist = new Param(110);
+    Param *turboModeDist = new Param(110, "turbo-mode-dist", "forward");
 
-    Adaptation *forwardSpeed = new Adaptation(56, 20, 4);
+    Param *speed = new Param(56, "forward-speed", "forward");
+    Adaptation *forwardSpeed = new Adaptation(speed, 20, 4);
 
-    Param *distWall = new Param(15);
+    Param *distWall = new Param(15, "wall-dist", "forward");
 
-    Param *distPersecution = new Param(50);
+    Param *distPersecution = new Param(50, "persecution-dist", "forward");
 
 
     virtual Strategy *init(Strategy *callback, unsigned int minMs, int param = 0) final {
@@ -67,12 +62,13 @@ public:
 
         power = forwardSpeed->adaptedValue();
 
-        int sum = -sensors->right45Distance - sensors->rightDistance / 2
-                  + sensors->left45Distance + sensors->leftDistance / 2;
+        int sum =
+                (sensors->left45Distance - sensors->right45Distance) * side45SensorsKoef->value / 100
+                + (sensors->leftDistance - sensors->rightDistance) * sideSensorsKoef->value / 100;
 
-        sum = constrain(sum, -100, 100);
+        sum = constrain(sum, -maxSum->value, maxSum->value);
 
-        angle = (int) map(sum, -100, 100, Mechanics::FULL_RIGHT, Mechanics::FULL_LEFT);
+        angle = (int) map(sum, -maxSum->value, maxSum->value, Mechanics::FULL_RIGHT, Mechanics::FULL_LEFT);
 
 
         Serial.printf("sum = %d  angle = %d  power = %d \n", sum, angle, power);
@@ -119,5 +115,3 @@ private:
                 ;
     }
 };
-
-#endif

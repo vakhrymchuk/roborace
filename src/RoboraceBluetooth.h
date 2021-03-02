@@ -24,8 +24,8 @@ private:
 
     HardwareSerial *bluetooth = &Serial;
 
-    IntervalValue *sendPackageInterval = new IntervalValue(new ValueInt(1000));
-    ValueInt *sendPackageValue = new ValueInt(0);
+    IntervalValue *sendPackageInterval = new IntervalValue(new Param(1000));
+    Param *sendPackageValue = new Param(0);
 
     void initBluetooth() const;
 
@@ -169,7 +169,7 @@ void RoboraceBluetooth::sendAdaptedValues() {
 
 void RoboraceBluetooth::checkAdaptation(Adaptation *adaptation, const char *string) const {
     if (adaptation->adapted) {
-        printValue(string, adaptation->valueInt->value);
+        printValue(string, adaptation->param->value);
         adaptation->adapted = false;
     }
 }

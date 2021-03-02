@@ -1,28 +1,18 @@
-#ifndef ROBORACE_ENGINE_HELPER_H
-#define ROBORACE_ENGINE_HELPER_H
+#pragma once
 
-/**
- *  _____            _            _   _      _
- * |  ___|          (_)          | | | |    | |
- * | |__ _ __   __ _ _ _ __   ___| |_| | ___| |_ __   ___ _ __
- * |  __| '_ \ / _` | | '_ \ / _ \  _  |/ _ \ | '_ \ / _ \ '__|
- * | |__| | | | (_| | | | | |  __/ | | |  __/ | |_) |  __/ |
- * \____/_| |_|\__, |_|_| |_|\___\_| |_/\___|_| .__/ \___|_|
- *              __/ |                         | |
- *             |___/                          |_|
- */
+
 class EngineHelper {
 public:
 
     /** 20*20ms = 400 ms */
     static const int SIZE = 20;
 
-    ValueInt *maxCorrectionRun = new ValueInt(5); // 50
-    ValueInt *maxCorrectionBrake = new ValueInt(5); // 50
-    ValueInt *correctionFactor = new ValueInt(5); // 10
+    Param *maxCorrectionRun = new Param(5, "correction-run", "mechanics");
+    Param *maxCorrectionBrake = new Param(5, "correction-brake", "mechanics");
+    Param *correctionFactor = new Param(5, "correction-factor", "mechanics");
 
     EngineHelper() {
-        for (long &i : arr) {
+        for (int &i : arr) {
             i = 0;
         }
     }
@@ -44,7 +34,7 @@ public:
 
 private:
 
-    long arr[SIZE]{};
+    int arr[SIZE]{};
 
     int sum = 0;
 
@@ -67,5 +57,3 @@ private:
         return constrain(correction, -maxCorrectionRun->value, maxCorrectionBrake->value);
     }
 };
-
-#endif

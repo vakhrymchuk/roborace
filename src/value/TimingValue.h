@@ -1,12 +1,11 @@
-#ifndef INTERVAL_VALUE_H
-#define INTERVAL_VALUE_H
+#pragma once
 
-#include "ValueBase.h"
+#include "Param.h"
 
 class IntervalValue {
 public:
 
-    explicit IntervalValue(ValueInt *value) : value(value) { }
+    explicit IntervalValue(Param *value) : value(value) {}
 
     bool isReady() {
         bool ready = millis() >= msReady;
@@ -20,41 +19,11 @@ public:
         msReady += value->value;
     }
 
-    ValueInt *getValueInt() {
-        return (ValueInt *) value;
+    Param *getParam() {
+        return (Param *) value;
     }
 
 private:
-    const ValueInt *value;
+    const Param *value;
     unsigned long msReady = 0;
 };
-
-
-class TimeoutValue {
-public:
-
-    TimeoutValue(ValueInt *value) : value(value) { }
-
-    bool isReady() const {
-        return millis() >= msReady;
-    }
-
-    void start(unsigned short timeout) {
-        msReady = millis() + timeout;
-    }
-
-    void start() {
-        msReady = millis() + value->value;
-    }
-
-    ValueInt *getValueInt() {
-        return (ValueInt *) value;
-    }
-
-private:
-    const ValueInt *value;
-
-    unsigned long msReady = 0;
-};
-
-#endif

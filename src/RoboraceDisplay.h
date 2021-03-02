@@ -51,27 +51,27 @@ RoboraceDisplay::RoboraceDisplay() : Roborace() {
 
     configButton = new ButtonPullUp(CONFIG_PIN);
 
-    configIntervalOut = new IntervalValue(new ValueInt(20));
+    configIntervalOut = new IntervalValue(new Param(20));
     valueEditor = new ValueEditor();
 
     joystick = new Joystick(A7, A7, 7);
 
-    paramChangeTimeout = new TimeoutValue(new ValueInt(PARAM_CHANGE_TIMEOUT));
-    valueChangeTimeout = new TimeoutValue(new ValueInt(VALUE_CHANGE_TIMEOUT));
+    paramChangeTimeout = new TimeoutValue(new Param(PARAM_CHANGE_TIMEOUT));
+    valueChangeTimeout = new TimeoutValue(new Param(VALUE_CHANGE_TIMEOUT));
 
     valueEditor->add(turnMaxAngle, "TURN MAX  ANGLE");
     valueEditor->add(forwardSpeed, "BACKWARD  SPEED");
     valueEditor->add(backwardSpeed, "FORWARD   SPEED");
 
-    valueEditor->add(mainLoopChange->getValueInt(), "RUN INTERVAL");
+    valueEditor->add(mainLoopChange->getParam(), "RUN INTERVAL");
 
     valueEditor->add(engine->avg->correctionFactor, "ENGINE COR FACTOR");
     valueEditor->add(engine->avg->maxCorrection, "MAX ENGINECORRECTION");
 
-    valueEditor->add(configIntervalOut->getValueInt(), "CONFIG    INTERVAL");
+    valueEditor->add(configIntervalOut->getParam(), "CONFIG    INTERVAL");
 
-    valueEditor->add(paramChangeTimeout->getValueInt(), "PARAM     CHANGE MS");
-    valueEditor->add(valueChangeTimeout->getValueInt(), "VALUE     CHANGE MS");
+    valueEditor->add(paramChangeTimeout->getParam(), "PARAM     CHANGE MS");
+    valueEditor->add(valueChangeTimeout->getParam(), "VALUE     CHANGE MS");
 
     valueEditor->add((ValueBase *) kalmanFactorValue, "KALMAN    FACTOR");
 
@@ -221,18 +221,18 @@ void RoboraceDisplay::processConfig() {
         if (joystick->readButton()) {
             valueEditor->getNext();
             paramChangeTimeout->start();
-//            valueChangeTimeout->start(paramChangeTimeout->getValueInt()->value);
+//            valueChangeTimeout->start(paramChangeTimeout->getParam()->value);
         }
 /*
         int y = joystick->readY();
         if (y < ANALOG_RESOLUTION_HALF - THRESHOLD) {
             valueEditor->prev();
             paramChangeTimeout->start();
-            valueChangeTimeout->start(paramChangeTimeout->getValueInt()->value);
+            valueChangeTimeout->start(paramChangeTimeout->getParam()->value);
         } else if (y > ANALOG_RESOLUTION_HALF + THRESHOLD) {
             valueEditor->next();
             paramChangeTimeout->start();
-            valueChangeTimeout->start(paramChangeTimeout->getValueInt()->value);
+            valueChangeTimeout->start(paramChangeTimeout->getParam()->value);
         }
 */
 

@@ -45,15 +45,7 @@ byte checkWire(TwoWire wire) {
     return working;
 }
 
-/**
- *  _____                                _   _       _     _
- * /  ___|                              | | | |     | |   | |
- * \ `--.  ___ _ __  ___  ___  _ __ ___ | |_| | ___ | | __| | ___ _ __
- *  `--. \/ _ \ '_ \/ __|/ _ \| '__/ __||  _  |/ _ \| |/ _` |/ _ \ '__|
- * /\__/ /  __/ | | \__ \ (_) | |  \__ \| | | | (_) | | (_| |  __/ |
- * \____/ \___|_| |_|___/\___/|_|  |___/\_| |_/\___/|_|\__,_|\___|_|
- *
- */
+
 class SensorsHolder {
 
 public:
@@ -61,15 +53,17 @@ public:
     static const bool USE_MEDIAN_FILTER = false;
     static const bool USE_KALMAN_FILTER = false;
 
-    int forwardLeftDistance, forwardRightDistance, forwardCenterDistance;
-    int leftDistance, rightDistance;
-    int left45Distance, right45Distance;
+    int forwardLeftDistance = 0, forwardRightDistance = 0, forwardCenterDistance = 0;
+    int leftDistance = 0, rightDistance = 0;
+    int left45Distance = 0, right45Distance = 0;
 
     int minForwardDistance, maxForwardDistance;
 
     int minSideDistance, maxSideDistance;
 
     int maxDistance, minDistance;
+
+    unsigned long read0Time, read1Time;
 
 #if defined VL53
     TCA9548A *i2cMux;
@@ -120,16 +114,27 @@ void SensorsHolder::readDistances() {
 
 //    checkWire(Wire);
 
+    unsigned long start = millis();
+
     forwardRightDistance = forwardRightSensor->getDistance();
     forwardLeftDistance = forwardLeftSensor->getDistance();
-    forwardCenterDistance = forwardCenterSensor->getDistance();
     rightDistance = rightSensor->getDistance();
     leftDistance = leftSensor->getDistance();
     right45Distance = right45Sensor->getDistance();
     left45Distance = left45Sensor->getDistance();
 
+    unsigned long read0Sensors = millis();
+
+    forwardCenterDistance = forwardCenterSensor->getDistance();
+
+
     calcMaxDistance();
     calcMinDistance();
+
+    unsigned long finish = millis();
+
+    read0Time = read0Sensors - start;
+    read1Time = finish - read0Sensors;
 }
 
 

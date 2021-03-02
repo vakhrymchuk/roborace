@@ -3,8 +3,12 @@
 class Param {
 public:
 
-    Param(int value) : value(value) {}
+    explicit Param(int value, String name = "", String group = "default") : value(value),
+                                                                            name(std::move(name)),
+                                                                            group(std::move(group)) {}
 
     int value;
+    String name;
+    String group;
 
 };

@@ -6,7 +6,7 @@
     const myChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['L', 'L45', 'FL', 'FC', 'FR', 'R45', 'R'],
+            labels: ['L', 'L45', 'FL', 'FC', 'FR', 'R45', 'R', 'FPS'],
             datasets: [{
                 label: 'Distance',
                 data: [],
@@ -107,11 +107,11 @@
         if (data['t'] === 'd' || data['t'] === undefined) {
             myChart.data.datasets[0].data = [
                 data['l'], data['l45'], data['fl'], data['fc'],
-                data['fr'], data['r45'], data['r'],
+                data['fr'], data['r45'], data['r'], data['f'],
             ];
             document.getElementById('content').innerHTML = 'angle = ' + data['a']
                 + ' power = ' + data['p']
-                + ' speed = ' + data['s']
+                + ' turboSpeed = ' + data['s']
             ;
         } else if (data['t'] === 'p') {
             createTabs(data);
@@ -121,21 +121,24 @@
     }
 
     const button = document.querySelector('#btn-send');
-
-    function getIntFromInput(selectors) {
-        console.log(selectors);
-        return parseInt(document.querySelector(selectors).value);
-    }
-
     button.addEventListener('click', function (event) {
         const data = {};
         let params = document.getElementsByClassName("param");
         for (let i = 0; i < params.length; i++) {
-            data[params[i].id] = params[i].value;
+            data[params[i].id] = parseInt(params[i].value);
         }
         console.log(data);
         socket && socket.send(JSON.stringify(data));
     });
+
+    let commands = document.getElementsByClassName("btn-command");
+    for (const command of commands) {
+        command.addEventListener('click', function (event) {
+            const data = {action: command.dataset.command};
+            console.log(data);
+            socket && socket.send(JSON.stringify(data));
+        });
+    }
 
 
     createConnection();

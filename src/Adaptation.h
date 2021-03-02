@@ -1,37 +1,32 @@
-#ifndef ROBORACE_ADAPTATION_H
-#define ROBORACE_ADAPTATION_H
+#pragma once
 
 class Adaptation {
 public:
 
-    ValueInt *valueInt;
+    Param *param;
 
-    explicit Adaptation(const int value = 0, const int educationTime = 10, const int step = 1) :
+    explicit Adaptation(Param *param, const int educationTime = 20, const int step = 1) :
+            param(param),
             educationTime(educationTime),
             step(step) {
-        valueInt = new ValueInt(value);
         init();
     }
 
     void init() {
         stopwatch->start();
-        testValue = valueInt->value;
+        if (testingNewValue) {
+            param->value -= step;
+        }
+        testingNewValue = false;
     }
 
     int adaptedValue() {
         process();
-        return testValue;
-    }
-
-    bool adapted = false;
-
-    void resetValue(int value) {
-        valueInt->value = value;
-        init();
+        return param->value;
     }
 
 private:
-    int testValue;
+    bool testingNewValue = false;
     const int educationTime;
     const int step;
 
@@ -39,15 +34,10 @@ private:
 
     void process() {
         if (stopwatch->isMoreThan(educationTime, SECOND)) {
-            if (testValue > valueInt->value) {
-                valueInt->value = testValue;
-                adapted = true;
-            }
+            testingNewValue = true;
             stopwatch->start();
-            testValue += step;
+            param->value += step;
         }
     }
 
 };
-
-#endif

@@ -9,13 +9,11 @@ public:
 
     static const int MAX_DIST = 200;
 
-    Param *turboModeDisableDist = new Param(110);
-
-    Param *turboMaxTurn = new Param(4);
-
-    Param *speed = new Param(60);
-
-    Adaptation *forwardAcceleration = new Adaptation(20, 20, 4);
+    Param *turboModeDisableDist = new Param(110, "turbo-disable-dist", "turbo");
+    Param *turboMaxTurn = new Param(4, "turbo-angle-max-turn", "turbo");
+    Param *turboSpeed = new Param(60, "turbo-speed", "turbo");
+    Param *acceleration = new Param(20, "turbo-accel", "turbo");
+    Adaptation *forwardAcceleration = new Adaptation(acceleration, 20, 4);
 
 
 public:
@@ -25,11 +23,11 @@ public:
 
     virtual Strategy *init(Strategy *callback, unsigned int minMs, int param = 0) final {
         Strategy::init(callback, minMs);
-//        forwardAcceleration->init();
+        forwardAcceleration->init();
         return this;
     }
 
-    virtual Strategy *check(SensorsHolder *sensors) final {
+    Strategy *check(SensorsHolder *sensors) final {
         if (minTimeout->isReady()) {
             if (isTurboFinish(sensors)) {
                 return callback->init(this);
@@ -38,21 +36,21 @@ public:
         return this;
     }
 
-    virtual void calc(SensorsHolder *sensors) final {
+    void calc(SensorsHolder *sensors) final {
 
 
         int sum = sensors->leftDistance / 2 + sensors->left45Distance + sensors->forwardLeftDistance / 10
                   - sensors->rightDistance / 2 - sensors->right45Distance - sensors->forwardRightDistance / 10;
 
-        angle = map(sum, -100, 100, -turboMaxTurn->value, turboMaxTurn->value);
+        angle = (int) map(sum, -100, 100, -turboMaxTurn->value, turboMaxTurn->value);
         angle = constrain(angle, -turboMaxTurn->value, turboMaxTurn->value);
 
 //        if (sensors->minForwardDistance > 150) {
-//            power = speed->value + 4;
+//            power = turboSpeed->value + 4;
 //        }
 
 
-        power = speed->value;
+        power = turboSpeed->value;
         power += (int) map(sensors->maxForwardDistance,
                            turboModeDisableDist->value, MAX_DIST,
                            0, forwardAcceleration->adaptedValue());

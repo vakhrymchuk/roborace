@@ -25,7 +25,8 @@ class Roborace {
 public:
 
     static const int RUN_INTERVAL_MS = 20;
-    unsigned int fps = 0;
+    unsigned int fpsCounter = 0;
+    unsigned int fpsLastValue = 0;
 
     Roborace() {
         mechanics->init();
@@ -36,7 +37,7 @@ public:
 
 protected:
 
-    IntervalValue *mainLoopChange = new IntervalValue(new ValueInt(RUN_INTERVAL_MS));
+    IntervalValue *mainLoopChange = new IntervalValue(new Param(RUN_INTERVAL_MS, "main-interval", "main"));
 
     Mechanics *mechanics = new Mechanics();
 
@@ -52,8 +53,9 @@ protected:
 
     boolean enabled = true;
 
+    Interval *fpsInterval = new Interval(1, SECOND);
 #ifdef DEBUG
-    Interval debugInterval = Interval(200);
+    IntervalValue *debugInterval = new IntervalValue(new Param(200, "debug-interval", "main"));
 #endif
 
 private:
@@ -88,13 +90,16 @@ void Roborace::loop() {
 
     if (!mainLoopChange->isReady()) return;
 
-    fps++;
-#ifdef DEBUG
-    unsigned long start = micros();
-#endif
+    fpsCounter++;
+    if (fpsInterval->isReady()) {
+        fpsLastValue = fpsCounter;
+        fpsCounter = 0;
+    }
+
+
+    unsigned long start = millis();
 
     sensors->readDistances();
-    unsigned long finish = micros();
 
 //    if (sensors->isSamePlace(6000)) {
 //        mechanics->stop();
@@ -104,15 +109,19 @@ void Roborace::loop() {
     activeStrategy->calc(sensors);
     activeStrategy->run(mechanics);
 
+    unsigned long finish = millis();
+    unsigned long loopTime = finish - start;
+
 #ifdef DEBUG
 
-    if (debugInterval.isReady()) {
-        char buffer[200];
-        fps = fps * 1000 / debugInterval.getInterval();
-        sprintf(buffer,
-                "loop fps = %u mcs = %4lu  L =%3u  L45 =%3u  FL =%3u  FC =%3u  FR =%3u  R45 =%3u  R =%3u   ang =% 4d  pow =% 4d",
-                fps,
-                finish - start,
+    if (debugInterval->isReady()) {
+
+        Serial.printf(
+                "loop fps = %u ms = %4lu read0 = %4lu read1 = %4lu    L =%3u  L45 =%3u  FL =%3u  FC =%3u  FR =%3u  R45 =%3u  R =%3u   ang =% 4d  pow =% 4d\n",
+                fpsLastValue,
+                loopTime,
+                sensors->read0Time,
+                sensors->read1Time,
                 sensors->leftDistance,
                 sensors->left45Distance,
                 sensors->forwardLeftDistance,
@@ -123,9 +132,6 @@ void Roborace::loop() {
                 activeStrategy->angle,
                 activeStrategy->power
         );
-        Serial.println(buffer);
-        Serial.flush();
-        fps = 0;
     }
 #endif
 }

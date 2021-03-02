@@ -4,6 +4,7 @@
 #include <ArduinoJson.h>
 #include <ESPAsyncWebServer.h>
 #include <value/TimingValue.h>
+#include <value/ParamHolder.h>
 #include "Roborace.h"
 
 
@@ -15,9 +16,13 @@ private:
     AsyncWebServer server = AsyncWebServer(80);
     AsyncWebSocket ws = AsyncWebSocket("/ws");
 
-    DynamicJsonDocument doc = DynamicJsonDocument(512);
+    DynamicJsonDocument doc = DynamicJsonDocument(256);
 
-    IntervalValue *wsInterval = new IntervalValue(new ValueInt(500));
+    IntervalValue *wsInterval = new IntervalValue(new Param(500, "ws-interval", "main"));
+
+    ParamHolder *paramHolder = new ParamHolder();
+
+    bool isNeedUpdateParams = false;
 
 
 public:
@@ -51,6 +56,37 @@ public:
 
         server.begin();
 
+        createParams();
+
+    }
+
+    void createParams() {
+        paramHolder->add(wsInterval->getParam());
+        paramHolder->add(mainLoopChange->getParam());
+        paramHolder->add(debugInterval->getParam());
+
+        paramHolder->add(forward->speed);
+        paramHolder->add(forward->turboModeDist);
+        paramHolder->add(forward->distWall);
+        paramHolder->add(forward->distPersecution);
+        paramHolder->add(forward->side45SensorsKoef);
+        paramHolder->add(forward->sideSensorsKoef);
+        paramHolder->add(forward->maxSum);
+
+        paramHolder->add(turbo->turboSpeed);
+        paramHolder->add(turbo->acceleration);
+        paramHolder->add(turbo->turboMaxTurn);
+        paramHolder->add(turbo->turboModeDisableDist);
+
+        paramHolder->add(mechanics->servoEnabled);
+        paramHolder->add(mechanics->turnCentralPosition);
+        paramHolder->add(mechanics->turnMaxAngle);
+        paramHolder->add(mechanics->powerEnabled);
+        paramHolder->add(mechanics->engine->engineHelper->correctionFactor);
+        paramHolder->add(mechanics->engine->engineHelper->maxCorrectionRun);
+        paramHolder->add(mechanics->engine->engineHelper->maxCorrectionBrake);
+
+        paramHolder->readAllEeprom();
     }
 
     void loopWs() {
@@ -58,6 +94,10 @@ public:
             String message;
             serializeJson(createMessage(), message);
             ws.textAll(message);
+        }
+        if (isNeedUpdateParams) {
+            sendParams();
+            isNeedUpdateParams = false;
         }
     }
 
@@ -74,6 +114,7 @@ public:
         doc["a"] = activeStrategy->angle;
         doc["p"] = activeStrategy->power;
         doc["s"] = mechanics->engine->getSpeed();
+        doc["f"] = fpsLastValue;
         return doc;
     }
 
@@ -97,37 +138,19 @@ public:
         }
     }
 
-    void sendParams(int clientId) {
+    String createMessageWithParams() {
         String message;
-        serializeJson(createMessageWithParams(), message);
+        serializeJson(paramHolder->createMessageWithParams(), message);
         Serial.println(message);
-        ws.text(clientId, message);
+        return message;
     }
 
-    DynamicJsonDocument createMessageWithParams() {
-        doc.clear();
-        doc["t"] = "p";
-        const JsonObject &main = doc.createNestedObject("main");
-        main["ws-interval"] = wsInterval->getValueInt()->value;
-        main["main-interval"] = mainLoopChange->getValueInt()->value;
-        main["max-angle-turn"] = mechanics->turnMaxAngle->value;
-        main["servo-center"] = mechanics->turnCentralPosition->value;
+    void sendParams(int clientId) {
+        ws.text(clientId, createMessageWithParams());
+    }
 
-        const JsonObject &forwardObject = doc.createNestedObject("forward");
-        forwardObject["forward-speed"] = forward->forwardSpeed->valueInt->value;
-        forwardObject["start-turn-dist"] = forward->distStartTurn->value;
-        forwardObject["full-turn-dist"] = forward->distFullTurn->value;
-
-        const JsonObject &turboObject = doc.createNestedObject("turbo");
-        turboObject["turbo-speed"] = turbo->speed->value;
-        turboObject["turbo-max-angle-turn"] = turbo->turboMaxTurn->value;
-
-        const JsonObject &engine = doc.createNestedObject("engine");
-        engine["correction-factor"] = mechanics->engine->engineHelper->correctionFactor->value;
-        engine["correction-run"] = mechanics->engine->engineHelper->maxCorrectionRun->value;
-        engine["correction-brake"] = mechanics->engine->engineHelper->maxCorrectionBrake->value;
-
-        return doc;
+    void sendParams() {
+        ws.textAll(createMessageWithParams());
     }
 
     void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
@@ -135,34 +158,10 @@ public:
         if (info->final && info->index == 0 && info->len == len && info->opcode == WS_TEXT) {
             data[len] = 0;
 
-            const String &request = String((char *) data);
-            Serial.printf("ws request=%s\n", request.c_str());
-            deserializeJson(doc, request);
-            if (doc.containsKey("ws-interval")) {
-                wsInterval->getValueInt()->value = doc["ws-interval"];
-            }
-            if (doc.containsKey("main-interval")) {
-                mainLoopChange->getValueInt()->value = doc["main-interval"];
-            }
-            if (doc.containsKey("forward-speed")) {
-                forward->forwardSpeed->resetValue(doc["forward-speed"]);
-            }
-            if (doc.containsKey("start-turn-dist")) {
-                forward->distStartTurn->value = doc["start-turn-dist"];
-            }
-            if (doc.containsKey("full-turn-dist")) {
-                forward->distFullTurn->value = doc["full-turn-dist"];
-            }
-            if (doc.containsKey("turbo-mode-dist")) {
-                forward->turboModeDist->value = doc["turbo-mode-dist"];
-            }
-            if (doc.containsKey("wall-dist")) {
-                forward->distWall->value = doc["wall-dist"];
-            }
-            if (doc.containsKey("persecution-dist")) {
-                forward->distPersecution->value = doc["persecution-dist"];
-            }
-
+            const String &requestString = String((char *) data);
+            Serial.printf("ws requestString=%s\n", requestString.c_str());
+            deserializeJson(doc, requestString);
+            isNeedUpdateParams = paramHolder->apply(doc);
         }
     }
 

@@ -1,5 +1,4 @@
-#ifndef ROBORACE_ENGINE_H
-#define ROBORACE_ENGINE_H
+#pragma once
 
 #include "ServoWrapper.h"
 #include "EngineHelper.h"
@@ -59,5 +58,3 @@ private:
     };
 
 };
-
-#endif

@@ -23,8 +23,11 @@ public:
     static const int FULL_RIGHT = -TURN_MAX_ANGLE;
     static const int FULL_LEFT = TURN_MAX_ANGLE;
 
-    Param *turnMaxAngle = new Param(TURN_MAX_ANGLE);
-    Param *turnCentralPosition = new Param(94); // 93
+    Param *servoEnabled = new Param(1, "servo-enabled", "mechanics");
+    Param *powerEnabled = new Param(1, "power-enabled", "mechanics");
+
+    Param *turnMaxAngle = new Param(TURN_MAX_ANGLE, "servo-max-turn", "mechanics");
+    Param *turnCentralPosition = new Param(94, "servo-center", "mechanics");
 
     VoltageDivider battery = VoltageDivider(GPIO_NUM_2, 10);
 
@@ -45,19 +48,18 @@ public:
 
     void run(int angle, int power) {
         turnWheels(angle);
+        if (!powerEnabled) power = 0;
         engine->forward(power);
     }
 
+private:
     void turnWheels(int angle) {
+        if (!servoEnabled) {
+            angle = 0;
+            Serial.println("Servo is disabled!");
+        }
         int a = constrain(angle, -turnMaxAngle->value, turnMaxAngle->value);
         turnServo->write(turnCentralPosition->value + a);
     }
 
-    void forward(int power) {
-        engine->forward(power);
-    }
-
-    void backward(int power) {
-        engine->backward(power);
-    }
 };

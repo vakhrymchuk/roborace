@@ -38,8 +38,8 @@ void RoboraceConfigValues::initValueEditor() {
 //    valueEditor->add((ValueBase *) sameValueFactor, "SAME VALUE FACTOR");
 
     // strategies
-    valueEditor.add(forward->forwardSpeed->valueInt, F("FRWD SPEED"));
-    valueEditor.add(turbo->forwardAcceleration->valueInt, F("ACCELERATION"));
+    valueEditor.add(forward->forwardSpeed->param, F("FRWD SPEED"));
+    valueEditor.add(turbo->forwardAcceleration->param, F("ACCELERATION"));
     valueEditor.add(forward->distStartTurn, F("DIST START TURN"));
     valueEditor.add(forward->distFullTurn, F("DIST FULL TURN"));
     valueEditor.add(forward->distWall, F("DIST WALL"));
