@@ -1,5 +1,4 @@
-#ifndef ROBORACE_STRATEGY_H
-#define ROBORACE_STRATEGY_H
+#pragma once
 
 #include "Timeout.h"
 #include "../mechanics/Mechanics.h"
@@ -12,16 +11,6 @@ int sign(T val) {
 }
 
 
-/**
- *  _____ _             _
- * /  ___| |           | |
- * \ `--.| |_ _ __ __ _| |_ ___  __ _ _   _
- *  `--. \ __| '__/ _` | __/ _ \/ _` | | | |
- * /\__/ / |_| | | (_| | ||  __/ (_| | |_| |
- * \____/ \__|_|  \__,_|\__\___|\__, |\__, |
- *                               __/ | __/ |
- *                              |___/ |___/
- */
 class Strategy {
 public:
 
@@ -101,5 +90,3 @@ public:
         return (unsigned short) sqrt(num);
     }
 };
-
-#endif

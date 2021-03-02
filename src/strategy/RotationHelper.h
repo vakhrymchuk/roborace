@@ -1,18 +1,8 @@
-#ifndef ROBORACE_ROTATION_HELPER_H
-#define ROBORACE_ROTATION_HELPER_H
+#pragma once
 
 #include <Interval.h>
 
-/**
- * ______      _        _   _             _   _      _
- * | ___ \    | |      | | (_)           | | | |    | |
- * | |_/ /___ | |_ __ _| |_ _  ___  _ __ | |_| | ___| |_ __   ___ _ __
- * |    // _ \| __/ _` | __| |/ _ \| '_ \|  _  |/ _ \ | '_ \ / _ \ '__|
- * | |\ \ (_) | || (_| | |_| | (_) | | | | | | |  __/ | |_) |  __/ |
- * \_| \_\___/ \__\__,_|\__|_|\___/|_| |_\_| |_/\___|_| .__/ \___|_|
- *                                                    | |
- *                                                    |_|
- */
+
 class RotationHelper {
 public:
 
@@ -65,5 +55,3 @@ private:
         return sum;
     }
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef ROBORACE_PRINTFAKE_H
-#define ROBORACE_PRINTFAKE_H
+#pragma once
 
 
 class PrintFake : public Print {
@@ -8,5 +7,3 @@ public:
         return 0;
     }
 };
-
-#endif

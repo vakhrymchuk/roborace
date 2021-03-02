@@ -1,5 +1,4 @@
-#ifndef ROBORACE_ENGINE_ENCODER_H
-#define ROBORACE_ENGINE_ENCODER_H
+#pragma once
 
 #include <Interval.h>
 
@@ -29,5 +28,3 @@ public:
 
     unsigned int lastPos;
 };
-
-#endif

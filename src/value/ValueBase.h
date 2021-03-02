@@ -1,5 +1,4 @@
-#ifndef ROBORACE_VALUE_H
-#define ROBORACE_VALUE_H
+#pragma once
 
 #include <EEPROM.h>
 
@@ -131,5 +130,3 @@ public:
         }
     };
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef VOLTAGE_DIVIDER_H
-#define VOLTAGE_DIVIDER_H
+#pragma once
 
 #include <KalmanFilterType.h>
 
@@ -29,5 +28,3 @@ private:
     KalmanFilterType<float> value;
 
 };
-
-#endif

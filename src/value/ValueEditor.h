@@ -1,5 +1,4 @@
-#ifndef ROBORACE_VALUE_EDITOR_H
-#define ROBORACE_VALUE_EDITOR_H
+#pragma once
 
 #include "ValueBase.h"
 
@@ -94,5 +93,3 @@ void ValueEditor::displayAll(const char *string) const {
 void ValueEditor::printLine() const {
     print->println(F("===================="));
 }
-
-#endif

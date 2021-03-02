@@ -1,5 +1,4 @@
-#ifndef ROBORACE_LEFTWALL_H
-#define ROBORACE_LEFTWALL_H
+#pragma once
 
 #include "Strategy.h"
 
@@ -66,5 +65,3 @@ public:
     Adaptation speed = Adaptation(new Param(110), 10, 4);
 
 };
-
-#endif

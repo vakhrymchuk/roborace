@@ -1,5 +1,4 @@
-#ifndef ROBORACE_DISPLAY_H
-#define ROBORACE_DISPLAY_H
+#pragma once
 
 #include <Adafruit_SSD1306.h>
 #include <Joystick.h>
@@ -262,5 +261,3 @@ void RoboraceDisplay::displayCurrent(const ValueBase *value) const {
     value->printValue(display);
     display->display();
 }
-
-#endif

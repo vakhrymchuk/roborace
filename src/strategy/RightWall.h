@@ -1,18 +1,7 @@
-#ifndef ROBORACE_RIGHTWALL_H
-#define ROBORACE_RIGHTWALL_H
+#pragma once
 
 #include "Strategy.h"
 
-/**
- * ______ _       _     _   _    _       _ _
- * | ___ (_)     | |   | | | |  | |     | | |
- * | |_/ /_  __ _| |__ | |_| |  | | __ _| | |
- * |    /| |/ _` | '_ \| __| |/\| |/ _` | | |
- * | |\ \| | (_| | | | | |_\  /\  / (_| | | |
- * \_| \_|_|\__, |_| |_|\__|\/  \/ \__,_|_|_|
- *           __/ |
- *          |___/
- */
 class RightWall : public Strategy {
 public:
 
@@ -62,5 +51,3 @@ public:
     Strategy *forward;
 
 };
-
-#endif

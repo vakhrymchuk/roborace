@@ -1,5 +1,4 @@
-#ifndef ROBORACE_H
-#define ROBORACE_H
+#pragma once
 
 #include <Arduino.h>
 #include "value/ValueBase.h"
@@ -13,14 +12,6 @@
 #include "strategy/LeftWall.h"
 
 
-/**
- * ______      _
- * | ___ \    | |
- * | |_/ /___ | |__   ___  _ __ __ _  ___ ___
- * |    // _ \| '_ \ / _ \| '__/ _` |/ __/ _ \
- * | |\ \ (_) | |_) | (_) | | | (_| | (_|  __/
- * \_| \_\___/|_.__/ \___/|_|  \__,_|\___\___|
- */
 class Roborace {
 public:
 
@@ -135,5 +126,3 @@ void Roborace::loop() {
     }
 #endif
 }
-
-#endif

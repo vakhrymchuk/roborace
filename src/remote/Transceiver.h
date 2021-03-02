@@ -1,5 +1,4 @@
-#ifndef ROBORACE_TRANSCEIVER_H
-#define ROBORACE_TRANSCEIVER_H
+#pragma once
 
 #include <Arduino.h>
 #include <NRF24.h>
@@ -76,5 +75,3 @@ void Transceiver::init(const char *name) {
 
     print.println(F("NRF24 initialised"));
 }
-
-#endif

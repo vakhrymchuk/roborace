@@ -1,16 +1,7 @@
-#ifndef ROBORACE_ROTATE_H
-#define ROBORACE_ROTATE_H
+#pragma once
 
 #include "Strategy.h"
 
-/**
- * ______ _____ _____ ___ _____ _____
- * | ___ \  _  |_   _/ _ \_   _|  ___|
- * | |_/ / | | | | |/ /_\ \| | | |__
- * |    /| | | | | ||  _  || | |  __|
- * | |\ \\ \_/ / | || | | || | | |___
- * \_| \_|\___/  \_/\_| |_/\_/ \____/
- */
 class Rotate : public Strategy {
 public:
 
@@ -71,5 +62,3 @@ public:
 private:
     byte stage = 0;
 };
-
-#endif

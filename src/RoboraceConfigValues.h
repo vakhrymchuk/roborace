@@ -1,5 +1,4 @@
-#ifndef ROBORACE_CONFIG_VALUES_H
-#define ROBORACE_CONFIG_VALUES_H
+#pragma once
 
 #include "Roborace.h"
 #include "value/ValueEditor.h"
@@ -63,5 +62,3 @@ void RoboraceConfigValues::readConfigFromEEPROM() {
 //    valueEditor.readAllEEPROM();
 //    valueEditor.displayAll("Config EEPROM values:");
 }
-
-#endif

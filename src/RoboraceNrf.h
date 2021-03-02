@@ -1,5 +1,4 @@
-#ifndef ROBORACE_ROBORACE_NRF_H
-#define ROBORACE_ROBORACE_NRF_H
+#pragma once
 
 #include "Roborace.h"
 #include "remote/Transceiver.h"
@@ -58,5 +57,3 @@ private:
     Stopwatch runStopwatch;
 
 };
-
-#endif

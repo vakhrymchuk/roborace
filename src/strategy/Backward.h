@@ -1,16 +1,8 @@
-#ifndef ROBORACE_BACKWARD_H
-#define ROBORACE_BACKWARD_H
+#pragma once
 
 #include "Strategy.h"
 
-/**
- * ______  ___  _____  _   ___    _  ___  ____________
- * | ___ \/ _ \/  __ \| | / / |  | |/ _ \ | ___ \  _  \
- * | |_/ / /_\ \ /  \/| |/ /| |  | / /_\ \| |_/ / | | |
- * | ___ \  _  | |    |    \| |/\| |  _  ||    /| | | |
- * | |_/ / | | | \__/\| |\  \  /\  / | | || |\ \| |/ /
- * \____/\_| |_/\____/\_| \_/\/  \/\_| |_/\_| \_|___/
- */
+
 class Backward : public Strategy {
 private:
     int rotation = 0;
@@ -68,5 +60,3 @@ private:
         return sensors->minForwardDistance > 25 && sensors->maxDistance > 50;
     }
 };
-
-#endif

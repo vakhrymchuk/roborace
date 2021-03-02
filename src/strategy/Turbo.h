@@ -1,5 +1,4 @@
-#ifndef ROBORACE_TURBO_H
-#define ROBORACE_TURBO_H
+#pragma once
 
 #include "Strategy.h"
 
@@ -63,6 +62,3 @@ private:
         return sensors->minForwardDistance < turboModeDisableDist->value;
     }
 };
-
-
-#endif

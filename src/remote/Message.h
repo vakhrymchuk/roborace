@@ -1,5 +1,4 @@
-#ifndef ROBORACE_MESSAGE_H
-#define ROBORACE_MESSAGE_H
+#pragma once
 
 #include <Arduino.h>
 
@@ -26,5 +25,3 @@ public:
     float logicVoltage = 0;
     float engineVoltage = 0;
 };
-
-#endif

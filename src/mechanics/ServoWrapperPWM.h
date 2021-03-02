@@ -1,5 +1,4 @@
-#ifndef ROBORACE_SERVOWRAPPERPWM_H
-#define ROBORACE_SERVOWRAPPERPWM_H
+#pragma once
 
 #include <PWMServo.h>
 
@@ -9,5 +8,3 @@ public:
         PWMServo::attach(pin);
     }
 };
-
-#endif

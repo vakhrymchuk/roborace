@@ -1,5 +1,4 @@
-#ifndef ROBORACE_ROBORACEJOYSTICK_H
-#define ROBORACE_ROBORACEJOYSTICK_H
+#pragma once
 
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
@@ -93,5 +92,3 @@ private:
     char buffer[17];
 
 };
-
-#endif

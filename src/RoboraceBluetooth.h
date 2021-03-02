@@ -1,5 +1,4 @@
-#ifndef ROBORACE_BLUETOOTH_H
-#define ROBORACE_BLUETOOTH_H
+#pragma once
 
 #include <HardwareSerial.h>
 #include "Roborace.h"
@@ -173,5 +172,3 @@ void RoboraceBluetooth::checkAdaptation(Adaptation *adaptation, const char *stri
         adaptation->adapted = false;
     }
 }
-
-#endif
