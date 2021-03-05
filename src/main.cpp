@@ -15,14 +15,15 @@ RoboraceWebserver *roborace;
 WiFiMulti *wiFiMulti;
 
 void connectToAp() {
-    IPAddress local_IP(192, 168, 1, 215);
-    IPAddress gateway(192, 168, 1, 1);
-    IPAddress subnet(255, 255, 255, 0);
-    WiFi.config(local_IP, gateway, subnet);
+//    IPAddress local_IP(192, 168, 1, 215);
+//    IPAddress gateway(192, 168, 1, 1);
+//    IPAddress subnet(255, 255, 255, 0);
+//    WiFi.config(local_IP, gateway, subnet);
     WiFi.setHostname("subaru");
     WiFiClass::mode(WIFI_STA);
 
     wiFiMulti = new WiFiMulti();
+    wiFiMulti->addAP("roborace", "robo2019");
     wiFiMulti->addAP("smarthata", "82514211");
     wiFiMulti->addAP("honor-20", "82514211");
     Serial.print("Wait for WiFi... ");
@@ -60,8 +61,8 @@ void setup() {
 
 
 #ifdef VL53
-    Wire.begin();
-    Wire.setClock(400000);
+//    Wire.begin();
+//    Wire.setClock(400000);
 #endif
 
 #ifdef DEBUG
@@ -72,18 +73,19 @@ void setup() {
     roborace = new RoboraceWebserver();
 
 
-    connectToAp();
+//    connectToAp();
+    startAp();
 
     roborace->initServer();
 
-//    while (millis() < 5000) {
-//        delay(1);
+    while (millis() < 1000) {
+        delay(1);
 //        wiFiMulti->run(10);
-//    }
+    }
 
 }
 
 void loop() {
     roborace->loop();
-    wiFiMulti->run(10);
+//    wiFiMulti->run(10);
 }

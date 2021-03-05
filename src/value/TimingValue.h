@@ -16,7 +16,8 @@ public:
     }
 
     void recalculate() {
-        msReady += value->value;
+        while (msReady <= millis())
+            msReady += value->value;
     }
 
     Param *getParam() {

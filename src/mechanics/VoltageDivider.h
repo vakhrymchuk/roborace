@@ -22,7 +22,10 @@ public:
     }
 
     float readFloatKalman() {
-        return value.update(readFloat());
+        float newValue = readFloat();
+        if (abs(newValue - value.get()) > 1.0)
+            value.set(newValue);
+        return value.update(newValue);
     }
 
 private:

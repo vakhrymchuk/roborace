@@ -17,7 +17,7 @@ public:
 
 public:
 
-    Strategy *forward;
+    Strategy *forward = nullptr;
 
 
     virtual Strategy *init(Strategy *callback, unsigned int minMs, int param = 0) final {

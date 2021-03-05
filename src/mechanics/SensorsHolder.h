@@ -19,10 +19,10 @@
 #endif
 
 
-byte checkWire(TwoWire wire) {
+byte checkWire(TwoWire &wire) {
     byte working = 0;
     byte count = 0;
-    wire.begin();
+//    wire.begin();
 //    for (byte i = 8; i < 120; i++) {
     for (byte i = 0x28; i < 0x71; i++) {
         wire.beginTransmission(i);
@@ -46,7 +46,7 @@ byte checkWire(TwoWire wire) {
 }
 
 
-class SensorsHolder {
+class SensorsHolder1 {
 
 public:
 
@@ -70,7 +70,7 @@ public:
 #endif
     TimingFilter *forwardRightSensor;
     TimingFilter *forwardLeftSensor;
-    TimingFilter *forwardCenterSensor;
+//    TimingFilter *forwardCenterSensor;
     TimingFilter *rightSensor;
     TimingFilter *leftSensor;
     TimingFilter *right45Sensor;
@@ -78,7 +78,7 @@ public:
 
 public:
 
-    SensorsHolder() {
+    SensorsHolder1() {
         createSensors();
     }
 
@@ -125,7 +125,7 @@ void SensorsHolder::readDistances() {
 
     unsigned long read0Sensors = millis();
 
-    forwardCenterDistance = forwardCenterSensor->getDistance();
+//    forwardCenterDistance = forwardCenterSensor->getDistance();
 
 
     calcMaxDistance();
@@ -140,7 +140,7 @@ void SensorsHolder::readDistances() {
 
 void SensorsHolder::calcMaxDistance() {
     maxForwardDistance = max(forwardLeftDistance, forwardRightDistance);
-    maxForwardDistance = max(maxForwardDistance, forwardCenterDistance);
+//    maxForwardDistance = max(maxForwardDistance, forwardCenterDistance);
     maxSideDistance = max(left45Distance, right45Distance);
     maxDistance = max(maxForwardDistance, maxSideDistance);
 }
@@ -178,8 +178,8 @@ void SensorsHolder::createSensors() {
     i2cMux->closeAll();
     forwardRightSensor = createSensor(createSensor0(5));
     forwardLeftSensor = createSensor(createSensor0(1));
-    forwardCenterSensor = createSensor(createSensor1(3));
-    rightSensor = createSensor(createSensor0(7));
+//    forwardCenterSensor = createSensor(createSensor1(3));
+    rightSensor = createSensor(createSensor0(6));
     right45Sensor = createSensor(createSensor0(2));
     left45Sensor = createSensor(createSensor0(4));
     leftSensor = createSensor(createSensor0(0));

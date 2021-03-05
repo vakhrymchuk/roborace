@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 #include "value/ValueBase.h"
-#include "mechanics/SensorsHolder.h"
+#include "mechanics/SensorsHolderSerial.h"
 #include "mechanics/Mechanics.h"
 #include "strategy/Forward.h"
 #include "strategy/Turbo.h"
@@ -35,14 +35,14 @@ protected:
     SensorsHolder *sensors = new SensorsHolder();
 
     Forward *forward = new Forward;
-    Turbo *turbo = new Turbo;
+//    Turbo *turbo = new Turbo;
     Backward *backward = new Backward;
     Rotate *rotate = new Rotate;
 //    RightWall *rightWall = new RightWall;
 //    LeftWall *leftWall = new LeftWall;
     Strategy *activeStrategy = forward;
 
-    boolean enabled = true;
+//    boolean enabled = true;
 
     Interval *fpsInterval = new Interval(1, SECOND);
 #ifdef DEBUG
@@ -56,13 +56,13 @@ private:
 
 
 void Roborace::initStrategies() {
-    forward->turbo = turbo;
+//    forward->turbo = turbo;
     forward->backward = backward;
     forward->rotate = rotate;
 //    forward->rightWall = rightWall;
 //    forward->leftWall = leftWall;
 
-    turbo->forward = forward;
+//    turbo->forward = forward;
 
     backward->forward = forward;
 
@@ -71,7 +71,7 @@ void Roborace::initStrategies() {
 //    rightWall->forward = forward;
 //    leftWall->forward = forward;
 
-    activeStrategy = forward->init(nullptr, 1000);
+    activeStrategy = forward->init(nullptr, 1000, 0);
 //    activeStrategy = rightWall->init();
 //    activeStrategy = leftWall->init(leftWall);
 }
@@ -108,11 +108,9 @@ void Roborace::loop() {
     if (debugInterval->isReady()) {
 
         Serial.printf(
-                "loop fps = %u ms = %4lu read0 = %4lu read1 = %4lu    L =%3u  L45 =%3u  FL =%3u  FC =%3u  FR =%3u  R45 =%3u  R =%3u   ang =% 4d  pow =% 4d  v=%.2f\n",
+                "loop fps = %u ms = %4lu   L =%3u  L45 =%3u  FL =%3u  FC =%3u  FR =%3u  R45 =%3u  R =%3u   ang =% 4d  pow =% 4d  v=%.2f\n",
                 fpsLastValue,
                 loopTime,
-                sensors->read0Time,
-                sensors->read1Time,
                 sensors->leftDistance,
                 sensors->left45Distance,
                 sensors->forwardLeftDistance,

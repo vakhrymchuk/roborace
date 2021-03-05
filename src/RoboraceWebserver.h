@@ -66,17 +66,18 @@ public:
         paramHolder->add(debugInterval->getParam());
 
         paramHolder->add(forward->speed);
-        paramHolder->add(forward->turboModeDist);
         paramHolder->add(forward->distWall);
         paramHolder->add(forward->distPersecution);
         paramHolder->add(forward->side45SensorsKoef);
         paramHolder->add(forward->sideSensorsKoef);
         paramHolder->add(forward->maxSum);
+        paramHolder->add(forward->turn45Dist);
+        paramHolder->add(forward->turnSideDist);
 
-        paramHolder->add(turbo->turboSpeed);
-        paramHolder->add(turbo->acceleration);
-        paramHolder->add(turbo->turboMaxTurn);
-        paramHolder->add(turbo->turboModeDisableDist);
+        paramHolder->add(forward->turboModeDist);
+        paramHolder->add(forward->turboSpeed);
+        paramHolder->add(forward->turboMaxTurn);
+
 
         paramHolder->add(mechanics->servoEnabled);
         paramHolder->add(mechanics->turnCentralPosition);
@@ -116,7 +117,21 @@ public:
         doc["s"] = mechanics->engine->getSpeed();
         doc["f"] = fpsLastValue;
         doc["v"] = mechanics->battery.readFloatKalman();
+        doc["st"] = getStrategy();
         return doc;
+    }
+
+    String getStrategy() {
+        if (activeStrategy == forward) {
+            return "forward";
+        } else if (activeStrategy == backward) {
+            return "backward";
+//        } else if (activeStrategy == turbo) {
+//            return "turbo";
+        } else if (activeStrategy == rotate) {
+            return "rotate";
+        }
+        return "unknown";
     }
 
     void onEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type,

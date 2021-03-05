@@ -18,17 +18,22 @@ public:
     Param *sideSensorsKoef = new Param(10, "side-sensors-koef", "forward");
     Param *maxSum = new Param(100, "max-sum", "forward");
 
-    Param *turboModeDist = new Param(110, "turbo-mode-dist", "forward");
+    Param *turn45Dist = new Param(110, "turn-45-dist", "forward");
+    Param *turnSideDist = new Param(80, "turn-side-dist", "forward");
 
-    Param *speed = new Param(56, "forward-speed", "forward");
+    Param *speed = new Param(50, "forward-speed", "forward");
     Adaptation *forwardSpeed = new Adaptation(speed, 20, 4);
 
     Param *distWall = new Param(15, "wall-dist", "forward");
 
     Param *distPersecution = new Param(50, "persecution-dist", "forward");
 
+    Param *turboModeDist = new Param(110, "turbo-mode-dist", "turbo");
+    Param *turboSpeed = new Param(60, "turbo-speed", "turbo");
+    Param *turboMaxTurn = new Param(4, "turbo-angle-max-turn", "turbo");
 
-    virtual Strategy *init(Strategy *callback, unsigned int minMs, int param = 0) final {
+
+    Strategy *init(Strategy *callback, unsigned int minMs, int param) final {
         Strategy::init(callback, minMs);
         forwardSpeed->init();
         persecution = false;
@@ -36,11 +41,11 @@ public:
         return this;
     }
 
-    virtual Strategy *check(SensorsHolder *sensors) final {
+    Strategy *check(SensorsHolder *sensors) final {
         if (minTimeout->isReady()) {
-//            if (isWallNear(sensors)) {
-//                return backward->init(this, 500, rotation);
-//            }
+            if (isWallNear(sensors)) {
+                return backward->init(this, 500, rotation);
+            }
 //            if (sensors->isSamePlace(4000)) {
 //                return backward->init(this, 600);
 //            }
@@ -58,24 +63,32 @@ public:
         return this;
     }
 
-    virtual void calc(SensorsHolder *sensors) final {
+    void calc(SensorsHolder *sensors) final {
 
         power = forwardSpeed->adaptedValue();
 
-        int sum =
-                (sensors->left45Distance - sensors->right45Distance) * side45SensorsKoef->value / 100
-                + (sensors->leftDistance - sensors->rightDistance) * sideSensorsKoef->value / 100;
+        int sum = (sensors->left45Distance - sensors->right45Distance) * side45SensorsKoef->value / 100
+                  + (sensors->leftDistance - sensors->rightDistance) * sideSensorsKoef->value / 100;
 
         sum = constrain(sum, -maxSum->value, maxSum->value);
-
         angle = (int) map(sum, -maxSum->value, maxSum->value, Mechanics::FULL_RIGHT, Mechanics::FULL_LEFT);
 
+        if (sensors->maxForwardDistance >= turboModeDist->value) {
+            angle = constrain(angle, -turboMaxTurn->value, turboMaxTurn->value);
+            power = turboSpeed->value;
+        } else if (sensors->rightDistance >= turnSideDist->value || sensors->right45Distance >= turn45Dist->value) {
+            angle = Mechanics::FULL_RIGHT;
+        } else if (sensors->leftDistance >= turnSideDist->value || sensors->left45Distance >= turn45Dist->value) {
+            angle = Mechanics::FULL_LEFT;
+        } else {
 
-        Serial.printf("sum = %d  angle = %d  power = %d \n", sum, angle, power);
+        }
+
+//        Serial.printf("sum = %d  angle = %d  power = %d \n", sum, angle, power);
 
 //        checkPersecution(sensors);
 
-//        rotationHelper->placeVector(angle, power);
+        rotationHelper->placeVector(angle, power);
     }
 
 
@@ -94,7 +107,7 @@ public:
         }
     }
 
-    Strategy *turbo;
+//    Strategy *turbo;
     Strategy *backward;
     Strategy *rotate;
     Strategy *rightWall;
@@ -108,8 +121,10 @@ private:
     RotationHelper *rotationHelper = new RotationHelper();
 
     bool isWallNear(SensorsHolder *sensors) const {
-        return sensors->minForwardDistance < distWall->value && sensors->forwardLeftSensor->isLongerThan(100)
-               && sensors->forwardRightSensor->isLongerThan(100)
+        return sensors->minForwardDistance < distWall->value
+               || sensors->maxForwardDistance < 40
+//               && sensors->forwardLeftSensor->isLongerThan(100)
+//               && sensors->forwardRightSensor->isLongerThan(100)
 //               || sensors->maxForwardDistance < 10
 //               || sensors->minDistance < 20
                 ;
