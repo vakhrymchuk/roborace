@@ -32,6 +32,9 @@ public:
     Param *turboSpeed = new Param(60, "turbo-speed", "turbo");
     Param *turboMaxTurn = new Param(4, "turbo-angle-max-turn", "turbo");
 
+    Stopwatch backStopwatch = Stopwatch();
+    boolean backStarted = false;
+
 
     Strategy *init(Strategy *callback, unsigned int minMs, int param) final {
         Strategy::init(callback, minMs);
@@ -46,16 +49,16 @@ public:
             if (isWallNear(sensors)) {
                 return backward->init(this, 500, rotation);
             }
-//            if (sensors->isSamePlace(4000)) {
-//                return backward->init(this, 600);
-//            }
+            if (sensors->isSamePlace(4000)) {
+                return backward->init(this, 600);
+            }
 //            if (persecutionStopwatch->isMoreThan(3000)) {
 //                return leftWall->init(this, 5000);
 //            }
-//            if (rotationHelper->isCounterClockWise()) {
-//                rotationHelper->reset();
-//                return rotate->init(this);
-//            }
+            if (rotationHelper->isCounterClockWise()) {
+                rotationHelper->reset();
+                return rotate->init(this);
+            }
 //            if (sensors->maxForwardDistance >= turboModeDist->value) {
 //                return turbo->init(this);
 //            }
@@ -76,12 +79,16 @@ public:
         if (sensors->maxForwardDistance >= turboModeDist->value) {
             angle = constrain(angle, -turboMaxTurn->value, turboMaxTurn->value);
             power = turboSpeed->value;
-        } else if (sensors->rightDistance >= turnSideDist->value || sensors->right45Distance >= turn45Dist->value) {
-            angle = Mechanics::FULL_RIGHT;
-        } else if (sensors->leftDistance >= turnSideDist->value || sensors->left45Distance >= turn45Dist->value) {
-            angle = Mechanics::FULL_LEFT;
         } else {
-
+            if (sensors->left45Distance > sensors->right45Distance && sensors->left45Distance >= turn45Dist->value) {
+                angle = Mechanics::FULL_LEFT;
+            } else if (sensors->right45Distance >= turn45Dist->value) {
+                angle = Mechanics::FULL_RIGHT;
+            } else if (sensors->rightDistance >= turnSideDist->value) {
+                angle = Mechanics::FULL_RIGHT;
+            } else if (sensors->leftDistance >= turnSideDist->value) {
+                angle = Mechanics::FULL_LEFT;
+            }
         }
 
 //        Serial.printf("sum = %d  angle = %d  power = %d \n", sum, angle, power);
@@ -120,9 +127,22 @@ private:
 
     RotationHelper *rotationHelper = new RotationHelper();
 
-    bool isWallNear(SensorsHolder *sensors) const {
-        return sensors->minForwardDistance < distWall->value
-               || sensors->maxForwardDistance < 40
+    bool isWallNear(SensorsHolder *sensors) {
+
+        bool isBackNeed = sensors->minForwardDistance < distWall->value
+                          || sensors->maxForwardDistance < 40;
+
+        if (isBackNeed) {
+
+            if (!backStarted) {
+                backStarted = true;
+                backStopwatch.start();
+            }
+            return backStopwatch.isMoreThan(50);
+        }
+        backStarted = false;
+
+        return isBackNeed
 //               && sensors->forwardLeftSensor->isLongerThan(100)
 //               && sensors->forwardRightSensor->isLongerThan(100)
 //               || sensors->maxForwardDistance < 10
