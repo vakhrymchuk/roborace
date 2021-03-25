@@ -27,17 +27,17 @@ public:
         int forwardDistToWall = 100;
         int forwardDistFullTurn = 80;
 
-        if (sensors->forwardLeftDistance < forwardDistToWall &&
-            sensors->leftDistance < sideDistToWall + 2 * borderFullTurn) {
-            angle = mapConstrain(sensors->forwardLeftDistance,
+        if (sensors->f00d < forwardDistToWall &&
+            sensors->l90d < sideDistToWall + 2 * borderFullTurn) {
+            angle = mapConstrain(sensors->f00d,
                                  forwardDistFullTurn, forwardDistToWall,
                                  Mechanics::FULL_RIGHT, 0);
-        } else if (sensors->leftDistance > sideDistToWall + borderCenter) {
-            angle = mapConstrain(sensors->leftDistance,
+        } else if (sensors->l90d > sideDistToWall + borderCenter) {
+            angle = mapConstrain(sensors->l90d,
                                  sideDistToWall + borderCenter, sideDistToWall + borderFullTurn,
                                  0, Mechanics::FULL_LEFT);
-        } else if (sensors->leftDistance < sideDistToWall - borderCenter) {
-            angle = mapConstrain(sensors->leftDistance,
+        } else if (sensors->l90d < sideDistToWall - borderCenter) {
+            angle = mapConstrain(sensors->l90d,
                                  sideDistToWall - borderCenter, sideDistToWall - borderFullTurn,
                                  0, Mechanics::FULL_RIGHT);
         } else {
@@ -49,7 +49,7 @@ public:
             power += 20;
         }
 
-        if (sensors->minForwardDistance < 15 || (back && sensors->forwardLeftDistance < 35)) {
+        if (sensors->minForwardDistance < 15 || (back && sensors->f00d < 35)) {
             angle *= -1;
             power = -power;
             back = true;
@@ -62,6 +62,6 @@ public:
     Strategy *forward;
     bool back = false;
 
-    Adaptation speed = Adaptation(new Param(110), 10, 4);
+    Adaptation speed = Adaptation(new Param(60), 50, 70, 10, 4);
 
 };

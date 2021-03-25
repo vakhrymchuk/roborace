@@ -19,6 +19,7 @@ private:
     DynamicJsonDocument doc = DynamicJsonDocument(256);
 
     IntervalValue *wsInterval = new IntervalValue(new Param(500, "ws-interval", "main"));
+    IntervalValue *wsParamInterval = new IntervalValue(new Param(20000, "ws-param-interval", "main"));
 
     ParamHolder *paramHolder = new ParamHolder();
 
@@ -39,7 +40,6 @@ public:
 
     void initServer() {
 
-        // Route for root / web page
         server.on("/", HTTP_GET, [&](AsyncWebServerRequest *request) {
             const DynamicJsonDocument &document = createMessage();
             String message;
@@ -62,41 +62,49 @@ public:
 
     void createParams() {
         paramHolder->add(wsInterval->getParam());
+        paramHolder->add(wsParamInterval->getParam());
         paramHolder->add(mainLoopChange->getParam());
         paramHolder->add(debugInterval->getParam());
+        paramHolder->add(forward->rotationHelper->rotationThreshold);
 
         paramHolder->add(forward->speed);
         paramHolder->add(forward->distWall);
         paramHolder->add(forward->distPersecution);
-        paramHolder->add(forward->side45SensorsKoef);
-        paramHolder->add(forward->sideSensorsKoef);
+        paramHolder->add(forward->f30k);
+        paramHolder->add(forward->f60k);
+        paramHolder->add(forward->f90k);
         paramHolder->add(forward->maxSum);
-        paramHolder->add(forward->turn45Dist);
-        paramHolder->add(forward->turnSideDist);
+//        paramHolder->add(forward->turn60Dist);
+//        paramHolder->add(forward->turn90Dist);
 
         paramHolder->add(forward->turboModeDist);
         paramHolder->add(forward->turboSpeed);
         paramHolder->add(forward->turboMaxTurn);
+        paramHolder->add(forward->t30k);
+        paramHolder->add(forward->t60k);
+        paramHolder->add(forward->t90k);
 
 
         paramHolder->add(mechanics->servoEnabled);
         paramHolder->add(mechanics->turnCentralPosition);
         paramHolder->add(mechanics->turnMaxAngle);
+        paramHolder->add(mechanics->servoTurnDelta);
+
         paramHolder->add(mechanics->powerEnabled);
         paramHolder->add(mechanics->engine->speedCorrector->correctionFactor);
         paramHolder->add(mechanics->engine->speedCorrector->maxCorrectionRun);
         paramHolder->add(mechanics->engine->speedCorrector->maxCorrectionBrake);
 
-        paramHolder->readAllEeprom();
+//        paramHolder->readAllEeprom();
     }
 
     void loopWs() {
-        if (wsInterval->isReady()) {
+        if (wsInterval->isReady() && ws.count() > 0) {
             String message;
             serializeJson(createMessage(), message);
             ws.textAll(message);
         }
-        if (isNeedUpdateParams) {
+        if (wsParamInterval->isReady() || isNeedUpdateParams) {
             sendParams();
             isNeedUpdateParams = false;
         }
@@ -105,13 +113,22 @@ public:
     DynamicJsonDocument createMessage() {
         doc.clear();
         doc["t"] = "d";
-        doc["fl"] = sensors->forwardLeftDistance;
-        doc["fr"] = sensors->forwardRightDistance;
-        doc["fc"] = sensors->forwardCenterDistance;
-        doc["l"] = sensors->leftDistance;
-        doc["r"] = sensors->rightDistance;
-        doc["l45"] = sensors->left45Distance;
-        doc["r45"] = sensors->right45Distance;
+        const JsonArray &array = doc.createNestedArray("d");
+        array.add(sensors->l90d);
+        array.add(sensors->l60d);
+        array.add(sensors->l30d);
+        array.add(sensors->f00d);
+        array.add(sensors->r30d);
+        array.add(sensors->r60d);
+        array.add(sensors->r90d);
+
+//        doc["l90"] = sensors->l90d;
+//        doc["l60"] = sensors->l60d;
+//        doc["l30"] = sensors->l30d;
+//        doc["f00"] = sensors->f00d;
+//        doc["r30"] = sensors->r30d;
+//        doc["r60"] = sensors->r60d;
+//        doc["r90"] = sensors->r90d;
         doc["a"] = activeStrategy->angle;
         doc["p"] = activeStrategy->power;
         doc["s"] = mechanics->engine->getSpeed();

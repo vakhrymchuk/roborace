@@ -7,9 +7,11 @@ class RotationHelper {
 public:
 
     /** Время круга */
-    static const int ARR_SIZE = 10;
-    static const int TURN_ON_SECOND = 180;
+    static const int ARR_SIZE = 20;
+    static const int TURN_ON_SECOND = 200;
     static const int ROTATE_THRESHOLD_VALUE = ARR_SIZE * TURN_ON_SECOND;
+
+    Param *rotationThreshold = new Param(ROTATE_THRESHOLD_VALUE, "rotation-threshold", "main");
 
     RotationHelper() {
         arr = new int[ARR_SIZE];
@@ -34,11 +36,11 @@ public:
     }
 
     bool isCounterClockWise() const {
-        return sum() > ROTATE_THRESHOLD_VALUE;
+        return sum() > rotationThreshold->value;
     }
 
     bool isClockWise() const {
-        return sum() < -ROTATE_THRESHOLD_VALUE;
+        return sum() < -rotationThreshold->value;
     }
 
 private:

@@ -12,7 +12,7 @@ public:
     Param *turboMaxTurn = new Param(4, "turbo-angle-max-turn", "turbo");
     Param *turboSpeed = new Param(60, "turbo-speed", "turbo");
     Param *acceleration = new Param(20, "turbo-accel", "turbo");
-    Adaptation *forwardAcceleration = new Adaptation(acceleration, 20, 4);
+    Adaptation *forwardAcceleration = new Adaptation(acceleration, 0, 30, 20, 4);
 
 
 public:
@@ -38,8 +38,8 @@ public:
     void calc(SensorsHolder *sensors) final {
 
 
-        int sum = sensors->leftDistance / 2 + sensors->left45Distance + sensors->forwardLeftDistance / 10
-                  - sensors->rightDistance / 2 - sensors->right45Distance - sensors->forwardRightDistance / 10;
+        int sum = sensors->l90d / 2 + sensors->l30d + sensors->l60d / 10
+                  - sensors->r90d / 2 - sensors->r30d - sensors->r60d / 10;
 
         angle = (int) map(sum, -100, 100, -turboMaxTurn->value, turboMaxTurn->value);
         angle = constrain(angle, -turboMaxTurn->value, turboMaxTurn->value);

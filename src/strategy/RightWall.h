@@ -22,16 +22,16 @@ public:
         int forwardDistToWall = 90;
         int borderCenter = 5;
         int borderFullTurn = 30;
-        if (sensors->rightDistance > rightDistToWall + borderCenter) {
-            angle = mapConstrain(sensors->rightDistance,
+        if (sensors->r90d > rightDistToWall + borderCenter) {
+            angle = mapConstrain(sensors->r90d,
                                  rightDistToWall + borderCenter, rightDistToWall + borderFullTurn,
                                  0, Mechanics::FULL_RIGHT);
-        } else if (sensors->forwardRightDistance < forwardDistToWall) {
-            angle = mapConstrain(sensors->forwardRightDistance,
+        } else if (sensors->f00d < forwardDistToWall) {
+            angle = mapConstrain(sensors->f00d,
                                  50, forwardDistToWall,
                                  Mechanics::FULL_LEFT, 0);
-        } else if (sensors->rightDistance < rightDistToWall - borderCenter) {
-            angle = mapConstrain(sensors->rightDistance,
+        } else if (sensors->r90d < rightDistToWall - borderCenter) {
+            angle = mapConstrain(sensors->r90d,
                                  rightDistToWall - borderCenter, rightDistToWall - borderFullTurn,
                                  0, Mechanics::FULL_LEFT);
         } else {

@@ -125,7 +125,7 @@ void SensorsHolder::readDistances() {
 
     unsigned long read0Sensors = millis();
 
-//    forwardCenterDistance = forwardCenterSensor->getDistance();
+//    f00d = forwardCenterSensor->getDistance();
 
 
     calcMaxDistance();
@@ -140,14 +140,14 @@ void SensorsHolder::readDistances() {
 
 void SensorsHolder::calcMaxDistance() {
     maxForwardDistance = max(forwardLeftDistance, forwardRightDistance);
-//    maxForwardDistance = max(maxForwardDistance, forwardCenterDistance);
+//    maxForwardDistance = max(maxForwardDistance, f00d);
     maxSideDistance = max(left45Distance, right45Distance);
     maxDistance = max(maxForwardDistance, maxSideDistance);
 }
 
 void SensorsHolder::calcMinDistance() {
     minForwardDistance = min(forwardLeftDistance, forwardRightDistance);
-//    minForwardDistance = min(minForwardDistance, forwardCenterDistance);
+//    minForwardDistance = min(minForwardDistance, f00d);
     minSideDistance = min(left45Distance, right45Distance);
     minDistance = min(minForwardDistance, minSideDistance);
 }

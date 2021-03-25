@@ -108,16 +108,16 @@ void Roborace::loop() {
     if (debugInterval->isReady()) {
 
         Serial.printf(
-                "loop fps = %u ms = %4lu   L =%3u  L45 =%3u  FL =%3u  FC =%3u  FR =%3u  R45 =%3u  R =%3u   ang =% 4d  pow =% 4d  v=%.2f\n",
+                "loop fps = %u ms = %4lu   L90 =%3u  L60 =%3u  L30 =%3u  FC =%3u  R30 =%3u  R60 =%3u  R90 =%3u   ang =% 4d  pow =% 4d  v=%.1f\n",
                 fpsLastValue,
                 loopTime,
-                sensors->leftDistance,
-                sensors->left45Distance,
-                sensors->forwardLeftDistance,
-                sensors->forwardCenterDistance,
-                sensors->forwardRightDistance,
-                sensors->right45Distance,
-                sensors->rightDistance,
+                sensors->l90d,
+                sensors->l60d,
+                sensors->l30d,
+                sensors->f00d,
+                sensors->r30d,
+                sensors->r60d,
+                sensors->r90d,
                 activeStrategy->angle,
                 activeStrategy->power,
                 mechanics->battery.readFloatKalman()

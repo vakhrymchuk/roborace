@@ -6,7 +6,7 @@
     const myChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['L', 'L45', 'FL', 'FC', 'FR', 'R45', 'R'],
+            labels: ['L90', 'L60', 'L30', 'F00', 'R30', 'R60', 'R90'],
             datasets: [{
                 label: 'Distance',
                 data: [],
@@ -105,25 +105,21 @@
         // document.getElementById('content').innerHTML = JSON.stringify(data);
 
         if (data['t'] === 'd' || data['t'] === undefined) {
-            myChart.data.datasets[0].data = [
-                data['l'], data['l45'], data['fl'], data['fc'],
-                data['fr'], data['r45'], data['r'],
-            ];
+            myChart.data.datasets[0].data = data['d'];
             let vMax = 12.6;
             let vMin = 9.0;
             let v = Math.min(data['v'], vMax);
             v = Math.max(v, vMin);
             let voltageProc = (v - vMin) / (vMax - vMin) * 100;
+            let voltageData = data['v'].toFixed(1) + ' / ' + voltageProc.toFixed(0) + '%';
             document.getElementById('content').innerHTML =
                 'strategy = ' + data['st']
                 + ' angle = ' + data['a']
                 + ' power = ' + data['p']
                 + ' speed = ' + data['s']
                 + '<br>'
-                + ' voltage = ' + data['v'].toFixed(1)
-                + '  / ' + voltageProc.toFixed(0) + '%'
-                + '<br>'
                 + ' fps = ' + data['f']
+                + ' voltage = ' + voltageData
             ;
         } else if (data['t'] === 'p') {
             createTabs(data);

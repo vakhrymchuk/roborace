@@ -26,8 +26,8 @@ public:
 //            transceiver.message.power = activeStrategy->power;
 
             transceiver.message.forwardRightDistance = sensors->forwardRightDistance;
-            transceiver.message.leftDistance = sensors->leftDistance;
-            transceiver.message.rightDistance = sensors->rightDistance;
+            transceiver.message.leftDistance = sensors->l90d;
+            transceiver.message.rightDistance = sensors->r90d;
             transceiver.message.forwardLeftDistance = sensors->forwardLeftDistance;
 
             transceiver.message.rotate = mechanics->engine->engineEncoder->getPosition();

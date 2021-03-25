@@ -112,13 +112,13 @@ void RoboraceDisplay::displayDistancesLines() {
     display->drawFastHLine(W_MID - L_HALF, y, L_FULL, WHITE);
     display->drawFastHLine(W_MID - L_HALF, y + 1, L_FULL, WHITE);
 
-    y = mapType<short>(sensorsHolder->rightDistance, Sharp::MIN_DISTANCE, Sharp::MAX_DISTANCE, SSD1306_LCDHEIGHT - 30,
+    y = mapType<short>(sensorsHolder->r90d, Sharp::MIN_DISTANCE, Sharp::MAX_DISTANCE, SSD1306_LCDHEIGHT - 30,
                        0);
     display->drawLine(W_MID + L_HALF, y, W_MID + 3 * L_HALF, y + L_HALF, WHITE);
     ++y;
     display->drawLine(W_MID + L_HALF, y, W_MID + 3 * L_HALF, y + L_HALF, WHITE);
 
-    y = mapType<short>(sensorsHolder->leftDistance, Sharp::MIN_DISTANCE, Sharp::MAX_DISTANCE, SSD1306_LCDHEIGHT - 30,
+    y = mapType<short>(sensorsHolder->l90d, Sharp::MIN_DISTANCE, Sharp::MAX_DISTANCE, SSD1306_LCDHEIGHT - 30,
                        0);
     display->drawLine(W_MID - 3 * L_HALF, y + L_HALF, W_MID - L_HALF, y, WHITE);
     ++y;
@@ -201,7 +201,7 @@ void RoboraceDisplay::displayDistancesLines() {
             break;
         }
         case ANGLE: {
-            if (sensorsHolder->rightDistance > sensorsHolder->leftDistance) {
+            if (sensorsHolder->r90d > sensorsHolder->l90d) {
                 display->drawFastVLine(SSD1306_LCDWIDTH - 1, 0, SSD1306_LCDHEIGHT, WHITE);
             } else {
                 display->drawFastVLine(0, 0, SSD1306_LCDHEIGHT, WHITE);

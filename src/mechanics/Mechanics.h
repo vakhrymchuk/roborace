@@ -3,6 +3,7 @@
 #include "Engine.h"
 #include "VoltageDivider.h"
 #include "value/Param.h"
+#include "ServoSmooth.h"
 
 #define TURN_SERVO_PIN GPIO_NUM_12
 #define ENGINE_PIN GPIO_NUM_14
@@ -11,7 +12,7 @@
 class Mechanics {
 public:
     /** Максимальный угол поворота */
-    static const int TURN_MAX_ANGLE = 38;
+    static const int TURN_MAX_ANGLE = 40;
     static const int FULL_RIGHT = -TURN_MAX_ANGLE;
     static const int FULL_LEFT = TURN_MAX_ANGLE;
 
@@ -20,15 +21,17 @@ public:
 
     Param *turnMaxAngle = new Param(TURN_MAX_ANGLE, "servo-max-turn", "mechanics");
     Param *turnCentralPosition = new Param(94, "servo-center", "mechanics");
+    Param *servoTurnDelta = new Param(5, "servo-turn-delta", "mechanics");
 
     VoltageDivider battery = VoltageDivider(BATTERY_VOLTAGE_PIN, 10);
+
+    Engine *engine = new Engine(new ServoWrapperEsp32(ENGINE_PIN));
+
+    ServoSmooth *turnServo = new ServoSmooth(TURN_SERVO_PIN, servoTurnDelta);
 
     Mechanics() {
         stop();
     }
-
-    Engine *engine = new Engine(new ServoWrapperEsp32(ENGINE_PIN));
-    ServoWrapperEsp32 *turnServo = new ServoWrapperEsp32(TURN_SERVO_PIN);
 
     void stop() {
         run(0, 0);

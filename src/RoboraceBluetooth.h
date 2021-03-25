@@ -84,8 +84,8 @@ void RoboraceBluetooth::processConfig() {
 void RoboraceBluetooth::sendState() const {
     printValue("frwdLeftDst", sensors->forwardLeftDistance);
     printValue("frwdRightDst", sensors->forwardRightDistance);
-    printValue("leftDst", sensors->leftDistance);
-    printValue("rightDst", sensors->rightDistance);
+    printValue("leftDst", sensors->l90d);
+    printValue("rightDst", sensors->r90d);
     printValue("angle", activeStrategy->angle);
     printValue("power", activeStrategy->power);
     printValue("pos", mechanics->engine->engineEncoder->lastPos);
@@ -108,8 +108,8 @@ void RoboraceBluetooth::sendPackage() {
         bluetooth->write(sensors->forwardLeftDistance);  // 1
         bluetooth->write(sensors->forwardRightDistance); // 2
 
-        bluetooth->write(sensors->leftDistance);         // 3
-        bluetooth->write(sensors->rightDistance);        // 4
+        bluetooth->write(sensors->l90d);         // 3
+        bluetooth->write(sensors->r90d);        // 4
 
         writeInteger(activeStrategy->power);                     // 5 6
         writeInteger(mechanics->engine->engineEncoder->lastPos); // 7 8

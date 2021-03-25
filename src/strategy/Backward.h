@@ -13,7 +13,7 @@ public:
     virtual Strategy *init(Strategy *callback, unsigned int minMs, int param = 0) final {
         Strategy::init(callback, minMs);
 //        minTimeout->start(500);
-        maxTimeout->start(3000);
+        maxTimeout->start(2000);
         rotation = param;
         return this;
     }
@@ -21,7 +21,7 @@ public:
     virtual Strategy *check(SensorsHolder *sensors) final {
         if (minTimeout->isReady()) {
             if (maxTimeout->isReady() || isBackFinish(sensors)) {
-                return callback->init(this);
+                return callback->init(this, 500);
             }
         }
         return this;
@@ -34,7 +34,7 @@ public:
             if (rotation != 0) {
                 angle = -rotation;
             } else {
-                angle = -30 * getAngleSign(sensors->rightDistance, sensors->leftDistance);
+                angle = -30 * getAngleSign(sensors->r90d, sensors->l90d);
             }
         } else {
             angle = 0;
