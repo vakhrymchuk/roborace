@@ -7,6 +7,7 @@
 #include <Wire.h>
 
 #define DEBUG true
+//#define WAIT_5S true
 
 #include "RoboraceWebserver.h"
 
@@ -78,10 +79,11 @@ void setup() {
 
     roborace->initServer();
 
-    while (millis() < 1000) {
+#ifdef WAIT_5S
+    while (millis() < 4900)
         delay(1);
 //        wiFiMulti->run(10);
-    }
+#endif
 
 }
 
