@@ -27,7 +27,7 @@ public:
 
     Engine *engine = new Engine(new ServoWrapperEsp32(ENGINE_PIN));
 
-    ServoSmooth *turnServo = new ServoSmooth(TURN_SERVO_PIN, servoTurnDelta);
+    ServoSmooth *turnServo = new ServoSmooth(TURN_SERVO_PIN, servoTurnDelta, turnCentralPosition);
 
     Mechanics() {
         stop();
