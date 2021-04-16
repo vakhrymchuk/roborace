@@ -65,6 +65,8 @@ public:
         paramHolder->add(wsParamInterval->getParam());
         paramHolder->add(mainLoopChange->getParam());
         paramHolder->add(debugInterval->getParam());
+        paramHolder->add(forward->stuckCheckEnabled);
+        paramHolder->add(forward->rotationCheckEnabled);
         paramHolder->add(forward->rotationHelper->rotationThreshold);
 
         paramHolder->add(forward->speed);
@@ -74,8 +76,7 @@ public:
         paramHolder->add(forward->f60k);
         paramHolder->add(forward->f90k);
         paramHolder->add(forward->maxSum);
-//        paramHolder->add(forward->turn60Dist);
-//        paramHolder->add(forward->turn90Dist);
+        paramHolder->add(forward->runCorrectionSide);
 
         paramHolder->add(forward->turboModeDist);
         paramHolder->add(forward->turboSpeed);
@@ -94,8 +95,6 @@ public:
         paramHolder->add(mechanics->engine->speedCorrector->correctionFactor);
         paramHolder->add(mechanics->engine->speedCorrector->maxCorrectionRun);
         paramHolder->add(mechanics->engine->speedCorrector->maxCorrectionBrake);
-
-        paramHolder->add(forward->runCorrectionSide);
 
         paramHolder->readAllEeprom();
     }

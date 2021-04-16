@@ -24,8 +24,9 @@ public:
     Param *t90k = new Param(10, "turbo-90-koef", "turbo");
     Param *maxSum = new Param(100, "max-sum", "forward");
 
-//    Param *turn60Dist = new Param(110, "turn-60-dist", "forward");
-//    Param *turn90Dist = new Param(80, "turn-90-dist", "forward");
+    Param *stuckCheckEnabled = new Param(0, "stuck-check", "main");
+    Param *rotationCheckEnabled = new Param(0, "rotation-check", "main");
+    Param *runCorrectionSide = new Param(0, "run-correction-side", "forward");
 
     Param *speed = new Param(58, "forward-speed", "forward");
     Adaptation *forwardSpeed = new Adaptation(speed, 58, 100, 10, 2, 1, 4);
@@ -38,7 +39,6 @@ public:
     Param *turboSpeed = new Param(8, "turbo-speed", "turbo");
     Param *turboMaxTurn = new Param(10, "turbo-angle-max-turn", "turbo");
 
-    Param *runCorrectionSide = new Param(0, "run-correction-side", "forward");
 
     Stopwatch backStopwatch = Stopwatch();
     boolean backStarted = false;
@@ -56,16 +56,17 @@ public:
             if (isWallNear(sensors)) {
                 return backward->init(this, 500, rotation);
             }
-            if (sensors->isSamePlace(4000)) {
+            if (stuckCheckEnabled->value && sensors->isSamePlace(4000)) {
                 return backward->init(this, 600);
             }
 //            if (persecutionStopwatch->isMoreThan(3000)) {
 //                return leftWall->init(this, 5000);
 //            }
-//            if (rotationHelper->isCounterClockWise() && sensors->l30d >= 30 && sensors->l60d >= 30) {
-//                rotationHelper->reset();
-//                return rotate->init(this);
-//            }
+            if (rotationCheckEnabled->value && rotationHelper->isCounterClockWise()
+                && sensors->l30d >= 30 && sensors->l60d >= 30) {
+                rotationHelper->reset();
+                return rotate->init(this);
+            }
 //            if (sensors->maxForwardDistance >= turboModeDist->value) {
 //                return turbo->init(this);
 //            }
