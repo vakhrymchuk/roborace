@@ -95,7 +95,9 @@ public:
         paramHolder->add(mechanics->engine->speedCorrector->maxCorrectionRun);
         paramHolder->add(mechanics->engine->speedCorrector->maxCorrectionBrake);
 
-//        paramHolder->readAllEeprom();
+        paramHolder->add(forward->runCorrectionSide);
+
+        paramHolder->readAllEeprom();
     }
 
     void loopWs() {
@@ -104,7 +106,7 @@ public:
             serializeJson(createMessage(), message);
             ws.textAll(message);
         }
-        if (wsParamInterval->isReady() || isNeedUpdateParams) {
+        if (/*wsParamInterval->isReady() ||*/ isNeedUpdateParams) {
             sendParams();
             isNeedUpdateParams = false;
         }

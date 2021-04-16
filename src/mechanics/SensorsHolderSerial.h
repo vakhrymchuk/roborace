@@ -101,11 +101,11 @@ void SensorsHolder::calcMinDistance() {
 
 bool SensorsHolder::isSamePlace(unsigned long ms) const {
     return f00Sensor->isLongerThan(ms)
-           || l90Sensor->isLongerThan(ms)
-           || l60Sensor->isLongerThan(ms)
-           || l30Sensor->isLongerThan(ms)
-           || r30Sensor->isLongerThan(ms)
-           || r60Sensor->isLongerThan(ms)
-           || r90Sensor->isLongerThan(ms);
+           + l90Sensor->isLongerThan(ms)
+           + l60Sensor->isLongerThan(ms)
+           + l30Sensor->isLongerThan(ms)
+           + r30Sensor->isLongerThan(ms)
+           + r60Sensor->isLongerThan(ms)
+           + r90Sensor->isLongerThan(ms) >= 5;
 }
 

@@ -16,31 +16,32 @@ public:
     RotationHelper *rotationHelper = new RotationHelper();
 
 //    Param *distFullTurn = new Param(80);
-    Param *f30k = new Param(50, "forward-30-koef", "forward");
+    Param *f30k = new Param(80, "forward-30-koef", "forward");
     Param *f60k = new Param(100, "forward-60-koef", "forward");
-    Param *f90k = new Param(20, "forward-90-koef", "forward");
-    Param *t30k = new Param(100, "turbo-30-koef", "turbo");
+    Param *f90k = new Param(50, "forward-90-koef", "forward");
+    Param *t30k = new Param(80, "turbo-30-koef", "turbo");
     Param *t60k = new Param(30, "turbo-60-koef", "turbo");
     Param *t90k = new Param(10, "turbo-90-koef", "turbo");
-    Param *maxSum = new Param(150, "max-sum", "forward");
+    Param *maxSum = new Param(100, "max-sum", "forward");
 
 //    Param *turn60Dist = new Param(110, "turn-60-dist", "forward");
 //    Param *turn90Dist = new Param(80, "turn-90-dist", "forward");
 
-    Param *speed = new Param(50, "forward-speed", "forward");
-    Adaptation *forwardSpeed = new Adaptation(speed, 40, 80, 20, 4);
+    Param *speed = new Param(58, "forward-speed", "forward");
+    Adaptation *forwardSpeed = new Adaptation(speed, 58, 100, 10, 2, 1, 4);
 
-    Param *distWall = new Param(15, "wall-dist", "forward");
+    Param *distWall = new Param(20, "wall-dist", "forward");
 
     Param *distPersecution = new Param(50, "persecution-dist", "forward");
 
-    Param *turboModeDist = new Param(110, "turbo-mode-dist", "turbo");
-    Param *turboSpeed = new Param(10, "turbo-speed", "turbo");
-    Param *turboMaxTurn = new Param(4, "turbo-angle-max-turn", "turbo");
+    Param *turboModeDist = new Param(120, "turbo-mode-dist", "turbo");
+    Param *turboSpeed = new Param(8, "turbo-speed", "turbo");
+    Param *turboMaxTurn = new Param(10, "turbo-angle-max-turn", "turbo");
+
+    Param *runCorrectionSide = new Param(0, "run-correction-side", "forward");
 
     Stopwatch backStopwatch = Stopwatch();
     boolean backStarted = false;
-
 
     Strategy *init(Strategy *callback, unsigned int minMs, int param) final {
         Strategy::init(callback, minMs);
@@ -55,16 +56,16 @@ public:
             if (isWallNear(sensors)) {
                 return backward->init(this, 500, rotation);
             }
-//            if (sensors->isSamePlace(4000)) {
-//                return backward->init(this, 600);
-//            }
+            if (sensors->isSamePlace(4000)) {
+                return backward->init(this, 600);
+            }
 //            if (persecutionStopwatch->isMoreThan(3000)) {
 //                return leftWall->init(this, 5000);
 //            }
-            if (rotationHelper->isCounterClockWise()) {
-                rotationHelper->reset();
-                return rotate->init(this);
-            }
+//            if (rotationHelper->isCounterClockWise() && sensors->l30d >= 30 && sensors->l60d >= 30) {
+//                rotationHelper->reset();
+//                return rotate->init(this);
+//            }
 //            if (sensors->maxForwardDistance >= turboModeDist->value) {
 //                return turbo->init(this);
 //            }
@@ -73,23 +74,14 @@ public:
     }
 
     void calc(SensorsHolder *sensors) final {
+        power = forwardSpeed->adaptedValue();
 
-        if (sensors->maxForwardDistance >= turboModeDist->value) {
-            power = forwardSpeed->adaptedValue() + turboSpeed->value;
-            angle = calcAngleBySensors(sensors, t30k->value, t60k->value, t90k->value,
-                                       maxSum->value, turboMaxTurn->value);
+        if (sensors->f00d >= turboModeDist->value) {
+            power += map(sensors->f00d, turboModeDist->value, 200, 0, turboSpeed->value);
+            angle = calcAngleBySensors(sensors, t30k->value, t60k->value, t90k->value, turboMaxTurn->value);
         } else {
-            power = forwardSpeed->adaptedValue();
-
-            angle = calcAngleBySensors(sensors, f30k->value, f60k->value, f90k->value,
-                                       maxSum->value, Mechanics::TURN_MAX_ANGLE);
-
-            angle = !smoothEquals(sensors->r60d, sensors->l60d) ?
-                    sensors->r60d > sensors->l60d :
-                    sensors->r90d > sensors->l90d
-                    ? Mechanics::FULL_RIGHT : Mechanics::FULL_LEFT;
+            angle = calcAngleBySensors(sensors, f30k->value, f60k->value, f90k->value, Mechanics::TURN_MAX_ANGLE);
         }
-
 
 //        Serial.printf("sum = %d  angle = %d  power = %d \n", sum, angle, power);
 
@@ -100,13 +92,17 @@ public:
 //        Serial.printf("forward power=%d\n", turboSpeed->value);
     }
 
-    int calcAngleBySensors(const SensorsHolder *sensors, int s30k, int s60k, int s90k, int maxSum, int maxTurn) {
+    int
+    calcAngleBySensors(const SensorsHolder *sensors, int s30k, int s60k, int s90k, int maxTurn) const {
         int sum = (sensors->l30d - sensors->r30d) * s30k / 100
                   + (sensors->l60d - sensors->r60d) * s60k / 100
                   + (sensors->l90d - sensors->r90d) * s90k / 100;
 
-        sum = constrain(sum, -maxSum, maxSum);
-        return (int) map(sum, -maxSum, maxSum, -maxTurn, maxTurn);
+        sum += runCorrectionSide->value;
+
+        int maxSumValue = maxSum->value;
+        sum = constrain(sum, -maxSumValue, maxSumValue);
+        return (int) map(sum, -maxSumValue, maxSumValue, -maxTurn, maxTurn);
     }
 
 
@@ -151,10 +147,5 @@ private:
         }
         backStarted = false;
         return false;
-//        return isBackNeed
-//               && sensors->f00Sensor->isLongerThan(100)
-//               || sensors->maxForwardDistance < 10
-//               || sensors->minDistance < 20
-//                ;
     }
 };

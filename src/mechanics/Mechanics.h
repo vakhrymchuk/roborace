@@ -20,8 +20,8 @@ public:
     Param *powerEnabled = new Param(1, "power-enabled", "mechanics");
 
     Param *turnMaxAngle = new Param(TURN_MAX_ANGLE, "servo-max-turn", "mechanics");
-    Param *turnCentralPosition = new Param(94, "servo-center", "mechanics");
-    Param *servoTurnDelta = new Param(5, "servo-turn-delta", "mechanics");
+    Param *turnCentralPosition = new Param(90, "servo-center", "mechanics");
+    Param *servoTurnDelta = new Param(10, "servo-turn-delta", "mechanics");
 
     VoltageDivider battery = VoltageDivider(BATTERY_VOLTAGE_PIN, 10);
 
