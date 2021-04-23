@@ -4,7 +4,7 @@ class Adaptation {
 public:
 
     explicit Adaptation(Param *param,
-                        const int min, const int max,
+                        Param *min, Param *max,
                         const int educationTime = 20, const int step = 1,
                         const int errorsThresholdInc = 1, const int errorsThresholdDec = 3) :
             param(param),
@@ -30,7 +30,7 @@ public:
 
 private:
     Param *param;
-    const int min, max;
+    Param *min, *max;
     const int educationTime;
     const int step;
     const int errorsThresholdInc, errorsThresholdDec;
@@ -41,13 +41,13 @@ private:
 
     void process() {
         if (stopwatch->isMoreThan(educationTime, SECOND) || errorsCount >= errorsThresholdDec) {
-            if (errorsCount >= errorsThresholdDec && param->value > min) {
+            if (errorsCount >= errorsThresholdDec && param->value > min->value) {
                 param->value -= step;
-            } else if (errorsCount <= errorsThresholdInc && param->value < max) {
+            } else if (errorsCount <= errorsThresholdInc && param->value < max->value) {
                 param->value += step;
             }
             errorsCount = 0;
-            param->value = constrain(param->value, min, max);
+            param->value = constrain(param->value, min->value, max->value);
             stopwatch->start();
         }
     }

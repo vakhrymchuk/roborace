@@ -10,7 +10,7 @@ private:
 
     Param *values[SIZE]{};
     int size = 0;
-    DynamicJsonDocument doc = DynamicJsonDocument(1024);
+    DynamicJsonDocument doc = DynamicJsonDocument(2048);
 
 public:
 

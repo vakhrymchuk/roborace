@@ -12,7 +12,7 @@ public:
     Param *turboMaxTurn = new Param(4, "turbo-angle-max-turn", "turbo");
     Param *turboSpeed = new Param(60, "turbo-speed", "turbo");
     Param *acceleration = new Param(20, "turbo-accel", "turbo");
-    Adaptation *forwardAcceleration = new Adaptation(acceleration, 0, 30, 20, 4);
+    Adaptation *forwardAcceleration = new Adaptation(acceleration, new Param(0), new Param(30), 20, 4);
 
 
 public:

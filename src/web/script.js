@@ -19,7 +19,7 @@
                 yAxes: [{
                     ticks: {
                         beginAtZero: true,
-                        suggestedMax: 120
+                        suggestedMax: 200
                     }
                 }]
             }

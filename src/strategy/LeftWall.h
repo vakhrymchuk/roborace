@@ -62,6 +62,6 @@ public:
     Strategy *forward;
     bool back = false;
 
-    Adaptation speed = Adaptation(new Param(60), 50, 70, 10, 4);
+    Adaptation speed = Adaptation(new Param(60), new Param(50), new Param(70), 10, 4);
 
 };

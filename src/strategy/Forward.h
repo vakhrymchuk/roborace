@@ -28,8 +28,10 @@ public:
     Param *rotationCheckEnabled = new Param(0, "rotation-check", "main");
     Param *runCorrectionSide = new Param(0, "run-correction-side", "forward");
 
-    Param *speed = new Param(58, "forward-speed", "forward");
-    Adaptation *forwardSpeed = new Adaptation(speed, 58, 100, 10, 2, 1, 4);
+    Param *speed = new Param(54, "forward-speed", "forward");
+    Param *minSpeed = new Param(40, "min-speed", "forward");
+    Param *maxSpeed = new Param(100, "max-speed", "forward");
+    Adaptation *forwardSpeed = new Adaptation(speed, minSpeed, maxSpeed, 10, 2, 1, 4);
 
     Param *distWall = new Param(20, "wall-dist", "forward");
 

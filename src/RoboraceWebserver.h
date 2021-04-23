@@ -96,6 +96,9 @@ public:
         paramHolder->add(mechanics->engine->speedCorrector->maxCorrectionRun);
         paramHolder->add(mechanics->engine->speedCorrector->maxCorrectionBrake);
 
+        paramHolder->add(forward->minSpeed);
+        paramHolder->add(forward->maxSpeed);
+
         paramHolder->readAllEeprom();
     }
 
