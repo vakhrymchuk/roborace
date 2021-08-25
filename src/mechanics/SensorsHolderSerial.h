@@ -8,6 +8,10 @@ class SensorsHolder {
 
 public:
 
+    const int max30 = 200;
+    const int max60 = 200;
+    const int max90 = 200;
+
     int f00d = 0;
     int l30d = 0, r30d = 0;
     int l60d = 0, r60d = 0;
@@ -44,6 +48,10 @@ private:
 
     void calcMinDistance();
 
+    int minV(int a, int b) {
+        return a < b ? a : b;
+    }
+
 };
 
 void SensorsHolder::readDistances() {
@@ -56,21 +64,21 @@ void SensorsHolder::readDistances() {
         deserializeJson(doc, data);
 //        serializeJson(doc, Serial);
 
-        l90Sensor->setDistance(doc[0]);
-        l60Sensor->setDistance(doc[1]);
-        l30Sensor->setDistance(doc[2]);
-        f00Sensor->setDistance(doc[3]);
-        r30Sensor->setDistance(doc[4]);
-        r60Sensor->setDistance(doc[5]);
-        r90Sensor->setDistance(doc[6]);
+        l90Sensor->setDistance(minV(doc[0], max90));
+        l60Sensor->setDistance(minV(doc[1], max60));
+        l30Sensor->setDistance(minV(doc[2], max30));
+        f00Sensor->setDistance(minV(doc[3], 200));
+        r30Sensor->setDistance(minV(doc[4], max30));
+        r60Sensor->setDistance(minV(doc[5], max60));
+        r90Sensor->setDistance(minV(doc[6], max90));
 
-        l90d = doc[0];
-        l60d = doc[1];
-        l30d = doc[2];
-        f00d = doc[3];
-        r30d = doc[4];
-        r60d = doc[5];
-        r90d = doc[6];
+        l90d = l90Sensor->getDistance();
+        l60d = l60Sensor->getDistance();
+        l30d = l30Sensor->getDistance();
+        f00d = f00Sensor->getDistance();
+        r30d = r30Sensor->getDistance();
+        r60d = r60Sensor->getDistance();
+        r90d = r90Sensor->getDistance();
 //        int fps = doc[7];
 
         calcMaxDistance();
