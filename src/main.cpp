@@ -6,8 +6,12 @@
 #include <WiFiMulti.h>
 #include <Wire.h>
 
+#include <esp_task_wdt.h>
+//3 seconds WDT
+#define WDT_TIMEOUT 3
+
 #define DEBUG true
-//#define WAIT_5S true
+#define WAIT_5S true
 
 #include "RoboraceWebserver.h"
 
@@ -85,9 +89,13 @@ void setup() {
 //        wiFiMulti->run(10);
 #endif
 
+    esp_task_wdt_init(WDT_TIMEOUT, true); //enable panic so ESP32 restarts
+    esp_task_wdt_add(NULL); //add current thread to WDT watch
+
 }
 
 void loop() {
     roborace->loop();
+    esp_task_wdt_reset();
 //    wiFiMulti->run(10);
 }
