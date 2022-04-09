@@ -64,9 +64,9 @@ private:
 
     void forward() {
         bool isLonger2Sec = start.isMoreThan(2, SECOND);
-        bool isFBack = sensors.forwardD < 20 && sensors.isForwardLongerThan(200);
-        bool isLBack = sensors.l45d < 20 && sensors.isLeftLongerThan(200);
-        bool isRBack = sensors.r45d < 20 && sensors.isRightLongerThan(200);
+        bool isFBack = sensors.forwardD < 20 && sensors.isForwardLongerThan(100);
+        bool isLBack = sensors.l45d < 20 && sensors.isLeftLongerThan(100);
+        bool isRBack = sensors.r45d < 20 && sensors.isRightLongerThan(100);
         if ((isFBack || isLBack || isRBack) && isLonger2Sec) {
             newStrategy(BACKWARD);
             return;
@@ -84,29 +84,19 @@ private:
 
         double currentSpeed = mechanics.getEngine().getSpeed();
         double error = (sensors.l45d - sensors.r45d) / 4.0;
-        speed = 3.1;
+        speed = 3.0;
         if (sensors.r45d >= 130 && sensors.r45d > sensors.l45d) {
-            turn = 0.6 * ServoWrapper::FULL_RIGHT;
+            turn = 0.55 * ServoWrapper::FULL_RIGHT;
         } else if (sensors.l45d >= 130) {
-            turn = 0.6 * ServoWrapper::FULL_LEFT;
+            turn = 0.55 * ServoWrapper::FULL_LEFT;
         } else {
-            speed = 3.8;
-//            turn = sensors.l45d > sensors.r45d ? ServoWrapper::FULL_LEFT : ServoWrapper::FULL_RIGHT;
-/*            if (sensors.forwardD >= 80) {
-                speed = 3.0;
-                 turn = 1.0 * error;
-//                turn = 0;
-                turn = constrain(turn, -10, 10);
-            } else */{
-                turn = 1.0 * error;
-
-//                int angle = map(sensors.forwardD, 30, 70, 100, 0);
-//                turn = angle * sign(error);
-
-                turn = constrain(turn, -10, 10);
-//                turn = 0;
-            }
+            speed = 3.5;
+            turn = 1.0 * error;
+            turn = constrain(turn, -10, 10);
         }
+
+        if (currentSpeed > 3.3) turn = constrain(turn, -50, 50);
+
 #ifdef DEBUG
         if (debug.isReady()) {
             Serial.print(speed);
@@ -145,12 +135,12 @@ private:
         Serial.println(start.time());
 #endif
         if (start.isLessThan(1000)) {
-            speed = 2.0;
+            speed = 5.0;
             turn = ServoWrapper::FULL_LEFT;
-        } else if (start.isLessThan(2500)) {
+        } else /*if (start.isLessThan(2500)) {
             speed = -2.0;
             turn = ServoWrapper::FULL_RIGHT;
-        } else {
+        } else */{
             newStrategy(FORWARD);
         }
 

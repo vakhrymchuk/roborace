@@ -24,7 +24,7 @@ public:
 
         pid.begin();
         pid.tune(400.0, 1.5, 0.0);
-        pid.limit(-100, 100);
+        pid.limit(-150, 150);
 
         pidBack.begin();
         pidBack.tune(400.0, 2.0, 0.0);

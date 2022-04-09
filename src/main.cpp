@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
 //#define DEBUG true
-//#define WAIT_5S true
+#define WAIT_5S true
 
 #include "Roborace2.h"
 
