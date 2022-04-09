@@ -4,7 +4,7 @@
 #include <LiquidCrystal_I2C.h>
 #include <Joystick.h>
 #include "Roborace.h"
-#include "remote/Transceiver.h"
+#include "v1.0/remote/Transceiver.h"
 
 class RoboraceJoystick : public Roborace {
 public:

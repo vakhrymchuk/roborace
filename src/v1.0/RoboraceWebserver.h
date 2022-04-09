@@ -3,8 +3,8 @@
 
 #include <ArduinoJson.h>
 #include <ESPAsyncWebServer.h>
-#include <value/TimingValue.h>
-#include <value/ParamHolder.h>
+#include "v1.0/value/TimingValue.h"
+#include "v1.0/value/ParamHolder.h"
 #include "Roborace.h"
 
 
@@ -145,13 +145,13 @@ public:
     String getStrategy() {
         if (activeStrategy == forward) {
             return "forward";
-        } else if (activeStrategy == backward) {
+        }/* else if (activeStrategy == backward) {
             return "backward";
 //        } else if (activeStrategy == turbo) {
 //            return "turbo";
         } else if (activeStrategy == rotate) {
             return "rotate";
-        }
+        }*/
         return "unknown";
     }
 
@@ -197,8 +197,9 @@ public:
 
             const String &requestString = String((char *) data);
             Serial.printf("ws requestString=%s\n", requestString.c_str());
-            deserializeJson(doc, requestString);
-            isNeedUpdateParams = paramHolder->apply(doc);
+            DynamicJsonDocument jsonDoc = DynamicJsonDocument(100);
+            deserializeJson(jsonDoc, requestString);
+            isNeedUpdateParams = paramHolder->apply(jsonDoc);
         }
     }
 

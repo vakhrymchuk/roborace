@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Stopwatch.h>
+#include "Stopwatch.h"
 #include "Timeout.h"
-#include "../mechanics/Mechanics.h"
+#include "v1.0/mechanics/Mechanics.h"
 
 
 template<typename T>

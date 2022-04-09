@@ -1,8 +1,8 @@
 #pragma once
 
-#include <value/Param.h>
+#include "v1.0/value/Param.h"
 #include "Strategy.h"
-#include "Adaptation.h"
+#include "v1.0/Adaptation.h"
 #include "RotationHelper.h"
 
 
@@ -15,14 +15,6 @@ public:
 
     RotationHelper *rotationHelper = new RotationHelper();
 
-//    Param *distFullTurn = new Param(80);
-    Param *f30k = new Param(80, "forward-30-koef", "forward");
-    Param *f60k = new Param(100, "forward-60-koef", "forward");
-    Param *f90k = new Param(50, "forward-90-koef", "forward");
-    Param *t30k = new Param(80, "turbo-30-koef", "turbo");
-    Param *t60k = new Param(30, "turbo-60-koef", "turbo");
-    Param *t90k = new Param(10, "turbo-90-koef", "turbo");
-    Param *maxSum = new Param(100, "max-sum", "forward");
 
     Param *stuckCheckEnabled = new Param(0, "stuck-check", "main");
     Param *rotationCheckEnabled = new Param(0, "rotation-check", "main");
@@ -65,7 +57,7 @@ public:
 //                return leftWall->init(this, 5000);
 //            }
             if (rotationCheckEnabled->value && rotationHelper->isCounterClockWise()
-                && sensors->l30d >= 30 && sensors->l60d >= 30) {
+                && sensors->left45Distance >= 30) {
                 rotationHelper->reset();
                 return rotate->init(this);
             }
@@ -79,33 +71,15 @@ public:
     void calc(SensorsHolder *sensors) final {
         power = forwardSpeed->adaptedValue();
 
-        if (sensors->f00d >= turboModeDist->value) {
-            power += map(sensors->f00d, turboModeDist->value, 200, 0, turboSpeed->value);
-            angle = calcAngleBySensors(sensors, t30k->value, t60k->value, t90k->value, turboMaxTurn->value);
-        } else {
-            angle = calcAngleBySensors(sensors, f30k->value, f60k->value, f90k->value, Mechanics::TURN_MAX_ANGLE);
+        if (sensors->maxForwardDistance >= turboModeDist->value) {
+//            power += map(sensors->f00d, turboModeDist->value, 200, 0, turboSpeed->value);
+            power += turboSpeed->value;
         }
-
-//        Serial.printf("sum = %d  angle = %d  power = %d \n", sum, angle, power);
-
 //        checkPersecution(sensors);
 
         rotationHelper->placeVector(angle, power);
 
 //        Serial.printf("forward power=%d\n", turboSpeed->value);
-    }
-
-    int
-    calcAngleBySensors(const SensorsHolder *sensors, int s30k, int s60k, int s90k, int maxTurn) const {
-        int sum = (sensors->l30d - sensors->r30d) * s30k / 100
-                  + (sensors->l60d - sensors->r60d) * s60k / 100
-                  + (sensors->l90d - sensors->r90d) * s90k / 100;
-
-        sum += runCorrectionSide->value;
-
-        int maxSumValue = maxSum->value;
-        sum = constrain(sum, -maxSumValue, maxSumValue);
-        return (int) map(sum, -maxSumValue, maxSumValue, -maxTurn, maxTurn);
     }
 
 

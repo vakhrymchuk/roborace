@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Roborace.h"
-#include "remote/Transceiver.h"
+#include "v1.0/remote/Transceiver.h"
 #include "PrintFake.h"
 
 class RoboraceNrf : public Roborace {

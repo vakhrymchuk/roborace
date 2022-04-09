@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Roborace.h"
-#include "value/ValueEditor.h"
+#include "v1.0/value/ValueEditor.h"
 
 class RoboraceConfigValues : public Roborace {
 public:

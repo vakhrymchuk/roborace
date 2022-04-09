@@ -1,7 +1,7 @@
 #pragma once
 
 #include "KalmanFilter.h"
-#include "TimingFilter.h"
+#include "TimingSensor.h"
 #include "MedianFilter.h"
 #include "MedianFilterWindow.h"
 
@@ -13,12 +13,12 @@
 
 #elif defined SHARP_SENSORS
 
-#include <ADC.h>
-#include <Sharp.h>
+#include "ADC.h"
+#include "Sharp.h"
 
 #endif
 
-
+#if defined VL53
 byte checkWire(TwoWire &wire) {
     byte working = 0;
     byte count = 0;
@@ -44,16 +44,16 @@ byte checkWire(TwoWire &wire) {
 //    wire.end();
     return working;
 }
+#endif
 
-
-class SensorsHolder1 {
+class SensorsHolder {
 
 public:
 
     static const bool USE_MEDIAN_FILTER = false;
     static const bool USE_KALMAN_FILTER = false;
 
-    int forwardLeftDistance = 0, forwardRightDistance = 0, forwardCenterDistance = 0;
+    int forwardLeftDistance = 0, forwardRightDistance = 0;
     int leftDistance = 0, rightDistance = 0;
     int left45Distance = 0, right45Distance = 0;
 
@@ -68,17 +68,17 @@ public:
 #if defined VL53
     TCA9548A *i2cMux;
 #endif
-    TimingFilter *forwardRightSensor;
-    TimingFilter *forwardLeftSensor;
-//    TimingFilter *forwardCenterSensor;
-    TimingFilter *rightSensor;
-    TimingFilter *leftSensor;
-    TimingFilter *right45Sensor;
-    TimingFilter *left45Sensor;
+    TimingSensor *forwardRightSensor;
+    TimingSensor *forwardLeftSensor;
+//    TimingSensor *forwardCenterSensor;
+    TimingSensor *rightSensor;
+    TimingSensor *leftSensor;
+    TimingSensor *right45Sensor;
+    TimingSensor *left45Sensor;
 
 public:
 
-    SensorsHolder1() {
+    SensorsHolder() {
         createSensors();
     }
 
@@ -94,7 +94,7 @@ private:
 
     void calcMinDistance();
 
-    static TimingFilter *createSensor(DistanceSensor *sensor) {
+    static TimingSensor *createSensor(DistanceSensor *sensor) {
         DistanceSensor *distanceSensor = sensor;
         if (USE_MEDIAN_FILTER) {
             distanceSensor = new MedianFilterWindow(distanceSensor, MedianFilter::ARR_SIZE);
@@ -102,12 +102,14 @@ private:
         if (USE_KALMAN_FILTER) {
             distanceSensor = new KalmanFilter(distanceSensor);
         }
-        return new TimingFilter(distanceSensor);
+        return new TimingSensor(distanceSensor);
     }
 
+#if defined VL53
     Vl53l1xSensorI2cMux *createSensor1(byte channel) const;
 
     Vl53l0xSensorI2cMux *createSensor0(byte channel) const;
+#endif
 };
 
 void SensorsHolder::readDistances() {
@@ -189,6 +191,7 @@ void SensorsHolder::createSensors() {
 #endif
 }
 
+#ifdef VL53
 Vl53l0xSensorI2cMux *SensorsHolder::createSensor0(const byte channel) const {
     auto *sensor = new Vl53l0xSensorI2cMux(channel, i2cMux);
     sensor->initSensor();
@@ -200,3 +203,4 @@ Vl53l1xSensorI2cMux *SensorsHolder::createSensor1(const byte channel) const {
     sensor->initSensor();
     return sensor;
 }
+#endif

@@ -2,12 +2,13 @@
 
 #include "Engine.h"
 #include "VoltageDivider.h"
-#include "value/Param.h"
-#include "ServoSmooth.h"
+#include "v1.0/value/Param.h"
+#include "ServoWrapper.h"
 
-#define TURN_SERVO_PIN GPIO_NUM_12
-#define ENGINE_PIN GPIO_NUM_14
-#define BATTERY_VOLTAGE_PIN GPIO_NUM_35
+#define BACK_SERVO_PIN 11
+#define TURN_SERVO_PIN 10
+#define ENGINE_PIN 9
+#define BATTERY_VOLTAGE_PIN A7
 
 class Mechanics {
 public:
@@ -21,13 +22,13 @@ public:
 
     Param *turnMaxAngle = new Param(TURN_MAX_ANGLE, "servo-max-turn", "mechanics");
     Param *turnCentralPosition = new Param(90, "servo-center", "mechanics");
-    Param *servoTurnDelta = new Param(10, "servo-turn-delta", "mechanics");
+//    Param *servoTurnDelta = new Param(10, "servo-turn-delta", "mechanics");
 
     VoltageDivider battery = VoltageDivider(BATTERY_VOLTAGE_PIN, 10);
 
-    Engine *engine = new Engine(new ServoWrapperEsp32(ENGINE_PIN));
+    Engine *engine = new Engine(new ServoWrapper(ENGINE_PIN, 1500));
 
-    ServoSmooth *turnServo = new ServoSmooth(TURN_SERVO_PIN, servoTurnDelta, turnCentralPosition);
+    ServoWrapper *turnServo = new ServoWrapper(TURN_SERVO_PIN, 90);
 
     Mechanics() {
         stop();

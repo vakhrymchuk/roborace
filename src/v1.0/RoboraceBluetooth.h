@@ -2,7 +2,7 @@
 
 #include <HardwareSerial.h>
 #include "Roborace.h"
-#include "value/ValueEditor.h"
+#include "v1.0/value/ValueEditor.h"
 #include "RoboraceConfigValues.h"
 
 class RoboraceBluetooth : public RoboraceConfigValues {

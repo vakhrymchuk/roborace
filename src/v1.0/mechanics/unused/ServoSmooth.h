@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ServoWrapperEsp32.h"
+#include "mechanics/unused/ServoWrapperEsp32.h"
 
 class ServoSmooth : public ServoWrapperEsp32 {
 public:

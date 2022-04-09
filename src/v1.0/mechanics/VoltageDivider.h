@@ -1,7 +1,7 @@
 #pragma once
 
-#include <mechanics/KalmanFilterType.h>
-#include <Interval.h>
+#include "KalmanFilterType.h"
+#include "Interval.h"
 
 class VoltageDivider {
 public:

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Timeout.h>
-#include "ServoWrapperEsp32.h"
+#include "Servo.h"
+#include "Timeout.h"
 #include "SpeedCorrector.h"
 
 /**
@@ -12,7 +12,7 @@ public:
 
     static const int ENGINE_INIT_DELAY = 1500;
 
-    explicit Engine(ServoWrapperEsp32 *servo) : servo(servo) {
+    explicit Engine(Servo *servo) : servo(servo) {
         stop();
         finishTimeout.start(ENGINE_INIT_DELAY);
     }
@@ -40,7 +40,7 @@ public:
     SpeedCorrector *speedCorrector = new SpeedCorrector();
 
 private:
-    ServoWrapperEsp32 *servo;
+    Servo *servo;
     Timeout finishTimeout;
 
     void run(int power) const {

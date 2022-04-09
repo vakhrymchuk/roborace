@@ -8,7 +8,7 @@ private:
     int rotation = 0;
 public:
 
-    Param *backwardSpeed = new Param(70);
+    Param *backwardSpeed = new Param(66);
 
     virtual Strategy *init(Strategy *callback, unsigned int minMs, int param = 0) final {
         Strategy::init(callback, minMs);
