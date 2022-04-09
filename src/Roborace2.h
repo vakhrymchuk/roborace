@@ -67,7 +67,7 @@ private:
         bool isFBack = sensors.forwardD < 20 && sensors.isForwardLongerThan(100);
         bool isLBack = sensors.l45d < 20 && sensors.isLeftLongerThan(100);
         bool isRBack = sensors.r45d < 20 && sensors.isRightLongerThan(100);
-        if ((isFBack || isLBack || isRBack) && isLonger2Sec) {
+        if ((/*isFBack || */isLBack || isRBack) && isLonger2Sec) {
             newStrategy(BACKWARD);
             return;
         }
@@ -86,16 +86,16 @@ private:
         double error = (sensors.l45d - sensors.r45d) / 4.0;
         speed = 3.0;
         if (sensors.r45d >= 130 && sensors.r45d > sensors.l45d) {
-            turn = 0.55 * ServoWrapper::FULL_RIGHT;
+            turn = 0.6 * ServoWrapper::FULL_RIGHT;
         } else if (sensors.l45d >= 130) {
-            turn = 0.55 * ServoWrapper::FULL_LEFT;
+            turn = 0.6 * ServoWrapper::FULL_LEFT;
         } else {
-            speed = 3.5;
-            turn = 1.0 * error;
-            turn = constrain(turn, -10, 10);
+            speed = 3.6;
+            turn = 0.5 * error;
+            turn = constrain(turn, -3, 3);
         }
 
-        if (currentSpeed > 3.3) turn = constrain(turn, -50, 50);
+        if (currentSpeed >= 3.4) turn = constrain(turn, -60, 60);
 
 #ifdef DEBUG
         if (debug.isReady()) {
@@ -134,8 +134,11 @@ private:
         Serial.print("          rotate!!!!     ");
         Serial.println(start.time());
 #endif
-        if (start.isLessThan(1000)) {
-            speed = 5.0;
+        if (start.isLessThan(38)) {
+            speed = 4.0;
+            turn = ServoWrapper::FULL_RIGHT;
+        } else if (start.isLessThan(900)) {
+            speed = 4.0;
             turn = ServoWrapper::FULL_LEFT;
         } else /*if (start.isLessThan(2500)) {
             speed = -2.0;

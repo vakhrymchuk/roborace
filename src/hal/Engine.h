@@ -36,7 +36,7 @@ public:
     void run(float speed) {
         if (interval.isReady()) {
 
-            speed = constrain(speed, -4, 4);
+            speed = constrain(speed, -4.0, 5.0);
 
             int compute;
             int power;
