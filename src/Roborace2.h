@@ -84,18 +84,23 @@ private:
 
         double currentSpeed = mechanics.getEngine().getSpeed();
         double error = (sensors.l45d - sensors.r45d) / 4.0;
-        speed = 3.0;
-        if (sensors.r45d >= 130 && sensors.r45d > sensors.l45d) {
+        speed = 2.0;
+        if (sensors.r45d >= 130 && sensors.r45d > sensors.l45d && sensors.r45d > sensors.forwardD) {
             turn = 0.6 * ServoWrapper::FULL_RIGHT;
-        } else if (sensors.l45d >= 130) {
+        } else if (sensors.l45d >= 130 && sensors.l45d > sensors.forwardD) {
             turn = 0.6 * ServoWrapper::FULL_LEFT;
         } else {
-            speed = 3.6;
+            if (sensors.forwardD >= 200) {
+                speed = 3.0;
+            }
             turn = 0.5 * error;
             turn = constrain(turn, -3, 3);
         }
 
-        if (currentSpeed >= 3.4) turn = constrain(turn, -60, 60);
+//        long fd = constrain(sensors.forwardD, 50, 400);
+//        speed = map(fd, 50, 400, 20, 40) * 0.1;
+
+//        if (currentSpeed >= 2.5) turn = constrain(turn, -60, 60);
 
 #ifdef DEBUG
         if (debug.isReady()) {

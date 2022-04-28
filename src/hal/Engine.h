@@ -11,7 +11,7 @@ class Engine {
 public:
 
     static const int PID_INTERVAL = 40;
-    static constexpr double TICKS_ON_METER = 186.5;
+    static constexpr double TICKS_ON_METER = 282;
     static constexpr double TICKS_PER_INTERVAL_PER_METER = TICKS_ON_METER * PID_INTERVAL * 0.001;
 
     Engine() {

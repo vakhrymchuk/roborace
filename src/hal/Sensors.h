@@ -25,7 +25,7 @@ public:
     TimingSensor *left45 = createSensor(
             new Sharp10_150Table(A1, new uint16_t[READING_COUNT]{834, 603, 400, 320, 235, 192, 144, 130, 118}));
     TimingSensor *forward = createSensor(
-            new Sharp10_150Table(A2, new uint16_t[READING_COUNT]{836, 593, 416, 302, 243, 200, 172, 158, 128}));
+            new Sharp100_500Table(A2, new uint16_t[READING_COUNT]{627, 556, 502, 369, 319, 300, 287, 277, 270}));
 
     int forwardD = 0;
     int l45d = 0;
@@ -60,9 +60,11 @@ public:
     bool isForwardLongerThan(int ms) const {
         return forward->isLongerThan(ms);
     }
+
     bool isLeftLongerThan(int ms) const {
         return left45->isLongerThan(ms);
     }
+
     bool isRightLongerThan(int ms) const {
         return right45->isLongerThan(ms);
     }
