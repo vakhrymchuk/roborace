@@ -43,8 +43,9 @@ private:
 
     float speed = 0;
     int turn = ServoWrapper::CENTER;
+    double lastError = 0;
 
-    int32_t rotateLimit = ServoWrapper::FULL_LEFT * 30 * 2.0;
+    int32_t rotateLimit = ServoWrapper::FULL_LEFT * 14 * 2.0;
     int32_t rotateCounter = -rotateLimit;
 
 
@@ -64,10 +65,10 @@ private:
 
     void forward() {
         bool isLonger2Sec = start.isMoreThan(2, SECOND);
-        bool isFBack = sensors.forwardD < 20 && sensors.isForwardLongerThan(100);
-        bool isLBack = sensors.l45d < 20 && sensors.isLeftLongerThan(100);
-        bool isRBack = sensors.r45d < 20 && sensors.isRightLongerThan(100);
-        if ((/*isFBack || */isLBack || isRBack) && isLonger2Sec) {
+        bool isFBack = sensors.forwardD <= 60 && sensors.isForwardLongerThan(100);
+        bool isLBack = sensors.l45d < 20 && sensors.isLeftLongerThan(250);
+        bool isRBack = sensors.r45d < 20 && sensors.isRightLongerThan(250);
+        if ((/*isFBack &&*/ (isLBack || isRBack)) && isLonger2Sec) {
             newStrategy(BACKWARD);
             return;
         }
@@ -84,21 +85,33 @@ private:
 
         double currentSpeed = mechanics.getEngine().getSpeed();
         double error = (sensors.l45d - sensors.r45d) / 4.0;
+        int diff = (int) (0.5 * error + 2.0 * (error - lastError));
+        lastError = error;
+
         speed = 2.0;
-        if (sensors.r45d >= 130 && sensors.r45d > sensors.l45d && sensors.r45d > sensors.forwardD) {
-            turn = 0.6 * ServoWrapper::FULL_RIGHT;
-        } else if (sensors.l45d >= 130 && sensors.l45d > sensors.forwardD) {
-            turn = 0.6 * ServoWrapper::FULL_LEFT;
+        if (sensors.forwardD > 200) {
+            turn = diff;
+            turn = constrain(turn, -10, 10);
+        } else if (sensors.r45d >= 130 && sensors.r45d > sensors.l45d && sensors.forwardD <= 200) {
+            turn = 0.70 * ServoWrapper::FULL_RIGHT;
+        } else if (sensors.l45d >= 130 && sensors.forwardD <= 200) {
+            turn = 0.70 * ServoWrapper::FULL_LEFT;
         } else {
-            if (sensors.forwardD >= 200) {
-                speed = 3.0;
-            }
-            turn = 0.5 * error;
-            turn = constrain(turn, -3, 3);
+            speed = 2.5;
+            turn = diff;
+            turn = constrain(turn, -15, 15);
+//            if (sensors.forwardD >= 300) {
+//                speed = 3.0;
+//                turn = constrain(turn, -2, 2);
+//            }
         }
 
-//        long fd = constrain(sensors.forwardD, 50, 400);
-//        speed = map(fd, 50, 400, 20, 40) * 0.1;
+        long fd = constrain(sensors.forwardD, 50, 400);
+        int maxTurn = map(fd, 50, 400, 100, 1);
+
+//        turn = constrain(turn, -maxTurn, maxTurn);
+
+        speed = map(fd, 50, 400, 22, 28) * 0.1;
 
 //        if (currentSpeed >= 2.5) turn = constrain(turn, -60, 60);
 
@@ -124,11 +137,11 @@ private:
 #endif
         //        return min(l0d, forwardD);
         if (start.isMoreThan(1, SECOND) &&
-            (sensors.forwardD > 30 || sensors.r45d > 80 || sensors.l45d > 80 || start.isMoreThan(2, SECOND))) {
+            (sensors.forwardD > 60 || sensors.r45d > 80 || sensors.l45d > 80 || start.isMoreThan(2, SECOND))) {
             newStrategy(FORWARD);
             return;
         }
-        speed = -2.0;
+        speed = -2.5;
         turn = ServoWrapper::CENTER;
 
     }
@@ -140,10 +153,10 @@ private:
         Serial.println(start.time());
 #endif
         if (start.isLessThan(38)) {
-            speed = 4.0;
+            speed = 5.0;
             turn = ServoWrapper::FULL_RIGHT;
         } else if (start.isLessThan(900)) {
-            speed = 4.0;
+            speed = 5.0;
             turn = ServoWrapper::FULL_LEFT;
         } else /*if (start.isLessThan(2500)) {
             speed = -2.0;

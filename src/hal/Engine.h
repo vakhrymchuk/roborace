@@ -23,12 +23,12 @@ public:
         servo.writeMicroseconds(DEFAULT_PULSE_WIDTH);
 
         pid.begin();
-        pid.tune(400.0, 1.5, 0.0);
-        pid.limit(-150, 150);
+        pid.tune(500.0, 1.5, 0.0);
+        pid.limit(-250, 250);
 
         pidBack.begin();
         pidBack.tune(400.0, 2.0, 0.0);
-        pidBack.limit(-20, 200);
+        pidBack.limit(-20, 400);
 
         ticks = 0;
     }
