@@ -88,30 +88,31 @@ private:
         int diff = (int) (0.5 * error + 2.0 * (error - lastError));
         lastError = error;
 
-        speed = 2.0;
+        speed = 2.3;
         if (sensors.forwardD > 200) {
             turn = diff;
             turn = constrain(turn, -10, 10);
         } else if (sensors.r45d >= 130 && sensors.r45d > sensors.l45d && sensors.forwardD <= 200) {
-            turn = 0.70 * ServoWrapper::FULL_RIGHT;
+            turn = 0.80 * ServoWrapper::FULL_RIGHT;
         } else if (sensors.l45d >= 130 && sensors.forwardD <= 200) {
-            turn = 0.70 * ServoWrapper::FULL_LEFT;
+            turn = 0.80 * ServoWrapper::FULL_LEFT;
         } else {
-            speed = 2.5;
+//            speed = 2.5;
             turn = diff;
             turn = constrain(turn, -15, 15);
-//            if (sensors.forwardD >= 300) {
-//                speed = 3.0;
-//                turn = constrain(turn, -2, 2);
-//            }
+            if (sensors.forwardD >= 300) {
+                speed = 2.5;
+                turn = constrain(turn, -2, 2);
+            }
         }
 
-        long fd = constrain(sensors.forwardD, 50, 400);
-        int maxTurn = map(fd, 50, 400, 100, 1);
+        int md = 350;
+        long fd = constrain(sensors.forwardD, 50, md);
+//        int maxTurn = map(fd, 50, 400, 100, 1);
 
 //        turn = constrain(turn, -maxTurn, maxTurn);
 
-        speed = map(fd, 50, 400, 22, 28) * 0.1;
+//        speed = map(fd, 50, md, 24, 28) * 0.1;
 
 //        if (currentSpeed >= 2.5) turn = constrain(turn, -60, 60);
 
