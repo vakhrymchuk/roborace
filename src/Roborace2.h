@@ -73,7 +73,7 @@ private:
             return;
         }
 
-        if (rotateCounter >= rotateLimit) {
+        if (rotateCounter >= rotateLimit && sensors.forwardD >= 120 && sensors.l45d >= 60) {
             newStrategy(ROTATE);
             rotateCounter = 0;
             return;
@@ -85,21 +85,21 @@ private:
 
         double currentSpeed = mechanics.getEngine().getSpeed();
         double error = (sensors.l45d - sensors.r45d) / 4.0;
-        int diff = (int) (2.0 * error + 3.0 * (error - lastError));
+        int diff = (int) (1.8 * error + 3.0 * (error - lastError));
         lastError = error;
 
         speed = 2.0;
         float turboSpeed = 3.0;
         if (sensors.forwardD > 220) {
             turn = diff;
-            turn = constrain(turn, -5, 5);
-            int md = 400;
-            long fd = constrain(sensors.forwardD, 250, md);
+            turn = constrain(turn, -2, 2);
+            int md = 450;
+            long fd = constrain(sensors.forwardD, 220, md);
             speed = map(fd, 220, md, speed * 100, turboSpeed * 100) * 0.01;
         } else if (sensors.r45d >= 130 && sensors.r45d > sensors.l45d && sensors.forwardD <= 200) {
-            turn = 0.5 * ServoWrapper::FULL_RIGHT;
+            turn = 0.6 * ServoWrapper::FULL_RIGHT;
         } else if (sensors.l45d >= 130 && sensors.forwardD <= 200) {
-            turn = 0.5 * ServoWrapper::FULL_LEFT;
+            turn = 0.6 * ServoWrapper::FULL_LEFT;
         } else {
             turn = diff;
             turn = constrain(turn, -50, 50);
@@ -143,12 +143,12 @@ private:
         Serial.println(start.time());
 #endif
         if (start.isLessThan(30)) {
-            speed = 2.0;
+            speed = 1.5;
             turn = ServoWrapper::FULL_RIGHT;
-        } else if (start.isLessThan(500)) {
-            speed = 2.0;
+        } else if (start.isLessThan(300)) {
+            speed = 1.5;
             turn = ServoWrapper::FULL_LEFT;
-        } else if (start.isLessThan(1000)) {
+        } else if (start.isLessThan(1300)) {
             speed = -2.0;
             turn = ServoWrapper::FULL_RIGHT;
         } else {

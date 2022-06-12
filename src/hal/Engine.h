@@ -24,10 +24,10 @@ public:
 
         pid.begin();
         pid.tune(600.0, 1.5, 0.0);
-        pid.limit(-500, 500);
+        pid.limit(-500, 600);
 
         pidBack.begin();
-        pidBack.tune(400.0, 2.0, 0.0);
+        pidBack.tune(500.0, 2.0, 0.0);
         pidBack.limit(-20, 400);
 
         ticks = 0;
