@@ -85,36 +85,25 @@ private:
 
         double currentSpeed = mechanics.getEngine().getSpeed();
         double error = (sensors.l45d - sensors.r45d) / 4.0;
-        int diff = (int) (0.5 * error + 2.0 * (error - lastError));
+        int diff = (int) (2.0 * error + 3.0 * (error - lastError));
         lastError = error;
 
-        speed = 2.3;
-        if (sensors.forwardD > 200) {
+        speed = 2.0;
+        float turboSpeed = 3.0;
+        if (sensors.forwardD > 220) {
             turn = diff;
-            turn = constrain(turn, -10, 10);
+            turn = constrain(turn, -5, 5);
+            int md = 400;
+            long fd = constrain(sensors.forwardD, 250, md);
+            speed = map(fd, 220, md, speed * 100, turboSpeed * 100) * 0.01;
         } else if (sensors.r45d >= 130 && sensors.r45d > sensors.l45d && sensors.forwardD <= 200) {
-            turn = 0.80 * ServoWrapper::FULL_RIGHT;
+            turn = 0.5 * ServoWrapper::FULL_RIGHT;
         } else if (sensors.l45d >= 130 && sensors.forwardD <= 200) {
-            turn = 0.80 * ServoWrapper::FULL_LEFT;
+            turn = 0.5 * ServoWrapper::FULL_LEFT;
         } else {
-//            speed = 2.5;
             turn = diff;
-            turn = constrain(turn, -15, 15);
-            if (sensors.forwardD >= 300) {
-                speed = 2.5;
-                turn = constrain(turn, -2, 2);
-            }
+            turn = constrain(turn, -50, 50);
         }
-
-        int md = 350;
-        long fd = constrain(sensors.forwardD, 50, md);
-//        int maxTurn = map(fd, 50, 400, 100, 1);
-
-//        turn = constrain(turn, -maxTurn, maxTurn);
-
-//        speed = map(fd, 50, md, 24, 28) * 0.1;
-
-//        if (currentSpeed >= 2.5) turn = constrain(turn, -60, 60);
 
 #ifdef DEBUG
         if (debug.isReady()) {
@@ -153,16 +142,16 @@ private:
         Serial.print("          rotate!!!!     ");
         Serial.println(start.time());
 #endif
-        if (start.isLessThan(38)) {
-            speed = 5.0;
+        if (start.isLessThan(30)) {
+            speed = 2.0;
             turn = ServoWrapper::FULL_RIGHT;
-        } else if (start.isLessThan(900)) {
-            speed = 5.0;
+        } else if (start.isLessThan(500)) {
+            speed = 2.0;
             turn = ServoWrapper::FULL_LEFT;
-        } else /*if (start.isLessThan(2500)) {
+        } else if (start.isLessThan(1000)) {
             speed = -2.0;
             turn = ServoWrapper::FULL_RIGHT;
-        } else */{
+        } else {
             newStrategy(FORWARD);
         }
 

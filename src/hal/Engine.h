@@ -23,8 +23,8 @@ public:
         servo.writeMicroseconds(DEFAULT_PULSE_WIDTH);
 
         pid.begin();
-        pid.tune(500.0, 1.5, 0.0);
-        pid.limit(-250, 250);
+        pid.tune(600.0, 1.5, 0.0);
+        pid.limit(-500, 500);
 
         pidBack.begin();
         pidBack.tune(400.0, 2.0, 0.0);
