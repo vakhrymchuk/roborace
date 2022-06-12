@@ -88,12 +88,12 @@ private:
         int diff = (int) (1.8 * error + 3.0 * (error - lastError));
         lastError = error;
 
-        speed = 2.3;
+        speed = 2.0;
         float turboSpeed = 3.5;
         if (sensors.forwardD >= 270) {
             turn = diff;
             turn = constrain(turn, -3, 3);
-            speed = 2.6;
+            speed = 2.4;
 //            int md = 450;
 //            long fd = constrain(sensors.forwardD, 250, md);
 //            speed = map(fd, 220, md, speed * 100, turboSpeed * 100) * 0.01;
