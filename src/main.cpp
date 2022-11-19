@@ -13,6 +13,9 @@ void setup() {
     Serial.begin(115200);
     Serial.println("start");
 #endif
+#ifdef FREE_RUN_MODE
+    ADC_setup();
+#endif
 
     roborace = new Roborace();
 }

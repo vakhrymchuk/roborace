@@ -11,7 +11,7 @@ int sign(T val) {
 }
 
 enum Strategy {
-    FORWARD, BACKWARD, ROTATE
+    FORWARD, BACKWARD, LEFT_WALL, RIGHT_WALL, ROTATE
 };
 
 class Roborace {
@@ -25,7 +25,7 @@ public:
         logic();
 
 #ifdef WAIT_5S
-        if (millis() < 4900) speed = 0;
+        if (millis() < 4500) speed = 0;
 #endif
 
         mechanics.run(speed, turn);
@@ -38,7 +38,7 @@ private:
     Mechanics mechanics;
     Sensors sensors;
 
-    Strategy strategy = FORWARD;
+    Strategy strategy = RIGHT_WALL;
     Stopwatch start;
 
     float speed = 0;
@@ -60,15 +60,18 @@ private:
             case ROTATE:
                 rotate();
                 break;
+            case LEFT_WALL:
+                leftWall();
+                break;
+            case RIGHT_WALL:
+                rightWall();
+                break;
         }
     }
 
     void forward() {
-        bool isLonger2Sec = start.isMoreThan(250);
-        bool isFBack = sensors.forwardD <= 60 && sensors.isForwardLongerThan(100);
-        bool isLBack = sensors.l45d < 20 && sensors.isLeftLongerThan(250);
-        bool isRBack = sensors.r45d < 20 && sensors.isRightLongerThan(250);
-        if ((/*isFBack &&*/ (isLBack || isRBack)) && isLonger2Sec) {
+
+        if (isNeedBack()) {
             newStrategy(BACKWARD);
             return;
         }
@@ -122,6 +125,16 @@ private:
 
     }
 
+    bool isNeedBack() const {
+        bool isLonger2Sec = start.isMoreThan(50);
+        bool isFBack = sensors.forwardD <= 60 && sensors.isForwardLongerThan(100);
+        bool isL0Back = sensors.l0d < 30 && sensors.isLeftLongerThan(250);
+        bool isR0Back = sensors.r0d < 30 && sensors.isLeftLongerThan(250);
+        bool isL45Back = sensors.l45d < 20 && sensors.isLeftLongerThan(250);
+        bool isR45Back = sensors.r45d < 20 && sensors.isRightLongerThan(250);
+        return (isL0Back || isR0Back) && isLonger2Sec;
+    }
+
     void backward() {
 #ifdef DEBUG
         Serial.println("BACK");
@@ -129,12 +142,42 @@ private:
         //        return min(l0d, forwardD);
         if (start.isMoreThan(1, SECOND) &&
             (sensors.forwardD > 60 || sensors.r45d > 80 || sensors.l45d > 80 || start.isMoreThan(2, SECOND))) {
-            newStrategy(FORWARD);
+            newStrategy(RIGHT_WALL);
             return;
         }
         speed = -2.5;
         turn = ServoWrapper::CENTER;
 
+    }
+
+    void leftWall() {
+        speed = 2.0;
+        double error = sensors.l45d - 45;
+
+        int diff = (int) (0.5 * error + 1.8 * (error - lastError));
+        lastError = error;
+        turn = diff;
+
+        if (sensors.l0d < 45 && sensors.l45d < 60) {
+            turn = -35;
+        }
+    }
+
+    void rightWall() {
+        if (isNeedBack()) {
+            newStrategy(BACKWARD);
+            return;
+        }
+
+        speed = 1.0;
+        double error = (55.0 - sensors.r45d);
+
+        int diff = (int) (1.0 * error + 2.0 * (error - lastError));
+        lastError = error;
+        turn = diff;
+        if (sensors.r0d < 100 && sensors.r45d < 70) {
+            turn = 50;
+        }
     }
 
 

@@ -8,11 +8,11 @@ public:
 
     void run(float speed, int turn) {
         engine.run(speed);
-        forward.turn(turn * 3);
+        forward.turn(turn * 4);
         backward.turn(turn);
     }
 
-    const Engine &getEngine() const {
+    Engine &getEngine() {
         return engine;
     }
 

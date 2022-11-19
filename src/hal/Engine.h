@@ -29,33 +29,41 @@ public:
         pidBack.begin();
         pidBack.tune(500.0, 2.0, 0.0);
         pidBack.limit(-200, 400);
+    }
 
-        ticks = 0;
+    void stop() {
+        servo.writeMicroseconds(DEFAULT_PULSE_WIDTH);
     }
 
     void run(float speed) {
-        if (interval.isReady()) {
+        if (interval.isReady() /*|| speed != lastSpeed*/) {
 
             speed = constrain(speed, -4.0, 5.0);
 
-            int compute;
             int power;
             if (speed >= 0) {
                 pid.setpoint(speed);
-                compute = (int) pid.compute(calcSpeed());
-                power = 50 + compute;
+                power = 50 + (int) pid.compute(calcSpeed());
             } else {
                 pidBack.setpoint(-speed);
-                compute = (int) pidBack.compute(calcSpeed());
-                power = -(160 + compute);
+                power = -(200 + (int) pidBack.compute(calcSpeed()));
             }
 
             servo.writeMicroseconds(DEFAULT_PULSE_WIDTH + power);
+            lastSpeed = speed;
         }
     }
 
     double getSpeed() const {
         return speedActual;
+    }
+
+    double getOverallDistance() const {
+        return (double) overallTicks / TICKS_ON_METER;
+    }
+
+    void resetOverallDistance() {
+        overallTicks = 0;
     }
 
 private:
@@ -68,12 +76,15 @@ private:
     Servo servo;
 
     double speedActual = 0;
+    double lastSpeed = 0;
+    unsigned long overallTicks = 0;
 
     static void tick() {
         ticks++;
     }
 
     double calcSpeed() {
+        overallTicks += ticks;
         speedActual = ticks / TICKS_PER_INTERVAL_PER_METER;
         ticks = 0;
         return speedActual;
