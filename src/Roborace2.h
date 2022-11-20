@@ -81,20 +81,19 @@ private:
         int diff = (int) (1.6 * error + 3.2 * (error - lastError));
         lastError = error;
 
-        speed = 2.0;
-        float turboSpeed = 3.5;
-        if (sensors.r0d >= 150  || sensors.l0d >= 150) {
+        speed = 2.5;
+        if (sensors.r0d + sensors.l0d >= 220 && sensors.forwardD >= 200) {
 
-            double error2 = (sensors.l0d - sensors.r0d) / 4.0;
-            int diff2 = (int) (4.0 * error2);
-
-            turn = constrain(diff, -20, 20) + diff2;
-            if (sensors.forwardD >= 200) {
+            if (sensors.forwardD >= 250) {
+                turn = diff;
                 turn = constrain(turn, -3, 3);
                 speed = 3.0;
             } else {
+                double error2 = (sensors.l0d - sensors.r0d) / 4.0;
+                int diff2 = (int) (4.0 * error2);
+                turn = diff2;
                 turn = constrain(turn, -15, 15);
-                speed = 2.2;
+                speed = 2.8;
             }
         } else if (sensors.r45d >= 140 && sensors.r45d > sensors.l45d) {
             turn = -80;
@@ -102,7 +101,7 @@ private:
             turn = 80;
         } else {
             turn = diff;
-            turn = constrain(turn, -70, 70);
+            turn = constrain(turn, -30, 30);
         }
 
 #ifdef DEBUG
