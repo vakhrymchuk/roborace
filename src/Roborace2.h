@@ -25,7 +25,7 @@ public:
         logic();
 
 #ifdef WAIT_5S
-        if (millis() < 4500) speed = 0;
+        if (millis() < 3500) speed = 0;
 #endif
 
         mechanics.run(speed, turn);
@@ -38,7 +38,7 @@ private:
     Mechanics mechanics;
     Sensors sensors;
 
-    Strategy strategy = RIGHT_WALL;
+    Strategy strategy = FORWARD;
     Stopwatch start;
 
     float speed = 0;
@@ -76,37 +76,33 @@ private:
             return;
         }
 
-        if (rotateCounter >= rotateLimit && sensors.forwardD >= 120 && sensors.l45d >= 60) {
-            newStrategy(ROTATE);
-            rotateCounter = 0;
-            return;
-        }
-
-//        int d = constrain(sensors.forwardD, 10, 150);
-//        turn = map(d, 10, 150, -100, 100);
-//        return;
-
         double currentSpeed = mechanics.getEngine().getSpeed();
         double error = (sensors.l45d - sensors.r45d) / 4.0;
-        int diff = (int) (1.8 * error + 3.0 * (error - lastError));
+        int diff = (int) (1.6 * error + 3.2 * (error - lastError));
         lastError = error;
 
         speed = 2.0;
         float turboSpeed = 3.5;
-        if (sensors.forwardD >= 270) {
-            turn = diff;
-            turn = constrain(turn, -3, 3);
-            speed = 2.4;
-//            int md = 450;
-//            long fd = constrain(sensors.forwardD, 250, md);
-//            speed = map(fd, 220, md, speed * 100, turboSpeed * 100) * 0.01;
-        } else if (sensors.r45d >= 140 && sensors.r45d > sensors.l45d && sensors.forwardD <= 180) {
-            turn = 0.62 * ServoWrapper::FULL_RIGHT;
-        } else if (sensors.l45d >= 140 && sensors.forwardD <= 180) {
-            turn = 0.62 * ServoWrapper::FULL_LEFT;
+        if (sensors.r0d >= 150  || sensors.l0d >= 150) {
+
+            double error2 = (sensors.l0d - sensors.r0d) / 4.0;
+            int diff2 = (int) (4.0 * error2);
+
+            turn = constrain(diff, -20, 20) + diff2;
+            if (sensors.forwardD >= 200) {
+                turn = constrain(turn, -3, 3);
+                speed = 3.0;
+            } else {
+                turn = constrain(turn, -15, 15);
+                speed = 2.2;
+            }
+        } else if (sensors.r45d >= 140 && sensors.r45d > sensors.l45d) {
+            turn = -80;
+        } else if (sensors.l45d >= 140) {
+            turn = 80;
         } else {
             turn = diff;
-            turn = constrain(turn, -12, 12);
+            turn = constrain(turn, -70, 70);
         }
 
 #ifdef DEBUG
@@ -123,16 +119,22 @@ private:
         rotateCounter += currentSpeed * turn;
         rotateCounter = constrain(rotateCounter, -rotateLimit, rotateLimit);
 
+        if (rotateCounter >= rotateLimit && sensors.forwardD >= 120 && sensors.l45d >= 60) {
+            newStrategy(ROTATE);
+            rotateCounter = 0;
+            return;
+        }
+
     }
 
     bool isNeedBack() const {
-        bool isLonger2Sec = start.isMoreThan(50);
-        bool isFBack = sensors.forwardD <= 60 && sensors.isForwardLongerThan(100);
-        bool isL0Back = sensors.l0d < 30 && sensors.isLeftLongerThan(250);
-        bool isR0Back = sensors.r0d < 30 && sensors.isLeftLongerThan(250);
-        bool isL45Back = sensors.l45d < 20 && sensors.isLeftLongerThan(250);
-        bool isR45Back = sensors.r45d < 20 && sensors.isRightLongerThan(250);
-        return (isL0Back || isR0Back) && isLonger2Sec;
+//        bool isLonger2Sec = start.isMoreThan(50);
+//        bool isFBack = sensors.forwardD <= 60 && sensors.isForwardLongerThan(100);
+        bool isL0Back = sensors.l0d < 30 && sensors.isLeftLongerThan(50);
+        bool isR0Back = sensors.r0d < 30 && sensors.isLeftLongerThan(50);
+//        bool isL45Back = sensors.l45d < 20 && sensors.isLeftLongerThan(250);
+//        bool isR45Back = sensors.r45d < 20 && sensors.isRightLongerThan(250);
+        return isL0Back || isR0Back;
     }
 
     void backward() {
@@ -142,7 +144,7 @@ private:
         //        return min(l0d, forwardD);
         if (start.isMoreThan(1, SECOND) &&
             (sensors.forwardD > 60 || sensors.r45d > 80 || sensors.l45d > 80 || start.isMoreThan(2, SECOND))) {
-            newStrategy(RIGHT_WALL);
+            newStrategy(FORWARD);
             return;
         }
         speed = -2.5;
@@ -169,14 +171,14 @@ private:
             return;
         }
 
-        speed = 1.0;
-        double error = (55.0 - sensors.r45d);
+        speed = 3.0;
+        double error = (50.0 - sensors.r45d);
 
-        int diff = (int) (1.0 * error + 2.0 * (error - lastError));
+        int diff = (int) (0.5 * error + 1.0 * (error - lastError));
         lastError = error;
         turn = diff;
-        if (sensors.r0d < 100 && sensors.r45d < 70) {
-            turn = 50;
+        if (sensors.r0d < 120 && sensors.r45d < 80) {
+            turn = 80;
         }
     }
 

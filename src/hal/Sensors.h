@@ -65,11 +65,11 @@ public:
     }
 
     bool isLeftLongerThan(int ms) const {
-        return right0->isLongerThan(ms);
+        return left0->isLongerThan(ms);
     }
 
     bool isRightLongerThan(int ms) const {
-        return left0->isLongerThan(ms);
+        return right0->isLongerThan(ms);
     }
 
 private:
