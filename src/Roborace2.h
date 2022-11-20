@@ -45,7 +45,7 @@ private:
     int turn = ServoWrapper::CENTER;
     double lastError = 0;
 
-    int32_t rotateLimit = ServoWrapper::FULL_LEFT * 14 * 2.0;
+    int32_t rotateLimit = ServoWrapper::FULL_LEFT * 18 * 2.0;
     int32_t rotateCounter = -rotateLimit;
 
 
@@ -81,27 +81,27 @@ private:
         int diff = (int) (1.6 * error + 3.2 * (error - lastError));
         lastError = error;
 
-        speed = 2.5;
-        if (sensors.r0d + sensors.l0d >= 220 && sensors.forwardD >= 200) {
+        speed = 2.6;
+        if (((sensors.r0d >= 150 && sensors.l0d >= 120) || (sensors.l0d >= 150 && sensors.r0d >= 120)) && sensors.forwardD >= 200) {
 
-            if (sensors.forwardD >= 250) {
-                turn = diff;
+            if (sensors.forwardD >= 200) {
+                turn = diff - 1;
                 turn = constrain(turn, -3, 3);
-                speed = 3.0;
+                speed = 3.2;
             } else {
                 double error2 = (sensors.l0d - sensors.r0d) / 4.0;
                 int diff2 = (int) (4.0 * error2);
-                turn = diff2;
-                turn = constrain(turn, -15, 15);
+                turn = diff2 + diff / 10;
+                turn = constrain(turn, -10, 10);
                 speed = 2.8;
             }
-        } else if (sensors.r45d >= 140 && sensors.r45d > sensors.l45d) {
-            turn = -80;
-        } else if (sensors.l45d >= 140) {
-            turn = 80;
+        } else if (sensors.r45d >= 150 && sensors.r45d > sensors.l45d) {
+            turn = -60;
+        } else if (sensors.l45d >= 150) {
+            turn = 60;
         } else {
             turn = diff;
-            turn = constrain(turn, -30, 30);
+            turn = constrain(turn, -10, 10);
         }
 
 #ifdef DEBUG
@@ -129,8 +129,8 @@ private:
     bool isNeedBack() const {
 //        bool isLonger2Sec = start.isMoreThan(50);
 //        bool isFBack = sensors.forwardD <= 60 && sensors.isForwardLongerThan(100);
-        bool isL0Back = sensors.l0d < 30 && sensors.isLeftLongerThan(50);
-        bool isR0Back = sensors.r0d < 30 && sensors.isLeftLongerThan(50);
+        bool isL0Back = sensors.l0d < 30 && sensors.isLeftLongerThan(70);
+        bool isR0Back = sensors.r0d < 30 && sensors.isLeftLongerThan(70);
 //        bool isL45Back = sensors.l45d < 20 && sensors.isLeftLongerThan(250);
 //        bool isR45Back = sensors.r45d < 20 && sensors.isRightLongerThan(250);
         return isL0Back || isR0Back;
@@ -141,8 +141,8 @@ private:
         Serial.println("BACK");
 #endif
         //        return min(l0d, forwardD);
-        if (start.isMoreThan(1, SECOND) &&
-            (sensors.forwardD > 60 || sensors.r45d > 80 || sensors.l45d > 80 || start.isMoreThan(2, SECOND))) {
+        if (start.isMoreThan(500) &&
+            (sensors.r0d > 50 || sensors.l0d > 50 || start.isMoreThan(2, SECOND))) {
             newStrategy(FORWARD);
             return;
         }
