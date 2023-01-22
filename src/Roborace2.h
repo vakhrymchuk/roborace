@@ -81,7 +81,7 @@ private:
         int diff = (int) (1.6 * error + 3.2 * (error - lastError));
         lastError = error;
 
-        speed = 2.8;
+        speed = 2.5;
         if (((sensors.r0d >= 150 && sensors.l0d >= 120) || (sensors.l0d >= 150 && sensors.r0d >= 120)) &&
             sensors.forwardD >= 200) {
 
@@ -94,7 +94,7 @@ private:
                 int diff2 = (int) (4.0 * error2);
                 turn = diff2 + diff / 10;
                 turn = constrain(turn, -10, 10);
-                speed = 3.0;
+                speed = 2.8;
             }
         } else if (sensors.r45d >= 150 && sensors.r45d > sensors.l45d) {
             turn = -70;
