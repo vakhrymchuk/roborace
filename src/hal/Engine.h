@@ -23,12 +23,12 @@ public:
         servo.writeMicroseconds(DEFAULT_PULSE_WIDTH);
 
         pid.begin();
-        pid.tune(400.0, 1.5, 0.0);
-        pid.limit(-400, 400);
+        pid.tune(300.0, 1.5, 0.0);
+        pid.limit(-300, 300);
 
         pidBack.begin();
-        pidBack.tune(500.0, 2.0, 0.0);
-        pidBack.limit(-200, 400);
+        pidBack.tune(450.0, 2.0, 0.0);
+        pidBack.limit(-200, 500);
     }
 
     void stop() {
@@ -43,10 +43,10 @@ public:
             int power;
             if (speed >= 0) {
                 pid.setpoint(speed);
-                power = 50 + (int) pid.compute(calcSpeed());
+                power = 60 + (int) pid.compute(calcSpeed());
             } else {
                 pidBack.setpoint(-speed);
-                power = -(200 + (int) pidBack.compute(calcSpeed()));
+                power = -(150 + (int) pidBack.compute(calcSpeed()));
             }
 
             servo.writeMicroseconds(DEFAULT_PULSE_WIDTH + power);

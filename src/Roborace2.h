@@ -81,27 +81,28 @@ private:
         int diff = (int) (1.6 * error + 3.2 * (error - lastError));
         lastError = error;
 
-        speed = 2.6;
-        if (((sensors.r0d >= 150 && sensors.l0d >= 120) || (sensors.l0d >= 150 && sensors.r0d >= 120)) && sensors.forwardD >= 200) {
+        speed = 2.8;
+        if (((sensors.r0d >= 150 && sensors.l0d >= 120) || (sensors.l0d >= 150 && sensors.r0d >= 120)) &&
+            sensors.forwardD >= 200) {
 
             if (sensors.forwardD >= 200) {
                 turn = diff - 1;
                 turn = constrain(turn, -3, 3);
-                speed = 3.2;
+                speed = 3.5;
             } else {
                 double error2 = (sensors.l0d - sensors.r0d) / 4.0;
                 int diff2 = (int) (4.0 * error2);
                 turn = diff2 + diff / 10;
                 turn = constrain(turn, -10, 10);
-                speed = 2.8;
+                speed = 3.0;
             }
         } else if (sensors.r45d >= 150 && sensors.r45d > sensors.l45d) {
-            turn = -60;
+            turn = -70;
         } else if (sensors.l45d >= 150) {
-            turn = 60;
+            turn = 70;
         } else {
             turn = diff;
-            turn = constrain(turn, -10, 10);
+            turn = constrain(turn, -15, 15);
         }
 
 #ifdef DEBUG

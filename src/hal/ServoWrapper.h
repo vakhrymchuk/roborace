@@ -2,7 +2,7 @@
 
 #include <Servo.h>
 
-#define SERVO_CHECK true
+//#define SERVO_CHECK true
 
 class ServoWrapper : public Servo {
 public:
