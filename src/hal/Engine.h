@@ -11,7 +11,7 @@ class Engine {
 public:
 
     static const int PID_INTERVAL = 40;
-    static constexpr double TICKS_ON_METER = 282;
+    static constexpr int TICKS_ON_METER = 282;
     static constexpr double TICKS_PER_INTERVAL_PER_METER = TICKS_ON_METER * PID_INTERVAL * 0.001;
 
     Engine() {
@@ -23,30 +23,35 @@ public:
         servo.writeMicroseconds(DEFAULT_PULSE_WIDTH);
 
         pid.begin();
-        pid.tune(300.0, 1.5, 0.0);
-        pid.limit(-300, 300);
+//        pid.minimize(10.0);
+        pid.tune(4.5, 0.0001, 0.0);
+        pid.limit(-200, 400);
 
         pidBack.begin();
-        pidBack.tune(450.0, 2.0, 0.0);
-        pidBack.limit(-200, 500);
+//        pidBack.minimize(10.0);
+        pidBack.tune(20.0, 0.00005, 0.0);
+        pidBack.limit(-200, 400);
     }
 
     void stop() {
         servo.writeMicroseconds(DEFAULT_PULSE_WIDTH);
     }
 
-    void run(float speed) {
+    void run(int speed) {
         if (interval.isReady() /*|| speed != lastSpeed*/) {
 
-            speed = constrain(speed, -4.0, 5.0);
+            speed = constrain(speed, -400, 500);
 
+            calcSpeed();
             int power;
             if (speed >= 0) {
                 pid.setpoint(speed);
-                power = 60 + (int) pid.compute(calcSpeed());
+                if (lastSpeed < 0) pid.compute(speed);
+                power = 60 + (int) pid.compute(speedActual);
             } else {
                 pidBack.setpoint(-speed);
-                power = -(150 + (int) pidBack.compute(calcSpeed()));
+                if (lastSpeed >= 0) pid.compute(-speed);
+                power = -(180 + (int) pidBack.compute(speedActual));
             }
 
             servo.writeMicroseconds(DEFAULT_PULSE_WIDTH + power);
@@ -54,7 +59,7 @@ public:
         }
     }
 
-    double getSpeed() const {
+    int getSpeed() const {
         return speedActual;
     }
 
@@ -75,19 +80,27 @@ private:
 
     Servo servo;
 
-    double speedActual = 0;
-    double lastSpeed = 0;
+    int speedActual = 0;
+    int lastSpeed = 0;
     unsigned long overallTicks = 0;
+    unsigned long tickRefreshMs = 0;
 
     static void tick() {
         ticks++;
     }
 
-    double calcSpeed() {
+    void calcSpeed() {
         overallTicks += ticks;
-        speedActual = ticks / TICKS_PER_INTERVAL_PER_METER;
+        unsigned long duration = getIntervalDuration();
+        speedActual = (int) (100L * ticks * 1000 / (TICKS_ON_METER * duration));
         ticks = 0;
-        return speedActual;
+    }
+
+    unsigned long getIntervalDuration() {
+        unsigned long now = millis();
+        unsigned long duration = now - tickRefreshMs;
+        tickRefreshMs = now;
+        return duration;
     }
 };
 
