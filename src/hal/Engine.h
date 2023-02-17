@@ -29,7 +29,7 @@ public:
 
         pidBack.begin();
 //        pidBack.minimize(10.0);
-        pidBack.tune(20.0, 0.00005, 0.0);
+        pidBack.tune(20.0, 0.0001, 0.0);
         pidBack.limit(-200, 400);
     }
 

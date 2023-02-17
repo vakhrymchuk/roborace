@@ -8,7 +8,7 @@ public:
 
     void run(int speed, int turn) {
         engine.run(speed);
-        forward.turn(turn);
+        forward.turn(turn * 2);
         backward.turn(turn);
     }
 
