@@ -83,8 +83,8 @@ private:
 
         int fd = constrain(min(sensors.l0d, sensors.r0d), 60, 150);
         int minSpeed = 220;
-        int speedForward = 280;
-        int speedTurbo = 380;
+        int speedForward = 270;
+        int speedTurbo = 340;
         if (fd < 100) {
             speed = minSpeed;
         } else {
@@ -97,19 +97,18 @@ private:
             turn = constrain(diff, -10, 10);
             speed = speedForward;
 
-            if (sensors.forwardD >= 200) {
-                fd = constrain(sensors.forwardD, 200, 300);
-
-                speed = map(fd, 200, 300, speedForward, speedTurbo);
+            if (sensors.forwardD >= 150) {
+                fd = constrain(sensors.forwardD, 150, 400);
+                speed = map(fd, 150, 400, speedForward, speedTurbo);
                 speed = constrain(speed, speedForward, speedTurbo);
             }
         } else if (sensors.r45d >= 150 /*&& sensors.r45d > sensors.l45d*/) {
-            turn = -100;
+            turn = -90;
         } else if (sensors.l45d >= 150) {
-            turn = 100;
+            turn = 90;
         } else {
             turn = diff;
-            turn = constrain(turn, -100, 100);
+            turn = constrain(turn, -90, 90);
         };
 
 //        int maxTurn = mechanics.getEngine().getSpeed();
