@@ -24,12 +24,12 @@ public:
 
         pid.begin();
 //        pid.minimize(10.0);
-        pid.tune(4.5, 0.0001, 0.0);
+        pid.tune(5.0, 0.00002, 0.0);
         pid.limit(-200, 400);
 
         pidBack.begin();
 //        pidBack.minimize(10.0);
-        pidBack.tune(20.0, 0.0001, 0.0);
+        pidBack.tune(20.0, 0.00002, 0.0);
         pidBack.limit(-200, 400);
     }
 
