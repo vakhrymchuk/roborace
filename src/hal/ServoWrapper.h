@@ -18,15 +18,15 @@ public:
               fullLeft(fullLeft) {
         Servo::attach(pin);
 #ifdef SERVO_CHECK
-        for (int i = 0; i >= FULL_RIGHT; i-=5) {
+        for (int i = 0; i >= fullRight; i-=5) {
             turn(i);
             delay(1);
         }
-        for (int i = FULL_RIGHT; i <= FULL_LEFT; i+=5) {
+        for (int i = fullRight; i <= fullLeft; i+=5) {
             turn(i);
             delay(1);
         }
-        for (int i = FULL_LEFT; i >= 0; i-=5) {
+        for (int i = fullLeft; i >= 0; i-=5) {
             turn(i);
             delay(1);
         }

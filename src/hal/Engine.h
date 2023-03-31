@@ -3,6 +3,7 @@
 #include <Servo.h>
 #include <PIDController.h>
 #include <Interval.h>
+#include "Stopwatch.h"
 
 #define ENCODER_PIN 2
 #define POWER_SERVO_PIN 9
@@ -24,13 +25,16 @@ public:
 
         pid.begin();
 //        pid.minimize(10.0);
-        pid.tune(5.0, 0.00002, 0.0);
-        pid.limit(-200, 400);
+        pid.tune(5.0, 2.0 / PID_INTERVAL, 0.0);
+        pid.limit(-200, 300);
 
         pidBack.begin();
 //        pidBack.minimize(10.0);
-        pidBack.tune(20.0, 0.00002, 0.0);
-        pidBack.limit(-200, 400);
+        pidBack.tune(5.0, 1.5 / PID_INTERVAL, 0.0);
+        pidBack.limit(-100, 100);
+
+
+//        Serial.println("P,I,speed,actual");
     }
 
     void stop() {
@@ -43,19 +47,39 @@ public:
             speed = constrain(speed, -400, 500);
 
             calcSpeed();
+
             int power;
             if (speed >= 0) {
-                pid.setpoint(speed);
-                if (lastSpeed < 0) pid.compute(speed);
-                power = 60 + (int) pid.compute(speedActual);
+                if (lastSpeed < 0) {
+                    directionChanged.start();
+                }
+                if (directionChanged.isLessThan(400)) {
+                    power = 60;
+                    pid.resetLastTime();
+                } else {
+                    pid.setpoint(speed);
+                    power = 60 + (int) pid.compute(speedActual);
+                }
             } else {
-                pidBack.setpoint(-speed);
-                if (lastSpeed >= 0) pid.compute(-speed);
-                power = -(180 + (int) pidBack.compute(speedActual));
+                if (lastSpeed >= 0) {
+                    directionChanged.start();
+                }
+                if (directionChanged.isLessThan(400)) {
+                    power = -80;
+                    pidBack.resetLastTime();
+                } else {
+                    pidBack.setpoint(-speed);
+                    power = -(80 + (int) pidBack.compute(speedActual));
+                }
             }
 
             servo.writeMicroseconds(DEFAULT_PULSE_WIDTH + power);
             lastSpeed = speed;
+
+//            Serial.print(abs(speed));
+//            Serial.print(',');
+//            Serial.print(speedActual);
+//            Serial.println();
         }
     }
 
@@ -82,6 +106,7 @@ private:
 
     int speedActual = 0;
     int lastSpeed = 0;
+    Stopwatch directionChanged;
     unsigned long overallTicks = 0;
     unsigned long tickRefreshMs = 0;
 
