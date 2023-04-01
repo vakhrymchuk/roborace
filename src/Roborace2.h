@@ -81,10 +81,10 @@ private:
         int diff = (int) (0.5 * error + 1.5 * (error - lastError));
         lastError = error;
 
-        int fd = constrain(min(sensors.l0d, sensors.r0d), 60, 150);
-        int minSpeed = 115;
+        int fd = constrain((sensors.l0d+ sensors.r0d) / 2, 60, 150);
+        int minSpeed = 110;
         int speedForward = 145;
-        int speedTurbo = 170;
+        int speedTurbo = 155;
         if (fd < 100) {
             speed = minSpeed;
         } else {
@@ -93,23 +93,32 @@ private:
             speed = constrain(speed, minSpeed, speedForward);
         }
 
-        if (sensors.r0d + sensors.l0d >= 290 && sensors.forwardD >= 150) {
-            diff = sensors.l0d - sensors.r0d /*+ diff / 10*/;
+        if (sensors.r0d + sensors.l0d >= 270 || sensors.forwardD >= 150) {
+            diff = diff / 10;
+
+            diff = sensors.l0d - sensors.r0d;
+
+//            if (sensors.l0d >= sensors.r0d + 30) {
+//                diff = 10;
+//            }
+//            if (sensors.r0d >= sensors.l0d + 30) {
+//                diff = -10;
+//            }
             turn = constrain(diff, -10, 10);
             speed = speedForward;
 
             if (sensors.forwardD >= 150) {
-                fd = constrain(sensors.forwardD, 150, 400);
-                speed = map(fd, 150, 400, speedForward, speedTurbo);
+                fd = constrain(sensors.forwardD, 150, 300);
+                speed = map(fd, 150, 300, speedForward, speedTurbo);
                 speed = constrain(speed, speedForward, speedTurbo);
             }
-        } else if (sensors.r45d >= 120 /*&& sensors.r45d > sensors.l45d*/) {
-            turn = -100;
-        } else if (sensors.l45d >= 120) {
-            turn = 100;
-        } else {
+        } else if (sensors.l45d >= 145 && sensors.l45d > sensors.r45d) {
+            turn = 90;
+        }  else if (sensors.r45d >= 145 && sensors.r45d > sensors.l45d) {
+            turn = -90;
+        }else {
             turn = diff;
-            turn = constrain(turn, -80, 80);
+            turn = constrain(turn, -70, 70);
         };
 
 //        int maxTurn = mechanics.getEngine().getSpeed();
@@ -138,18 +147,25 @@ private:
 
     bool isNeedBack() const {
 //        bool isLonger2Sec = start.isMoreThan(50);
+        if (start.isLessThan(2000)) return false;
 //        bool isFBack = sensors.forwardD <= 60 && sensors.isForwardLongerThan(100);
-        bool isL0Back = sensors.l0d < 25 && sensors.isLeftLongerThan(90);
-        bool isR0Back = sensors.r0d < 25 && sensors.isLeftLongerThan(90);
+        bool isL0Back = sensors.l0d < 20 && sensors.isLeftLongerThan(120);
+        bool isR0Back = sensors.r0d < 20 && sensors.isLeftLongerThan(120);
 //        bool isL45Back = sensors.l45d < 20 && sensors.isLeftLongerThan(250);
 //        bool isR45Back = sensors.r45d < 20 && sensors.isRightLongerThan(250);
-        return isL0Back || isR0Back;
+        return (isL0Back && isR0Back) || ((isL0Back || isR0Back) && start.isLessThan(5000));
     }
 
     void backward() {
 #ifdef DEBUG
         Serial.println("BACK");
 #endif
+
+        double error = sensors.l45d - sensors.r45d;
+        int diff = (int) (1.0 * error);
+
+        turn = -diff;
+
         speed = -150;
         turn = -10;
         if (start.isLessThan(50)) {
@@ -157,7 +173,7 @@ private:
         } else if (start.isMoreThan(700) &&
                    (
                            sensors.r0d > 70 || sensors.l0d > 70
-//                           || sensors.l45d > 70 || sensors.r45d > 70
+                           //                           || sensors.l45d > 70 || sensors.r45d > 70
                            || start.isMoreThan(4, SECOND))
                 ) {
             newStrategy(FORWARD);
