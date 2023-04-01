@@ -78,22 +78,23 @@ private:
 
         double currentSpeed = mechanics.getEngine().getSpeed();
         double error = sensors.l45d - sensors.r45d;
-        int diff = (int) (0.5 * error + 1.0 * (error - lastError));
+        int diff = (int) (0.5 * error + 1.5 * (error - lastError));
         lastError = error;
 
         int fd = constrain(min(sensors.l0d, sensors.r0d), 60, 150);
-        int minSpeed = 220;
-        int speedForward = 270;
-        int speedTurbo = 340;
+        int minSpeed = 115;
+        int speedForward = 145;
+        int speedTurbo = 170;
         if (fd < 100) {
             speed = minSpeed;
         } else {
+//            speed = speedForward;
             speed = map(fd, 100, 150, minSpeed, speedForward);
             speed = constrain(speed, minSpeed, speedForward);
         }
 
-        if (sensors.r0d + sensors.l0d >= 300 && sensors.forwardD >= 130) {
-            diff = sensors.l0d - sensors.r0d + diff / 2;
+        if (sensors.r0d + sensors.l0d >= 290 && sensors.forwardD >= 150) {
+            diff = sensors.l0d - sensors.r0d /*+ diff / 10*/;
             turn = constrain(diff, -10, 10);
             speed = speedForward;
 
@@ -102,13 +103,13 @@ private:
                 speed = map(fd, 150, 400, speedForward, speedTurbo);
                 speed = constrain(speed, speedForward, speedTurbo);
             }
-        } else if (sensors.r45d >= 150 /*&& sensors.r45d > sensors.l45d*/) {
-            turn = -90;
-        } else if (sensors.l45d >= 150) {
-            turn = 90;
+        } else if (sensors.r45d >= 120 /*&& sensors.r45d > sensors.l45d*/) {
+            turn = -100;
+        } else if (sensors.l45d >= 120) {
+            turn = 100;
         } else {
             turn = diff;
-            turn = constrain(turn, -90, 90);
+            turn = constrain(turn, -80, 80);
         };
 
 //        int maxTurn = mechanics.getEngine().getSpeed();
@@ -127,7 +128,7 @@ private:
         rotateCounter += currentSpeed * turn;
         rotateCounter = constrain(rotateCounter, -rotateLimit, rotateLimit);
 
-        if (rotateCounter >= rotateLimit && sensors.forwardD >= 120 && sensors.l45d >= 60) {
+        if (rotateCounter <= -rotateLimit && sensors.forwardD >= 120 && sensors.l45d >= 60) {
             newStrategy(ROTATE);
             rotateCounter = 0;
             return;
@@ -164,7 +165,7 @@ private:
     }
 
     void leftWall() {
-        speed = 200;
+        speed = 100;
         double error = sensors.l45d - 45;
 
         int diff = (int) (0.5 * error + 1.8 * (error - lastError));
@@ -182,7 +183,7 @@ private:
             return;
         }
 
-        speed = 300;
+        speed = 100;
         double error = (50.0 - sensors.r45d);
 
         int diff = (int) (0.5 * error + 1.0 * (error - lastError));
@@ -199,17 +200,18 @@ private:
         Serial.print("          rotate!!!!     ");
         Serial.println(start.time());
 #endif
+        int rotateSpeed = 100;
         if (start.isLessThan(60)) {
-            speed = 150;
+            speed = rotateSpeed;
             turn = ServoWrapper::FULL_RIGHT;
         } else if (start.isLessThan(800)) {
-            speed = 200;
+            speed = rotateSpeed;
             turn = ServoWrapper::FULL_LEFT;
         } else if (start.isLessThan(2000)) {
-            speed = -150;
+            speed = -100;
             turn = ServoWrapper::FULL_RIGHT;
         } else if (start.isLessThan(2300)) {
-            speed = 200;
+            speed = rotateSpeed;
             turn = ServoWrapper::FULL_LEFT;
         } else {
             newStrategy(FORWARD);

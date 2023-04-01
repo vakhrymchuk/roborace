@@ -12,14 +12,13 @@
 
 class Sensors {
 public:
-
-    TimingSensor *left0 = createSensor(
-            new Sharp10_150Table(A0, new uint16_t[READING_COUNT]{625, 387, 295, 214, 167, 145, 132, 115, 114}));
-    TimingSensor *right0 = createSensor(
-            new Sharp10_150Table(A1, new uint16_t[READING_COUNT]{612, 359, 276, 194, 145, 121, 97, 80, 75}));
-    TimingSensor *right45 = createSensor(
-            new Sharp10_150Table(A6, new uint16_t[READING_COUNT]{611, 350, 255, 177, 130, 103, 78, 60, 49}));
     TimingSensor *left45 = createSensor(
+            new Sharp10_150Table(A0, new uint16_t[READING_COUNT]{625, 387, 295, 214, 167, 145, 132, 115, 114}));
+    TimingSensor *right45 = createSensor(
+            new Sharp10_150Table(A1, new uint16_t[READING_COUNT]{612, 359, 276, 194, 145, 121, 97, 80, 75}));
+    TimingSensor *left0 = createSensor(
+            new Sharp10_150Table(A6, new uint16_t[READING_COUNT]{611, 350, 255, 177, 130, 103, 78, 60, 49}));
+    TimingSensor *right0 = createSensor(
             new Sharp10_150Table(A7, new uint16_t[READING_COUNT]{620, 360, 268, 183, 133, 108, 81, 62, 51}));
     TimingSensor *forward = createSensor(
             new Sharp100_500Table(A2, new uint16_t[READING_COUNT]{627, 556, 507, 379, 327, 302, 287, 277, 270}));
