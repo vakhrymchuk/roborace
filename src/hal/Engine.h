@@ -25,8 +25,8 @@ public:
 
         pid.begin();
 //        pid.minimize(10.0);
-        pid.tune(5.0, 1.5 / PID_INTERVAL, 0.0);
-        pid.limit(-300, 200);
+        pid.tune(4.0, 1.5 / PID_INTERVAL, 0.0);
+        pid.limit(-300, 100);
 
         pidBack.begin();
 //        pidBack.minimize(10.0);
