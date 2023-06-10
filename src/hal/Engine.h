@@ -59,7 +59,7 @@ public:
                 } else {
                     pid.setpoint(speed);
                     power = 60 + (int) pid.compute(speedActual);
-                    if(speedActual > speed + 20) power = 60;
+//                    if(speedActual > speed + 20) power = 0;
                 }
             } else {
                 if (lastSpeed >= 0) {

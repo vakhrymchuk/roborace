@@ -24,12 +24,14 @@ public:
             new Sharp100_500Table(A2, new uint16_t[READING_COUNT]{627, 556, 507, 379, 327, 302, 287, 277, 270}));
 
     int forwardD = 0;
+    int lastForwardD = 0;
     int r0d = 0;
     int l0d = 0;
     int l45d = 0;
     int r45d = 0;
 
     void read() {
+        lastForwardD = forwardD;
         forwardD = (int) forward->getDistance();
         r0d = (int) right0->getDistance();
         l0d = (int) left0->getDistance();
@@ -69,6 +71,13 @@ public:
 
     bool isRightLongerThan(int ms) const {
         return right0->isLongerThan(ms);
+    }
+
+    int calcForwardD(double speed) {
+        double timeMs = 0.08;
+        int wallChange = forwardD - lastForwardD;
+        int newDist = forwardD - speed * timeMs - wallChange;
+        return newDist;
     }
 
 private:

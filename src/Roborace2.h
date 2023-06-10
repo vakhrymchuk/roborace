@@ -69,9 +69,9 @@ private:
         }
     }
 
-    int minSpeed = 110;
-    int speedForward = 120;
-    int speedTurbo = 130;
+    int minSpeed = 120;
+    int speedForward = 130;
+    int speedTurbo = 150;
 
     void forward() {
 
@@ -89,17 +89,18 @@ private:
 
         double currentSpeed = mechanics.getEngine().getSpeed();
         double error = sensors.l45d - sensors.r45d;
-        int diff = (int) (0.7 * error + 1.6 * (error - lastError));
+        int diff = (int) (0.6 * error + 1.5 * (error - lastError));
         lastError = error;
 
         int fd = constrain((sensors.l0d + sensors.r0d) / 2, 60, 150);
 
+        int forwardD = sensors.calcForwardD(currentSpeed);
         if (fd < 100) {
 //            speed = map(fd, 60, 100, 90, minSpeed);
             speed = minSpeed;
-        } else if (fd > 100 && sensors.forwardD > 200) {
+        } else if (fd > 100 && forwardD > 200) {
             speed = speedTurbo;
-        } else  {
+        } else {
 //            speed = speedForward;
             speed = map(fd, 100, 150, minSpeed, speedForward);
             speed = constrain(speed, minSpeed, speedForward);
@@ -137,8 +138,8 @@ private:
             turn = constrain(turn, -100, 100);
         };
 
-        if(sensors.forwardD >= 150) {
-            turn = constrain(turn, -20, 20);
+        if (forwardD >= 150) {
+            turn = constrain(turn, -15, 15);
         }
 
 //        int maxTurn = mechanics.getEngine().getSpeed();
@@ -157,7 +158,7 @@ private:
         rotateCounter += currentSpeed * turn;
         rotateCounter = constrain(rotateCounter, -rotateLimit, rotateLimit);
 
-        if (rotateCounter >= rotateLimit && sensors.forwardD >= 120 && sensors.l45d >= 60) {
+        if (rotateCounter >= rotateLimit && forwardD >= 120 && sensors.l45d >= 60) {
             newStrategy(ROTATE);
             rotateCounter = 0;
             return;
@@ -167,7 +168,7 @@ private:
 
     bool isNeedBack() const {
 
-        if(sensors.isSamePlace(3000)) return true;
+        if (sensors.isSamePlace(3000)) return true;
 //        bool isLonger2Sec = start.isMoreThan(50);
         if (start.isLessThan(1000)) return false;
 //        bool isFBack = sensors.forwardD <= 60 && sensors.isForwardLongerThan(100);
