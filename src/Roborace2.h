@@ -69,7 +69,18 @@ private:
         }
     }
 
+    int minSpeed = 110;
+    int speedForward = 120;
+    int speedTurbo = 130;
+
     void forward() {
+
+//        if(start.isMoreThan(15, SECOND)) {
+//            minSpeed += 2;
+//            speedForward += 2;
+//            speedTurbo += 2;
+//            start.start();
+//        }
 
         if (isNeedBack()) {
             newStrategy(BACKWARD);
@@ -82,11 +93,10 @@ private:
         lastError = error;
 
         int fd = constrain((sensors.l0d + sensors.r0d) / 2, 60, 150);
-        int minSpeed = 120;
-        int speedForward = 140;
-        int speedTurbo = 150;
+
         if (fd < 100) {
-            speed = map(fd, 60, 100, 90, minSpeed);
+//            speed = map(fd, 60, 100, 90, minSpeed);
+            speed = minSpeed;
         } else if (fd > 100 && sensors.forwardD > 200) {
             speed = speedTurbo;
         } else  {
@@ -127,7 +137,7 @@ private:
             turn = constrain(turn, -100, 100);
         };
 
-        if(sensors.forwardD > 150) {
+        if(sensors.forwardD >= 150) {
             turn = constrain(turn, -20, 20);
         }
 
@@ -161,8 +171,8 @@ private:
 //        bool isLonger2Sec = start.isMoreThan(50);
         if (start.isLessThan(1000)) return false;
 //        bool isFBack = sensors.forwardD <= 60 && sensors.isForwardLongerThan(100);
-        bool isL0Back = sensors.l0d < 30 && sensors.isLeftLongerThan(50);
-        bool isR0Back = sensors.r0d < 30 && sensors.isLeftLongerThan(50);
+        bool isL0Back = sensors.l0d < 20 && sensors.isLeftLongerThan(50);
+        bool isR0Back = sensors.r0d < 20 && sensors.isLeftLongerThan(50);
 //        bool isL45Back = sensors.l45d < 20 && sensors.isLeftLongerThan(250);
 //        bool isR45Back = sensors.r45d < 20 && sensors.isRightLongerThan(250);
         return isL0Back || isR0Back;
