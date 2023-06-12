@@ -12,45 +12,45 @@
 
 class Sensors {
 public:
-    TimingSensor *left45 = createSensor(
+    TimingSensor *left90 = createSensor(
             new Sharp10_150Table(A0, new uint16_t[READING_COUNT]{625, 387, 295, 214, 167, 145, 132, 115, 114}));
-    TimingSensor *right45 = createSensor(
+    TimingSensor *right90 = createSensor(
             new Sharp10_150Table(A1, new uint16_t[READING_COUNT]{612, 359, 276, 194, 145, 121, 97, 80, 75}));
-    TimingSensor *left0 = createSensor(
+    TimingSensor *right45 = createSensor(
             new Sharp10_150Table(A6, new uint16_t[READING_COUNT]{611, 350, 255, 177, 130, 103, 78, 60, 49}));
-    TimingSensor *right0 = createSensor(
+    TimingSensor *left45 = createSensor(
             new Sharp10_150Table(A7, new uint16_t[READING_COUNT]{620, 360, 268, 183, 133, 108, 81, 62, 51}));
     TimingSensor *forward = createSensor(
             new Sharp100_500Table(A2, new uint16_t[READING_COUNT]{627, 556, 507, 379, 327, 302, 287, 277, 270}));
 
     int forwardD = 0;
     int lastForwardD = 0;
-    int r0d = 0;
-    int l0d = 0;
     int l45d = 0;
     int r45d = 0;
+    int l90d = 0;
+    int r90d = 0;
 
     void read() {
         lastForwardD = forwardD;
         forwardD = (int) forward->getDistance();
-        r0d = (int) right0->getDistance();
-        l0d = (int) left0->getDistance();
         l45d = (int) left45->getDistance();
         r45d = (int) right45->getDistance();
+        l90d = (int) left90->getDistance();
+        r90d = (int) right90->getDistance();
 
 #ifdef DEBUG
         if (debug.isReady()) {
             Serial.print(millis());
-            Serial.print(" left45 = ");
-            Serial.print(l45d);
-            Serial.print(" left0 = ");
-            Serial.print(l0d);
-            Serial.print(" forward = ");
-            Serial.print(forwardD);
-            Serial.print(" right0 = ");
-            Serial.print(r0d);
+            Serial.print(" left90 = ");
+            Serial.print(l90d);
             Serial.print(" right45 = ");
             Serial.print(r45d);
+            Serial.print(" forward = ");
+            Serial.print(forwardD);
+            Serial.print(" left45 = ");
+            Serial.print(l45d);
+            Serial.print(" right90 = ");
+            Serial.print(r90d);
             Serial.println();
         }
 #endif
@@ -58,7 +58,7 @@ public:
 
 
     bool isSamePlace(unsigned long ms) const {
-        return right0->isLongerThan(ms) || left0->isLongerThan(ms);
+        return left45->isLongerThan(ms) || right45->isLongerThan(ms);
     }
 
     bool isForwardLongerThan(int ms) const {
@@ -66,11 +66,11 @@ public:
     }
 
     bool isLeftLongerThan(int ms) const {
-        return left0->isLongerThan(ms);
+        return right45->isLongerThan(ms);
     }
 
     bool isRightLongerThan(int ms) const {
-        return right0->isLongerThan(ms);
+        return left45->isLongerThan(ms);
     }
 
     int calcForwardD(double speed) {

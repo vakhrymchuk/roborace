@@ -69,9 +69,9 @@ private:
         }
     }
 
-    int minSpeed = 120;
-    int speedForward = 130;
-    int speedTurbo = 150;
+    int minSpeed = 110;
+    int speedForward = 140;
+    int speedTurbo = 170;
 
     void forward() {
 
@@ -88,37 +88,45 @@ private:
         }
 
         double currentSpeed = mechanics.getEngine().getSpeed();
-        double error = sensors.l45d - sensors.r45d;
-        int diff = (int) (0.6 * error + 1.5 * (error - lastError));
+        double error = 0.7 * (sensors.l90d - sensors.r90d) + sensors.l45d - sensors.r45d;
+        int diff = (int) (0.5 * error + 1.4 * (error - lastError));
         lastError = error;
 
-        int fd = constrain((sensors.l0d + sensors.r0d) / 2, 60, 150);
+//        int fd = constrain((sensors.r45d + sensors.l45d) / 2, 60, 150);
 
         int forwardD = sensors.calcForwardD(currentSpeed);
-        if (fd < 100) {
-//            speed = map(fd, 60, 100, 90, minSpeed);
-            speed = minSpeed;
-        } else if (fd > 100 && forwardD > 200) {
+        if (forwardD < 100) {
+//            speed = minSpeed;
+            speed = map(forwardD, 60, 100, 90, minSpeed);
+            if (sensors.l45d < 120 && sensors.r45d < 120) {
+                if (sensors.l90d > 110) {
+                    turn = 100;
+                } else if (sensors.r90d > 110) {
+                    turn = -100;
+                }
+
+            }
+        } else if (forwardD > 200) {
             speed = speedTurbo;
         } else {
 //            speed = speedForward;
-            speed = map(fd, 100, 150, minSpeed, speedForward);
+            speed = map(forwardD, 100, 150, minSpeed, speedForward);
             speed = constrain(speed, minSpeed, speedForward);
 
-//            if(sensors.l45d < 30 && sensors.r45d < 30 && sensors.forwardD >= 150) {
+//            if(sensors.l90d < 30 && sensors.r90d < 30 && sensors.forwardD >= 150) {
 //                speed += 10;
 //            }
         }
 
-/*        if (sensors.r0d + sensors.l0d >= 270 || sensors.forwardD >= 150) {
+/*        if (sensors.l45d + sensors.r45d >= 270 || sensors.forwardD >= 150) {
             diff = diff / 2;
 
-//            diff = sensors.l0d - sensors.r0d;
+//            diff = sensors.r45d - sensors.l45d;
 
-//            if (sensors.l0d >= sensors.r0d + 30) {
+//            if (sensors.r45d >= sensors.l45d + 30) {
 //                diff = 10;
 //            }
-//            if (sensors.r0d >= sensors.l0d + 30) {
+//            if (sensors.l45d >= sensors.r45d + 30) {
 //                diff = -10;
 //            }
             turn = constrain(diff, -10, 10);
@@ -129,9 +137,9 @@ private:
                 speed = map(fd, 150, 300, speedForward, speedTurbo);
                 speed = constrain(speed, speedForward, speedTurbo);
             }
-        } else*//* if (sensors.r45d >= 145 && sensors.r45d > sensors.l45d) {
+        } else*//* if (sensors.r90d >= 145 && sensors.r90d > sensors.l90d) {
             turn = -80;
-        } else if (sensors.l45d >= 145 && sensors.l45d > sensors.r45d) {
+        } else if (sensors.l90d >= 145 && sensors.l90d > sensors.r90d) {
             turn = 80;
         } else*/ {
             turn = diff;
@@ -158,7 +166,7 @@ private:
         rotateCounter += currentSpeed * turn;
         rotateCounter = constrain(rotateCounter, -rotateLimit, rotateLimit);
 
-        if (rotateCounter >= rotateLimit && forwardD >= 120 && sensors.l45d >= 60) {
+        if (rotateCounter >= rotateLimit && forwardD >= 120 && sensors.l90d >= 60) {
             newStrategy(ROTATE);
             rotateCounter = 0;
             return;
@@ -172,10 +180,10 @@ private:
 //        bool isLonger2Sec = start.isMoreThan(50);
         if (start.isLessThan(1000)) return false;
 //        bool isFBack = sensors.forwardD <= 60 && sensors.isForwardLongerThan(100);
-        bool isL0Back = sensors.l0d < 20 && sensors.isLeftLongerThan(50);
-        bool isR0Back = sensors.r0d < 20 && sensors.isLeftLongerThan(50);
-//        bool isL45Back = sensors.l45d < 20 && sensors.isLeftLongerThan(250);
-//        bool isR45Back = sensors.r45d < 20 && sensors.isRightLongerThan(250);
+        bool isL0Back = sensors.r45d < 30 && sensors.isLeftLongerThan(50);
+        bool isR0Back = sensors.l45d < 30 && sensors.isLeftLongerThan(50);
+//        bool isL45Back = sensors.l90d < 20 && sensors.isLeftLongerThan(250);
+//        bool isR45Back = sensors.r90d < 20 && sensors.isRightLongerThan(250);
         return isL0Back || isR0Back;
 //        return (isL0Back && isR0Back) || ((isL0Back || isR0Back) && start.isLessThan(1000));
     }
@@ -185,7 +193,7 @@ private:
         Serial.println("BACK");
 #endif
 
-        double error = sensors.l45d - sensors.r45d;
+        double error = sensors.l90d - sensors.r90d;
         int diff = (int) (10.0 * error);
 
         turn = -diff;
@@ -196,8 +204,8 @@ private:
             speed = 0;
         } else if (start.isMoreThan(1000) &&
                    (
-                           sensors.r0d > 80 || sensors.l0d > 80
-                           //                           || sensors.l45d > 70 || sensors.r45d > 70
+                           sensors.l45d > 80 || sensors.r45d > 80
+                           //                           || sensors.l90d > 70 || sensors.r90d > 70
                            || start.isMoreThan(3, SECOND))
                 ) {
             newStrategy(FORWARD);
@@ -206,13 +214,13 @@ private:
 
     void leftWall() {
         speed = 100;
-        double error = sensors.l45d - 45;
+        double error = sensors.l90d - 45;
 
         int diff = (int) (0.5 * error + 1.8 * (error - lastError));
         lastError = error;
         turn = diff;
 
-        if (sensors.l0d < 45 && sensors.l45d < 60) {
+        if (sensors.r45d < 45 && sensors.l90d < 60) {
             turn = -35;
         }
     }
@@ -224,12 +232,12 @@ private:
         }
 
         speed = 100;
-        double error = (50.0 - sensors.r45d);
+        double error = (50.0 - sensors.r90d);
 
         int diff = (int) (0.5 * error + 1.0 * (error - lastError));
         lastError = error;
         turn = diff;
-        if (sensors.r0d < 120 && sensors.r45d < 80) {
+        if (sensors.l45d < 120 && sensors.r90d < 80) {
             turn = 80;
         }
     }
