@@ -69,9 +69,9 @@ private:
         }
     }
 
-    int minSpeed = 110;
+    int minSpeed = 120;
     int speedForward = 140;
-    int speedTurbo = 170;
+    int speedTurbo = 180;
 
     void forward() {
 
@@ -88,8 +88,8 @@ private:
         }
 
         double currentSpeed = mechanics.getEngine().getSpeed();
-        double error = 0.7 * (sensors.l90d - sensors.r90d) + sensors.l45d - sensors.r45d;
-        int diff = (int) (0.5 * error + 1.4 * (error - lastError));
+        double error = (sensors.l90d - sensors.r90d) +  (sensors.l45d - sensors.r45d);
+        int diff = (int) (0.6 * error + 1.6 * (error - lastError));
         lastError = error;
 
 //        int fd = constrain((sensors.r45d + sensors.l45d) / 2, 60, 150);
@@ -98,14 +98,13 @@ private:
         if (forwardD < 100) {
 //            speed = minSpeed;
             speed = map(forwardD, 60, 100, 90, minSpeed);
-            if (sensors.l45d < 120 && sensors.r45d < 120) {
+/*            if (sensors.l45d < 120 && sensors.r45d < 120) {
                 if (sensors.l90d > 110) {
                     turn = 100;
                 } else if (sensors.r90d > 110) {
                     turn = -100;
                 }
-
-            }
+            }*/
         } else if (forwardD > 200) {
             speed = speedTurbo;
         } else {
@@ -117,37 +116,11 @@ private:
 //                speed += 10;
 //            }
         }
-
-/*        if (sensors.l45d + sensors.r45d >= 270 || sensors.forwardD >= 150) {
-            diff = diff / 2;
-
-//            diff = sensors.r45d - sensors.l45d;
-
-//            if (sensors.r45d >= sensors.l45d + 30) {
-//                diff = 10;
-//            }
-//            if (sensors.l45d >= sensors.r45d + 30) {
-//                diff = -10;
-//            }
-            turn = constrain(diff, -10, 10);
-            speed = speedForward;
-
-            if (sensors.forwardD >= 150) {
-                fd = constrain(sensors.forwardD, 150, 300);
-                speed = map(fd, 150, 300, speedForward, speedTurbo);
-                speed = constrain(speed, speedForward, speedTurbo);
-            }
-        } else*//* if (sensors.r90d >= 145 && sensors.r90d > sensors.l90d) {
-            turn = -80;
-        } else if (sensors.l90d >= 145 && sensors.l90d > sensors.r90d) {
-            turn = 80;
-        } else*/ {
-            turn = diff;
-            turn = constrain(turn, -100, 100);
-        };
+        turn = diff;
+        turn = constrain(turn, -100, 100);
 
         if (forwardD >= 150) {
-            turn = constrain(turn, -15, 15);
+            turn = constrain(turn, -10, 10);
         }
 
 //        int maxTurn = mechanics.getEngine().getSpeed();
@@ -166,11 +139,11 @@ private:
         rotateCounter += currentSpeed * turn;
         rotateCounter = constrain(rotateCounter, -rotateLimit, rotateLimit);
 
-        if (rotateCounter >= rotateLimit && forwardD >= 120 && sensors.l90d >= 60) {
-            newStrategy(ROTATE);
-            rotateCounter = 0;
-            return;
-        }
+//        if (rotateCounter >= rotateLimit && forwardD >= 120 && sensors.l90d >= 60) {
+//            newStrategy(ROTATE);
+//            rotateCounter = 0;
+//            return;
+//        }
 
     }
 

@@ -8,8 +8,17 @@ public:
 
     void run(int speed, int turn) {
         engine.run(speed);
-        forward.turn(turn * 2);
-        backward.turn(turn);
+        if (turn < 50 && turn > -50) {
+            forward.turn(turn * 2);
+            backward.turn(0);
+        } else {
+            forward.turn(turn * 2);
+            if (turn > 0) {
+            backward.turn(2 * (turn - 50)); // > 50
+            } else {
+                backward.turn(2 * (turn + 50));
+            }
+        }
     }
 
     Engine &getEngine() {
