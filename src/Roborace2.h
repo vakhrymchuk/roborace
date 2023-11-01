@@ -45,7 +45,7 @@ private:
     int turn = ServoWrapper::CENTER;
     double lastError = 0;
 
-    long rotateLimit = ServoWrapper::FULL_LEFT * 18 * 200L;
+    long rotateLimit = ServoWrapper::FULL_LEFT * 1500L;
     long rotateCounter = rotateLimit;
 
 
@@ -69,8 +69,8 @@ private:
         }
     }
 
-    int minSpeed = 120;
-    int speedForward = 140;
+    int minSpeed = 100;
+    int speedForward = 130;
     int speedTurbo = 180;
 
     void forward() {
@@ -88,15 +88,15 @@ private:
         }
 
         double currentSpeed = mechanics.getEngine().getSpeed();
-        double error = (sensors.l90d - sensors.r90d) +  (sensors.l45d - sensors.r45d);
+        double error = (sensors.l90d - sensors.r90d) + (sensors.l45d - sensors.r45d);
         int diff = (int) (0.5 * error + 1.5 * (error - lastError));
         lastError = error;
 
         int forwardD = sensors.calcForwardD(currentSpeed);
-        if (forwardD < 100) {
+        if (forwardD < 110) {
 //            speed = minSpeed;
             speed = map(forwardD, 60, 100, minSpeed, speedForward);
-        } else if (forwardD > 200) {
+        } else if (forwardD > 180) {
             speed = map(constrain(forwardD, 200, 400), 200, 400, speedForward, speedTurbo);
             if (sensors.l90d < 40 && sensors.r90d < 40 && sensors.forwardD >= 150) {
                 speed += 50;
@@ -104,20 +104,23 @@ private:
         } else {
             speed = speedForward;
         }
-        turn = constrain(diff, -100, 100);
+        turn = constrain(diff, -80, 80);
 
 
-        if (sensors.l45d > 130 && sensors.r45d < 130) {
-            turn = max(turn, 50);
-        } else if (sensors.r45d > 130) {
-            turn = min(turn, -50);
-        }/*else if (sensors.l90d > 110 && sensors.r90d < 110) {
-            turn = 90;
-        } else if (sensors.r90d > 110) {
-            turn = -90;
-        }*/
+        if (sensors.l45d > 120 && sensors.r45d < 120) {
+            turn = max(turn, 70);
+        } else if (sensors.r45d > 120) {
+            turn = min(turn, -70);
+        } else if (sensors.l90d > 120 && sensors.r90d < 120) {
+            turn = max(turn, 80);
+        } else if (sensors.r90d > 120) {
+            turn = min(turn, -80);
+        }
         if (forwardD >= 150) {
             turn = constrain(turn, -10, 10);
+        }
+        if (forwardD >= 130) {
+            turn = constrain(turn, -15, 15);
         }
 
 //        int maxTurn = mechanics.getEngine().getSpeed();
@@ -136,7 +139,7 @@ private:
         rotateCounter += currentSpeed * turn;
         rotateCounter = constrain(rotateCounter, -rotateLimit, rotateLimit);
 
-        if (rotateCounter <= -rotateLimit && forwardD >= 120 && sensors.l90d >= 60) {
+        if (rotateCounter <= -rotateLimit && sensors.l45d >= 50 && sensors.l90d >= 40) {
             newStrategy(ROTATE);
             rotateCounter = rotateLimit;
             return;
@@ -218,17 +221,14 @@ private:
         Serial.print("          rotate!!!!     ");
         Serial.println(start.time());
 #endif
-        int rotateSpeed = 100;
-/*        if (start.isLessThan(60)) {
-            speed = rotateSpeed;
-            turn = ServoWrapper::FULL_RIGHT;
-        } else */if (start.isLessThan(800)) {
+        int rotateSpeed = 90;
+        if (start.isLessThan(200) && sensors.l45d > 40) {
             speed = rotateSpeed;
             turn = ServoWrapper::FULL_LEFT;
-        } else if (start.isLessThan(2000)) {
+        } else if (start.isLessThan(1500)) {
             speed = -100;
             turn = ServoWrapper::FULL_RIGHT;
-        } else if (start.isLessThan(2600)) {
+        } else if (start.isLessThan(2300)) {
             speed = rotateSpeed;
             turn = ServoWrapper::FULL_LEFT;
         } else {
