@@ -44,8 +44,9 @@ private:
     int speed = 0;
     int turn = ServoWrapper::CENTER;
     double lastError = 0;
+    double lastError2 = 0;
 
-    long rotateLimit = ServoWrapper::FULL_LEFT * 1500L;
+    long rotateLimit = ServoWrapper::FULL_LEFT * 1800L;
     long rotateCounter = rotateLimit;
 
 
@@ -69,8 +70,8 @@ private:
         }
     }
 
-    int minSpeed = 100;
-    int speedForward = 130;
+    int minSpeed = 110;
+    int speedForward = 120;
     int speedTurbo = 180;
 
     void forward() {
@@ -96,8 +97,8 @@ private:
         if (forwardD < 110) {
 //            speed = minSpeed;
             speed = map(forwardD, 60, 100, minSpeed, speedForward);
-        } else if (forwardD > 180) {
-            speed = map(constrain(forwardD, 200, 400), 200, 400, speedForward, speedTurbo);
+        } else if (forwardD > 150) {
+            speed = map(constrain(forwardD, 200, 400), 200, 400, speedForward + 30, speedTurbo);
             if (sensors.l90d < 40 && sensors.r90d < 40 && sensors.forwardD >= 150) {
                 speed += 50;
             }
@@ -116,11 +117,23 @@ private:
         } else if (sensors.r90d > 120) {
             turn = min(turn, -80);
         }
-        if (forwardD >= 150) {
-            turn = constrain(turn, -10, 10);
-        }
         if (forwardD >= 130) {
             turn = constrain(turn, -15, 15);
+        }
+        if (forwardD >= 150) {
+            error = (constrain(sensors.l45d, 0, 100) - 45);
+            diff = (int) (0.5 * error + 1.2 * (error - lastError2));
+            lastError2 = error;
+
+            turn = diff;
+            turn = constrain(turn, -10, 10);
+
+#ifdef DEBUG
+            Serial.print("error = ");
+            Serial.print(error);
+            Serial.print(" diff = ");
+            Serial.println(diff);
+#endif
         }
 
 //        int maxTurn = mechanics.getEngine().getSpeed();
@@ -228,7 +241,7 @@ private:
         } else if (start.isLessThan(1500)) {
             speed = -100;
             turn = ServoWrapper::FULL_RIGHT;
-        } else if (start.isLessThan(2300)) {
+        } else if (start.isLessThan(2300) && sensors.l45d > 40) {
             speed = rotateSpeed;
             turn = ServoWrapper::FULL_LEFT;
         } else {
