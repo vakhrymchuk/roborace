@@ -70,9 +70,9 @@ private:
         }
     }
 
-    int minSpeed = 110;
-    int speedForward = 120;
-    int speedTurbo = 180;
+    int minSpeed = 105;
+    int speedForward = 115;
+    int speedTurbo = 170;
 
     void forward() {
 
@@ -96,7 +96,7 @@ private:
         int forwardD = sensors.calcForwardD(currentSpeed);
         if (forwardD < 110) {
 //            speed = minSpeed;
-            speed = map(forwardD, 60, 100, minSpeed, speedForward);
+            speed = map(forwardD, 50, 100, minSpeed, speedForward);
         } else if (forwardD > 150) {
             speed = map(constrain(forwardD, 200, 400), 200, 400, speedForward + 30, speedTurbo);
             if (sensors.l90d < 40 && sensors.r90d < 40 && sensors.forwardD >= 150) {
@@ -109,9 +109,9 @@ private:
 
 
         if (sensors.l45d > 120 && sensors.r45d < 120) {
-            turn = max(turn, 70);
+            turn = max(turn, 75);
         } else if (sensors.r45d > 120) {
-            turn = min(turn, -70);
+            turn = min(turn, -75);
         } else if (sensors.l90d > 120 && sensors.r90d < 120) {
             turn = max(turn, 80);
         } else if (sensors.r90d > 120) {
@@ -238,10 +238,10 @@ private:
         if (start.isLessThan(200) && sensors.l45d > 40) {
             speed = rotateSpeed;
             turn = ServoWrapper::FULL_LEFT;
-        } else if (start.isLessThan(1500)) {
+        } else if (start.isLessThan(1600)) {
             speed = -100;
             turn = ServoWrapper::FULL_RIGHT;
-        } else if (start.isLessThan(2300) && sensors.l45d > 40) {
+        } else if (start.isLessThan(2300) && sensors.l45d > 40 && sensors.r45d > 25) {
             speed = rotateSpeed;
             turn = ServoWrapper::FULL_LEFT;
         } else {
