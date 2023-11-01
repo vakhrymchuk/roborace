@@ -70,8 +70,8 @@ private:
         }
     }
 
-    int minSpeed = 105;
-    int speedForward = 115;
+    int minSpeed = 100;
+    int speedForward = 110;
     int speedTurbo = 170;
 
     void forward() {
@@ -88,6 +88,11 @@ private:
             return;
         }
 
+        int addSpeed = 0;
+        if (start.isMoreThan(10, SECOND)) {
+            addSpeed = 8;
+        }
+
         double currentSpeed = mechanics.getEngine().getSpeed();
         double error = (sensors.l90d - sensors.r90d) + (sensors.l45d - sensors.r45d);
         int diff = (int) (0.5 * error + 1.5 * (error - lastError));
@@ -96,22 +101,22 @@ private:
         int forwardD = sensors.calcForwardD(currentSpeed);
         if (forwardD < 110) {
 //            speed = minSpeed;
-            speed = map(forwardD, 50, 100, minSpeed, speedForward);
+            speed = map(forwardD, 50, 100, minSpeed + addSpeed / 2, speedForward + addSpeed);
         } else if (forwardD > 150) {
             speed = map(constrain(forwardD, 200, 400), 200, 400, speedForward + 30, speedTurbo);
             if (sensors.l90d < 40 && sensors.r90d < 40 && sensors.forwardD >= 150) {
-                speed += 50;
+                speed += 20;
             }
         } else {
-            speed = speedForward;
+            speed = speedForward + addSpeed;
         }
         turn = constrain(diff, -80, 80);
 
 
         if (sensors.l45d > 120 && sensors.r45d < 120) {
-            turn = max(turn, 75);
+            turn = max(turn, 70);
         } else if (sensors.r45d > 120) {
-            turn = min(turn, -75);
+            turn = min(turn, -70);
         } else if (sensors.l90d > 120 && sensors.r90d < 120) {
             turn = max(turn, 80);
         } else if (sensors.r90d > 120) {
