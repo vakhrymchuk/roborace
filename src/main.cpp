@@ -4,8 +4,11 @@
 #define WAIT_5S true
 
 #include "Roborace2.h"
+// #include "hal/EngineConfig.h"
 
 Roborace *roborace;
+
+// EngineConfig * engine;
 
 void setup() {
 
@@ -18,8 +21,10 @@ void setup() {
 #endif
 
     roborace = new Roborace();
+    // engine = new EngineConfig();
 }
 
 void loop() {
     roborace->loop();
+    // engine->loop();
 }
