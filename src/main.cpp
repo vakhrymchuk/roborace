@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-//#define DEBUG true
+// #define DEBUG true
 #define WAIT_5S true
 
 #include "Roborace2.h"
@@ -10,7 +10,8 @@ Roborace *roborace;
 
 // EnginePidConfig * engine;
 
-void setup() {
+void setup()
+{
 
 #ifdef DEBUG
     Serial.begin(115200);
@@ -24,7 +25,8 @@ void setup() {
     // engine = new EnginePidConfig();
 }
 
-void loop() {
+void loop()
+{
     roborace->loop();
     // engine->loop();
 }

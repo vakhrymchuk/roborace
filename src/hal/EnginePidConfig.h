@@ -35,7 +35,8 @@ public:
             Serial.println();
         }
 
-        if (showConfig.isReady()) showPidConfig();
+        if (showConfig.isReady())
+            showPidConfig();
 
         if (Serial.available())
         {

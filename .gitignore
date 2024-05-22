@@ -4,3 +4,4 @@ CMakeListsPrivate.txt
 CMakeLists.txt
 .idea
 docs
+.vscode

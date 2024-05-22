@@ -3,32 +3,38 @@
 #include "Engine.h"
 #include "ServoWrapper.h"
 
-class Mechanics {
+class Mechanics
+{
 public:
-
-    void run(int speed, int turn) {
+    void run(int speed, int turn)
+    {
         engine.run(speed);
-        if (turn < 50 && turn > -50) {
+        if (turn < 50 && turn > -50)
+        {
             forward.turn(turn * 2);
             backward.turn(0);
-        } else {
+        }
+        else
+        {
             forward.turn(turn * 2);
-            if (turn > 0) {
-            backward.turn(2 * (turn - 50)); // > 50
-            } else {
+            if (turn > 0)
+            {
+                backward.turn(2 * (turn - 50)); // > 50
+            }
+            else
+            {
                 backward.turn(2 * (turn + 50));
             }
         }
     }
 
-    Engine &getEngine() {
+    Engine &getEngine()
+    {
         return engine;
     }
 
 private:
-
     Engine engine;
     ServoWrapper forward = ServoWrapper(10, 90, -58, 60);
     ServoWrapper backward = ServoWrapper(11, 90, -30, 30);
-
 };

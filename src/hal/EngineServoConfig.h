@@ -19,12 +19,13 @@ public:
 
     void loop()
     {
-        if(Serial.available()) {
+        if (Serial.available())
+        {
             int speed = Serial.parseInt();
             Serial.print("speed=");
             Serial.println(speed);
-            if(speed >= 700 && speed <= 2300)
-              servo.writeMicroseconds(speed);
+            if (speed >= 700 && speed <= 2300)
+                servo.writeMicroseconds(speed);
             Serial.readString();
         }
     }
