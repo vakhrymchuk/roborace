@@ -23,15 +23,11 @@ public:
         servo.attach(POWER_SERVO_PIN);
         servo.writeMicroseconds(DEFAULT_PULSE_WIDTH);
 
-        pid.begin();
-//        pid.minimize(10.0);
-        pid.tune(6.0, 2.0 / PID_INTERVAL, 0.0);
-        pid.limit(-50, 180);
+        pid.tune(0.5, 0.002, 0);
+        pid.limit(-100, 200);
 
-        pidBack.begin();
-//        pidBack.minimize(10.0);
-        pidBack.tune(3.0, 1.5 / PID_INTERVAL, 0.0);
-        pidBack.limit(-100, 100);
+        pidBack.tune(0.5, 0.002, 0.0);
+        pidBack.limit(-100, 200);
 
 
 //        Serial.println("P,I,speed,actual");
@@ -54,11 +50,11 @@ public:
                     directionChanged.start();
                 }
                 if (directionChanged.isLessThan(400)) {
-                    power = 60;
+                    power = 50;
                     pid.resetLastTime();
                 } else {
                     pid.setpoint(speed);
-                    power = 60 + (int) pid.compute(speedActual);
+                    power = 0 + (int) pid.compute(speedActual);
 //                    if(speedActual > speed + 20) power = 0;
                 }
             } else {
@@ -70,7 +66,7 @@ public:
                     pidBack.resetLastTime();
                 } else {
                     pidBack.setpoint(-speed);
-                    power = -(80 + (int) pidBack.compute(speedActual));
+                    power = -(50 + (int) pidBack.compute(speedActual));
                 }
             }
 
@@ -96,12 +92,13 @@ public:
         overallTicks = 0;
     }
 
+    PIDController pid;
+    PIDController pidBack;
+
 private:
     static volatile unsigned int ticks;
 
     Interval interval = Interval(PID_INTERVAL);
-    PIDController pid;
-    PIDController pidBack;
 
     Servo servo;
 

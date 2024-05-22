@@ -11,7 +11,7 @@ public:
     static const int FULL_RIGHT = -100;
     static const int FULL_LEFT = 100;
 
-    explicit ServoWrapper(byte pin, int centralPosition = 90, int fullRight = -56, int fullLeft = 58)
+    explicit ServoWrapper(byte pin, int centralPosition = 90, int fullRight = -50, int fullLeft = 50)
             : Servo(),
               centralPosition(centralPosition),
               fullRight(fullRight),

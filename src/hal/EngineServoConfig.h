@@ -6,10 +6,10 @@
 
 #define POWER_SERVO_PIN 9
 
-class EngineConfig
+class EngineServoConfig
 {
 public:
-    EngineConfig()
+    EngineServoConfig()
     {
         servo.attach(POWER_SERVO_PIN);
         servo.writeMicroseconds(DEFAULT_PULSE_WIDTH);
