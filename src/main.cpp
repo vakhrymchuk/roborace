@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-// #define DEBUG true
+#define DEBUGF(...) //Serial.printf(__VA_ARGS__)
 #define WAIT_5S true
 
 #include "Roborace2.h"
@@ -13,11 +13,10 @@ Roborace *roborace;
 
 void setup()
 {
-
-#ifdef DEBUG
+#ifdef DEBUGF
     Serial.begin(115200);
-    Serial.println("start");
 #endif
+    DEBUGF("start\n");
 #ifdef FREE_RUN_MODE
     ADC_setup();
 #endif

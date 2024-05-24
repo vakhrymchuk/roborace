@@ -28,31 +28,29 @@ public:
         lds->setMotorPinCallback(lds_motor_pin_callback);
         lds->init();
 
-        Serial.print("LDS RX buffer size ");             // default 128 hw + 256 sw
-        Serial.println(LdSerial->setRxBufferSize(1024)); // must be before .begin()
+        // default 128 hw + 256 sw
+        DEBUGF("LDS RX buffer size %d\n", LdSerial->setRxBufferSize(1024)); // must be before .begin()
         uint32_t baud_rate = lds->getSerialBaudRate();
-        Serial.print("LDS baud rate ");
-        Serial.println(baud_rate);
+        DEBUGF("LDS baud rate %d\n", baud_rate);
 
         LdSerial->begin(baud_rate);
         while (LdSerial->read() >= 0)
-            Serial.write('.');
+            DEBUGF(".");
 
         LDS::result_t result = lds->start();
-        Serial.print("LDS init() result: ");
-        Serial.println(lds->resultCodeToString(result));
+        DEBUGF("LDS init() result: %d\n", lds->resultCodeToString(result));
 
         if (result < 0)
-            Serial.println("WARNING: is LDS connected to ESP32?");
+            DEBUGF("WARNING: is LDS connected to ESP32?");
 
-        Serial.print("LDS isActive(): ");
-        Serial.println(lds->isActive());
+        DEBUGF("LDS isActive(): %d\n", lds->isActive());
     }
 
     static bool getData(std::map<int, int> &data)
     {
         lds->loop();
-        if (!scan_completed) return false;
+        if (!scan_completed)
+            return false;
         scan_completed = false;
         data.insert(angles->begin(), angles->end());
         angles->clear();
@@ -86,18 +84,12 @@ public:
 
     static void lds_info_callback(LDS::info_t code, String info)
     {
-        Serial.print("LDS info ");
-        Serial.print(lds->infoCodeToString(code));
-        Serial.print(": ");
-        Serial.println(info);
+        DEBUGF("LDS info %s: %s\n", lds->infoCodeToString(code), info);
     }
 
     static void lds_error_callback(LDS::result_t code, String aux_info)
     {
-        Serial.print("LDS error ");
-        Serial.print(lds->resultCodeToString(code));
-        Serial.print(": ");
-        Serial.println(aux_info);
+        DEBUGF("LDS error %s: %s\n", lds->resultCodeToString(code), aux_info);
     }
 
     static void lds_packet_callback(uint8_t *packet, uint16_t length, bool scan_completed)

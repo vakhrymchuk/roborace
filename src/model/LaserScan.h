@@ -1,6 +1,8 @@
 #pragma once
 
+#ifdef ARDUINO
 #include <Arduino.h>
+#endif
 #include <map>
 
 class LaserScan
@@ -41,11 +43,12 @@ public:
         return constrain(d, 0, 500);
     }
 
-private:
     int getDataAtDegree(int degree)
     {
         if (data.count(degree))
             return data[degree];
         return 0;
     }
+
+private:
 };
