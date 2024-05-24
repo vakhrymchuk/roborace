@@ -1,12 +1,12 @@
 #pragma once
 
-#include <Servo.h>
+#include <ESP32Servo.h>
 #include <PIDController.h>
 #include <Interval.h>
 #include "Stopwatch.h"
 
-#define ENCODER_PIN 2
-#define POWER_SERVO_PIN 9
+#define ENCODER_PIN 34
+#define POWER_SERVO_PIN 25
 
 class Engine
 {
@@ -24,13 +24,13 @@ public:
         servo.attach(POWER_SERVO_PIN);
         servo.writeMicroseconds(DEFAULT_PULSE_WIDTH);
 
-        pid.tune(0.5, 0.002, 0);
-        pid.limit(-100, 200);
+        pid.tune(0.5, 0.003, 0);
+        pid.limit(-100, 100);
 
-        pidBack.tune(0.5, 0.002, 0.0);
-        pidBack.limit(-100, 200);
+        pidBack.tune(0.5, 0.003, 0.0);
+        pidBack.limit(-100, 100);
 
-        //        Serial.println("P,I,speed,actual");
+        // Serial.println("P,I,speed,actual");
     }
 
     void stop()
@@ -62,8 +62,7 @@ public:
                 else
                 {
                     pid.setpoint(speed);
-                    power = 0 + (int)pid.compute(speedActual);
-                    //                    if(speedActual > speed + 20) power = 0;
+                    power = 50 + (int)pid.compute(speedActual);
                 }
             }
             else
@@ -80,17 +79,22 @@ public:
                 else
                 {
                     pidBack.setpoint(-speed);
-                    power = -(50 + (int)pidBack.compute(speedActual));
+                    power = -(80 + (int)pidBack.compute(speedActual));
                 }
             }
 
             servo.writeMicroseconds(DEFAULT_PULSE_WIDTH + power);
             lastSpeed = speed;
 
-            //            Serial.print(abs(speed));
-            //            Serial.print(',');
-            //            Serial.print(speedActual);
-            //            Serial.println();
+            // Serial.print("abs(speed)=");
+            // Serial.print(abs(speed));
+            // Serial.print(',');
+            // Serial.print("speedActual=");
+            // Serial.print(speedActual);
+            // Serial.print(',');
+            // Serial.print("power=");
+            // Serial.print(power);
+            // Serial.println();
         }
     }
 

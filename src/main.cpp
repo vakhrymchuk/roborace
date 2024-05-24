@@ -5,10 +5,11 @@
 
 #include "Roborace2.h"
 // #include "hal/EnginePidConfig.h"
+// #include "hal/ServoConfig.h"
 
 Roborace *roborace;
-
-// EnginePidConfig * engine;
+// EnginePidConfig *roborace;
+// ServoConfig *roborace;
 
 void setup()
 {
@@ -22,11 +23,11 @@ void setup()
 #endif
 
     roborace = new Roborace();
-    // engine = new EnginePidConfig();
+    // roborace = new EnginePidConfig();
+    // roborace = new ServoConfig();
 }
 
 void loop()
 {
     roborace->loop();
-    // engine->loop();
 }
