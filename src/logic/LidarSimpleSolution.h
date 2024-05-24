@@ -7,7 +7,9 @@
 enum Strategy
 {
     FORWARD,
-    BACKWARD
+    BACKWARD,
+    ROTATE,
+    ROTATE_PITCH,
 };
 
 class Solution
@@ -17,34 +19,62 @@ private:
     Strategy strategy = FORWARD;
     Stopwatch start;
 
+    int absoluteAngleMax = 0;
+    int absoluteAngleMin = 0;
+
 public:
-    void logic(LaserScan &scan, int &speed, int &turn)
+    void logic(PhysicalData &data, int &speed, int &turn)
     {
         switch (strategy)
         {
         case FORWARD:
-            forward(scan, speed, turn);
+            forward(data, speed, turn);
             break;
         case BACKWARD:
-            backward(scan, speed, turn);
+            backward(data, speed, turn);
+            break;
+        case ROTATE:
+            rotate(data, speed, turn);
+            break;
+        case ROTATE_PITCH:
+            rotatePitch(data, speed, turn);
             break;
         }
     }
 
 private:
-    void forward(LaserScan &scan, int &speed, int &turn)
+    void forward(PhysicalData &data, int &speed, int &turn)
     {
-        int f = scan.findDistanceAtDegree(180);
+        int degRange = 50;
+        DEBUGF("size = %d \tpitch = %d \tyaw = %d\t", data.scan.data.size(), data.pitch, data.yaw);
+        // if (data.pitch > 10 && (data.yaw > 180 - degRange || data.yaw < -180 + degRange))
+        if (data.pitch > 10 && abs(data.yaw - 0) < degRange)
+        {
+            newStrategy(ROTATE_PITCH);
+            absoluteAngleMax = data.absoluteAngle;
+            absoluteAngleMin = data.absoluteAngle;
+            return;
+        }
+
+        if (isCounterClockWise(data, 270))
+        {
+            newStrategy(ROTATE);
+            absoluteAngleMax = data.absoluteAngle;
+            absoluteAngleMin = data.absoluteAngle;
+            return;
+        }
+
+        int f = data.scan.findDistanceAtDegree(180);
 
         DEBUGF("forw = %d \t", f);
 
-        if (f < 25 || scan.findDistanceAtDegree(180 - 10) < 25 || scan.findDistanceAtDegree(180 + 10) < 25)
+        if (f < 25 || data.scan.findDistanceAtDegree(180 - 10) < 25 || data.scan.findDistanceAtDegree(180 + 10) < 25)
         {
             newStrategy(BACKWARD);
             return;
         }
 
-        // double currentSpeed = mechanics.getEngine().getSpeed();
+        double currentSpeed = data.speed;
         // speed = map(constrain(f, 60, 200), 60, 200, 70, 80);
         speed = 70;
 
@@ -53,8 +83,8 @@ private:
         if (f > 120)
         {
             speed = 100;
-            int left = scan.findDistanceAtDegree(180 - 55);
-            int right = scan.findDistanceAtDegree(180 + 55);
+            int left = data.scan.findDistanceAtDegree(180 - 55);
+            int right = data.scan.findDistanceAtDegree(180 + 55);
             error = left - right;
             int maxError = 200;
             error = constrain(error, -maxError, maxError);
@@ -68,8 +98,8 @@ private:
             for (size_t i = 1; i <= 3; i++)
             {
                 int deg = 30 * i;
-                int left = scan.findDistanceAtDegree(180 - deg);
-                int right = scan.findDistanceAtDegree(180 + deg);
+                int left = data.scan.findDistanceAtDegree(180 - deg);
+                int right = data.scan.findDistanceAtDegree(180 + deg);
                 error += left * log(left) - right * log(right);
                 DEBUGF("left%d = %d \tright%d = %d \t", deg, left, deg, right);
             }
@@ -99,37 +129,54 @@ private:
         DEBUGF("speed = %d \t turn = %d\n", speed, turn);
     }
 
-    void backward(LaserScan &scan, int &speed, int &turn)
+    bool isCounterClockWise(PhysicalData &data, int threshold)
     {
-        DEBUGF("BACK");
+        absoluteAngleMax = max(absoluteAngleMax, data.absoluteAngle);
+        DEBUGF("absoluteAngleMax = %d\n", absoluteAngleMax);
+        return absoluteAngleMax - data.absoluteAngle > threshold;
+    }
 
+    bool isClockWise(PhysicalData &data, int threshold)
+    {
+        absoluteAngleMin = min(absoluteAngleMin, data.absoluteAngle);
+        return absoluteAngleMin - data.absoluteAngle < -threshold;
+    }
+
+    void backward(PhysicalData &data, int &speed, int &turn)
+    {
+        DEBUGF("BACK\n");
         speed = -50;
-        turn = 0;
-        if (start.isLessThan(150))
-        {
-            speed = 0;
-        }
-        else if (start.isMoreThan(2000) || scan.findDistanceAtDegree(180) > 40)
+
+        int left = data.scan.findDistanceAtDegree(180 - 55);
+        int right = data.scan.findDistanceAtDegree(180 + 55);
+        int error = left - right;
+        int maxError = 100;
+        error = constrain(error, -maxError, maxError);
+        turn = map(error, -maxError, maxError, -100, 100);
+        int maxTurn = 40;
+        turn = constrain(turn, -maxTurn, maxTurn);
+
+        if (start.isMoreThan(2000) || (data.scan.findDistanceAtDegree(180 - 10) > 40 && data.scan.findDistanceAtDegree(180 + 10) > 40))
         {
             newStrategy(FORWARD);
         }
     }
 
-    void rotate(LaserScan &scan, int &speed, int &turn)
+    void rotate(PhysicalData &data, int &speed, int &turn)
     {
         DEBUGF("   rotate!!  %d", start.time());
-        int rotateSpeed = 90;
-        if (start.isLessThan(200) && scan.findDistanceAtDegree(180 - 30) > 40)
+        int rotateSpeed = 60;
+        if (start.isLessThan(200) && data.scan.findDistanceAtDegree(180 - 30) > 40)
         {
-            speed = rotateSpeed;
-            turn = ServoWrapper::FULL_LEFT;
+            speed = -rotateSpeed;
+            turn = 0;
         }
         else if (start.isLessThan(1600))
         {
-            speed = -100;
+            speed = -rotateSpeed;
             turn = ServoWrapper::FULL_RIGHT;
         }
-        else if (start.isLessThan(2300) && scan.findDistanceAtDegree(180 - 30) > 40 && scan.findDistanceAtDegree(180 + 30) > 25)
+        else if (start.isLessThan(2300) && data.scan.findDistanceAtDegree(180 - 30) > 40 && data.scan.findDistanceAtDegree(180 + 30) > 25)
         {
             speed = rotateSpeed;
             turn = ServoWrapper::FULL_LEFT;
@@ -140,9 +187,37 @@ private:
         }
     }
 
+    void rotatePitch(PhysicalData &data, int &speed, int &turn)
+    {
+        DEBUGF("   rotate pitch!!  %d", start.time());
+        int rotateSpeed = 60;
+        if (start.isMoreThan(500) && (start.isLessThan(1000) || data.pitch > 10))
+        {
+            speed = -rotateSpeed;
+            turn = 0;
+        }
+        else if (start.isLessThan(2000) && data.scan.findDistanceAtDegree(0) > 50)
+        {
+            speed = -rotateSpeed;
+            turn = 0;
+        }
+        else if (start.isLessThan(2500))
+        {
+            speed = rotateSpeed;
+            if (data.scan.findDistanceAtDegree(180 - 90) > data.scan.findDistanceAtDegree(180 + 90))
+                turn = ServoWrapper::FULL_LEFT;
+            else
+                turn = ServoWrapper::FULL_RIGHT;
+        }
+        else
+        {
+            newStrategy(FORWARD);
+        }
+    }
+
     void newStrategy(const Strategy newStrategy)
     {
-        DEBUGF("NEW STRATEGY");
+        DEBUGF("NEW STRATEGY\n");
         strategy = newStrategy;
         start.start();
     }

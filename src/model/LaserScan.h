@@ -45,6 +45,10 @@ public:
 
     int getDataAtDegree(int degree)
     {
+        if (degree < 0)
+            degree += 360;
+        if (degree > 360)
+            degree -= 360;
         if (data.count(degree))
             return data[degree];
         return 0;
