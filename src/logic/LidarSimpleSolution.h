@@ -45,10 +45,10 @@ public:
 private:
     void forward(PhysicalData &data, int &speed, int &turn)
     {
-        int degRange = 50;
+        int degRange = 30;
         DEBUGF("size = %d \tpitch = %d \tyaw = %d\t", data.scan.data.size(), data.pitch, data.yaw);
         // if (data.pitch > 10 && (data.yaw > 180 - degRange || data.yaw < -180 + degRange))
-        if (data.pitch > 10 && abs(data.yaw - 0) < degRange)
+        if (millis() > 10000 && data.pitch > 7 && abs(data.yaw - 0) < degRange)
         {
             newStrategy(ROTATE_PITCH);
             absoluteAngleMax = data.absoluteAngle;
@@ -56,19 +56,19 @@ private:
             return;
         }
 
-        if (isCounterClockWise(data, 270))
-        {
-            newStrategy(ROTATE);
-            absoluteAngleMax = data.absoluteAngle;
-            absoluteAngleMin = data.absoluteAngle;
-            return;
-        }
+        // if (isCounterClockWise(data, 330))
+        // {
+        //     newStrategy(ROTATE);
+        //     absoluteAngleMax = data.absoluteAngle;
+        //     absoluteAngleMin = data.absoluteAngle;
+        //     return;
+        // }
 
         int f = data.scan.findDistanceAtDegree(180);
 
         DEBUGF("forw = %d \t", f);
 
-        if (f < 25 || data.scan.findDistanceAtDegree(180 - 10) < 25 || data.scan.findDistanceAtDegree(180 + 10) < 25)
+        if (data.pitch < 5 && (f < 25 || data.scan.findDistanceAtDegree(180 - 10) < 25 || data.scan.findDistanceAtDegree(180 + 10) < 25))
         {
             newStrategy(BACKWARD);
             return;
@@ -82,7 +82,7 @@ private:
 
         if (f > 120)
         {
-            speed = 100;
+            speed = 95;
             int left = data.scan.findDistanceAtDegree(180 - 55);
             int right = data.scan.findDistanceAtDegree(180 + 55);
             error = left - right;
@@ -104,7 +104,7 @@ private:
                 DEBUGF("left%d = %d \tright%d = %d \t", deg, left, deg, right);
             }
 
-            int maxError = 1200;
+            int maxError = 1100;
             error = constrain(error, -maxError, maxError);
             turn = map(error, -maxError, maxError, -100, 100);
         }
@@ -191,23 +191,24 @@ private:
     {
         DEBUGF("   rotate pitch!!  %d", start.time());
         int rotateSpeed = 60;
-        if (start.isMoreThan(500) && (start.isLessThan(1000) || data.pitch > 10))
+        if (start.isMoreThan(1000) && (start.isLessThan(1000) || data.pitch > 5))
         {
             speed = -rotateSpeed;
             turn = 0;
         }
-        else if (start.isLessThan(2000) && data.scan.findDistanceAtDegree(0) > 50)
+        else if (start.isLessThan(2000) && data.scan.findDistanceAtDegree(0) > 40)
         {
             speed = -rotateSpeed;
-            turn = 0;
+            turn = 30;
         }
         else if (start.isLessThan(2500))
         {
             speed = rotateSpeed;
-            if (data.scan.findDistanceAtDegree(180 - 90) > data.scan.findDistanceAtDegree(180 + 90))
-                turn = ServoWrapper::FULL_LEFT;
-            else
-                turn = ServoWrapper::FULL_RIGHT;
+            turn = ServoWrapper::FULL_RIGHT;
+            if (data.scan.findDistanceAtDegree(180-10) > 150)
+            {
+                newStrategy(FORWARD);
+            }
         }
         else
         {

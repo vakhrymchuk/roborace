@@ -54,6 +54,9 @@ public:
         if (millis() < 3500)
             speed = 0;
 #endif
+        speed += mpu.pitch * 2;
+
+        DEBUGF("speed = %d \t turn = %d\n", speed, turn);
 
         mechanics.run(speed, turn);
     }
