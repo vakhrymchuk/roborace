@@ -29,8 +29,6 @@ public:
 
         pidBack.tune(0.5, 0.003, 0.0);
         pidBack.limit(-100, 100);
-
-        // Serial.println("P,I,speed,actual");
     }
 
     void stop()
@@ -85,16 +83,6 @@ public:
 
             servo.writeMicroseconds(DEFAULT_PULSE_WIDTH + power);
             lastSpeed = speed;
-
-            // Serial.print("abs(speed)=");
-            // Serial.print(abs(speed));
-            // Serial.print(',');
-            // Serial.print("speedActual=");
-            // Serial.print(speedActual);
-            // Serial.print(',');
-            // Serial.print("power=");
-            // Serial.print(power);
-            // Serial.println();
         }
     }
 

@@ -1,19 +1,20 @@
 #include <Arduino.h>
 
-#define DEBUGF(...) //Serial.printf(__VA_ARGS__)
+#define DEBUGRRF(...) Serial.printf(__VA_ARGS__)
+#define DEBUGRR(...) Serial.println(__VA_ARGS__)
 #define WAIT_5S true
 
-#include "Roborace2.h"
+#include "RoboraceWebserver.h"
 // #include "hal/EnginePidConfig.h"
 // #include "hal/ServoConfig.h"
 
-Roborace *roborace;
+RoboraceWebserver *roborace;
 // EnginePidConfig *roborace;
 // ServoConfig *roborace;
 
 void setup()
 {
-#ifdef DEBUGF
+#ifdef DEBUGRR
     Serial.begin(115200);
 #endif
     DEBUGF("start\n");
@@ -21,7 +22,7 @@ void setup()
     ADC_setup();
 #endif
 
-    roborace = new Roborace();
+    roborace = new RoboraceWebserver();
     // roborace = new EnginePidConfig();
     // roborace = new ServoConfig();
 }

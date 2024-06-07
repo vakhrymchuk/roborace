@@ -5,7 +5,7 @@
 class IntervalValue {
 public:
 
-    explicit IntervalValue(Param *value) : value(value) {}
+    explicit IntervalValue(Param *param) : param(param) {}
 
     bool isReady() {
         bool ready = millis() >= msReady;
@@ -17,14 +17,14 @@ public:
 
     void recalculate() {
         while (msReady <= millis())
-            msReady += value->value;
+            msReady += param->value;
     }
 
     Param *getParam() {
-        return (Param *) value;
+        return (Param *) param;
     }
 
 private:
-    const Param *value;
+    const Param *param;
     unsigned long msReady = 0;
 };

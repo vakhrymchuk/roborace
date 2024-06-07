@@ -29,21 +29,21 @@ public:
         lds->init();
 
         // default 128 hw + 256 sw
-        DEBUGF("LDS RX buffer size %d\n", LdSerial->setRxBufferSize(1024)); // must be before .begin()
+        DEBUGRRF("LDS RX buffer size %d\n", LdSerial->setRxBufferSize(1024)); // must be before .begin()
         uint32_t baud_rate = lds->getSerialBaudRate();
-        DEBUGF("LDS baud rate %d\n", baud_rate);
+        DEBUGRRF("LDS baud rate %d\n", baud_rate);
 
         LdSerial->begin(baud_rate);
         while (LdSerial->read() >= 0)
-            DEBUGF(".");
+            DEBUGRR(".");
 
         LDS::result_t result = lds->start();
-        DEBUGF("LDS init() result: %d\n", lds->resultCodeToString(result));
+        DEBUGRRF("LDS init() result: %d\n", lds->resultCodeToString(result));
 
         if (result < 0)
-            DEBUGF("WARNING: is LDS connected to ESP32?");
+            DEBUGRR("WARNING: is LDS connected to ESP32?");
 
-        DEBUGF("LDS isActive(): %d\n", lds->isActive());
+        DEBUGRRF("LDS isActive(): %d\n", lds->isActive());
     }
 
     static bool getData(std::map<int, int> &data)
@@ -52,6 +52,7 @@ public:
         if (!scan_completed)
             return false;
         scan_completed = false;
+        data.clear();
         data.insert(angles->begin(), angles->end());
         angles->clear();
         return true;
@@ -84,12 +85,12 @@ public:
 
     static void lds_info_callback(LDS::info_t code, String info)
     {
-        DEBUGF("LDS info %s: %s\n", lds->infoCodeToString(code), info);
+        DEBUGRRF("LDS info %s: %s\n", lds->infoCodeToString(code), info);
     }
 
     static void lds_error_callback(LDS::result_t code, String aux_info)
     {
-        DEBUGF("LDS error %s: %s\n", lds->resultCodeToString(code), aux_info);
+        DEBUGRRF("LDS error %s: %s\n", lds->resultCodeToString(code), aux_info);
     }
 
     static void lds_packet_callback(uint8_t *packet, uint16_t length, bool scan_completed)

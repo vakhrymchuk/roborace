@@ -54,16 +54,7 @@ public:
                 rotates += (yaw < 0) ? 1 : -1;
             prevYaw = yaw;
 
-            // Serial.print(yaw); // вокруг оси Z
-            // Serial.print('\t');
-            // Serial.print(pitch); // вокруг оси Y
-            // Serial.print('\t');
-            // Serial.print(roll); // вокруг оси X
-            // Serial.print('\t');
-            // Serial.print(rotates);
-            // Serial.print('\t');
-            // Serial.print(absoluteAngle());
-            // Serial.println();
+            DEBUGRRF("y=%d\tp=%d\tr=%d\trot=%d\tangle=%d", yaw, pitch, roll, rotates, absoluteAngle());
         }
     }
 };

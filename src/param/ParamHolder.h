@@ -10,7 +10,7 @@ private:
 
     Param *values[SIZE]{};
     int size = 0;
-    DynamicJsonDocument doc = DynamicJsonDocument(2048);
+    JsonDocument doc = JsonDocument();
 
 public:
 
@@ -22,18 +22,18 @@ public:
         if (size < SIZE) {
             values[size++] = value;
         } else {
-            Serial.println("Unable to store param!");
+            DEBUGRR("Unable to store param!");
         }
     }
 
-    DynamicJsonDocument &createMessageWithParams() {
+    JsonDocument &createMessageWithParams() {
         doc.clear();
         doc["t"] = "p";
 
         for (int i = 0; i < size; ++i) {
             Param *param = values[i];
             if (!doc.containsKey(param->group)) {
-                doc.createNestedObject(param->group);
+                doc[param->group].to<JsonObject>();
             }
             doc[param->group][param->name] = param->value;
         }
@@ -41,24 +41,24 @@ public:
         return doc;
     }
 
-    bool apply(DynamicJsonDocument &doc) {
+    bool apply(JsonDocument &doc) {
         for (int i = 0; i < size; ++i) {
             Param *param = values[i];
             const char *name = param->name.c_str();
             if (doc.containsKey(param->name)) {
                 param->value = doc[name];
-                Serial.printf("Param changed %s %d\n", name, param->value);
+                DEBUGRRF("Param changed %s %d\n", name, param->value);
             }
         }
 
         if (doc.containsKey("action")) {
             String action = doc["action"];
-            Serial.printf("Need to perform action %s\n", action.c_str());
+            DEBUGRRF("Need to perform action %s\n", action.c_str());
             if (action.equals("save")) {
-                Serial.println("Writing");
+                DEBUGRR("Writing");
                 writeAllEeprom();
             } else if (action.equals("read")) {
-                Serial.println("Reading");
+                DEBUGRR("Reading");
                 readAllEeprom();
                 return true;
             }

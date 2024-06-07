@@ -13,52 +13,57 @@ public:
     LaserScan scan;
     Solution solution;
     MPU mpu;
+    long fps = 0;
 
+private:
+    Stopwatch wait;
+
+public:
     Roborace()
     {
         Lidar::init();
         mpu.init();
     }
 
-    void loop()
+    virtual void loop()
     {
-        scan.data.clear();
-        Stopwatch wait;
-        Interval show(200);
-        while (!Lidar::getData(scan.data))
+        mpu.readData();
+        if (Lidar::getData(scan.data))
         {
-            mechanics.run(speed, turn);
-            mpu.readData();
-            if (wait.isMoreThan(150))
+            fps = 1000 / wait.time();
+            wait.start();
+            if (scan.data.size() > 50)
             {
+                PhysicalData data = createPhysicalData();
+                solution.logic(data, speed, turn);
+            }
+            else
+            {
+                DEBUGRRF("Not enough Data, size = %d\n", scan.data.size());
                 speed = 0;
-                turn = 50 * sin(0.005 * millis());
-                if (show.isReady())
-                    DEBUGF("Scan is not received\n");
+                turn = 0;
             }
         }
-
-        if (scan.data.size() > 50)
+        else if (wait.isMoreThan(150))
         {
-            PhysicalData data = {scan, mechanics.getEngine().getSpeed(), mpu.yaw, mpu.pitch, mpu.roll, mpu.absoluteAngle()};
-            solution.logic(data, speed, turn);
-        }
-        else
-        {
-            DEBUGF("Not enough Data, size = %d\n", scan.data.size());
             speed = 0;
-            turn = 0;
+            turn = 50 * sin(0.005 * millis());
+            DEBUGRR("Scan is not received");
         }
 
 #ifdef WAIT_5S
         if (millis() < 3500)
             speed = 0;
 #endif
-
         mechanics.run(speed, turn);
     }
 
-private:
+    const PhysicalData createPhysicalData()
+    {
+        return {scan, mechanics.getEngine().getSpeed(), mpu.yaw, mpu.pitch, mpu.roll, mpu.absoluteAngle()};
+    }
+
+protected:
     Mechanics mechanics;
 
     int speed = 0;

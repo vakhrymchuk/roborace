@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <link href="https://fonts.googleapis.com/css?family=Khand|Overpass+Mono" rel="stylesheet">
+    <title>Roborace Control</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="root">
+        <div id="header">Roborace Control</div>
+        <div id="content">
+        </div>
+        <div id="buttons">
+            <div id="control" class="block" style="display: none;width:50vw">
+                <div id="tab-headers" class="tab"></div>
+                <div id="tab-content"></div>
+
+                <input type="button" id="btn-send" value="Send" data-command="send">
+                <input type="button" class="btn-command" id="btn-save" value="Save" data-command="save">
+                <input type="button" class="btn-command" id="btn-read" value="Read" data-command="read">
+            </div>
+
+            <div id="config" class="block">
+                <input type="text" id="ip" value="ws://192.168.4.1/ws">
+                <input type="button" id="btn-connect" value="Connect">
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
