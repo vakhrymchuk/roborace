@@ -1,4 +1,29 @@
 (function () {
+
+    const ctx = document.getElementById('myChart');
+
+    let chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            datasets: [
+                { data: [], label: "yaw" },
+                { data: [], label: "pitch" },
+                { data: [], label: "roll" },
+            ]
+        },
+        options: {
+            scales: {
+                y: {
+                    // beginAtZero: true
+                },
+                x: {
+                    display: false,
+                }
+            }
+        }
+    });
+
+
     let socket;
 
     let wsReconnectTimeoutId = null;
@@ -71,11 +96,28 @@
 
     }
 
+    let counter = 0;
     function processData(data) {
 
         document.getElementById('content').innerHTML = JSON.stringify(data);
 
         if (data['t'] === 'data' || data['t'] === undefined) {
+
+            if (chart.data.labels.length > 20) {
+                chart.data.datasets[0].data.shift();
+                chart.data.datasets[1].data.shift();
+                chart.data.datasets[2].data.shift();
+                chart.data.labels.shift();
+            }
+            counter += 1;
+            chart.data.labels.push(counter);
+            chart.data.datasets[0].data.push(data['yaw']);
+            chart.data.datasets[1].data.push(data['pitch']);
+            chart.data.datasets[2].data.push(data['roll']);
+
+
+            chart.update();
+
             /* document.getElementById('content').innerHTML =
                 'strategy = ' + data['st']
                 + ' angle = ' + data['a']
@@ -83,11 +125,10 @@
                 + ' speed = ' + data['s']
                 + '<br>'
                 + ' fps = ' + data['f'] */
-                ;
+            ;
         } else if (data['t'] === 'p') {
             createTabs(data);
         }
-        myChart.update();
     }
 
     const button = document.querySelector('#btn-send');

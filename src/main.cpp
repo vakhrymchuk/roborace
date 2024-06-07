@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
-#define DEBUGRRF(...) Serial.printf(__VA_ARGS__)
-#define DEBUGRR(...) Serial.println(__VA_ARGS__)
+#define DEBUGRRF(...) //Serial.printf(__VA_ARGS__)
+#define DEBUGRR(...) //Serial.println(__VA_ARGS__)
 #define WAIT_5S true
 
 #include "RoboraceWebserver.h"
@@ -16,8 +16,8 @@ void setup()
 {
 #ifdef DEBUGRR
     Serial.begin(115200);
+    DEBUGRR("start");
 #endif
-    DEBUGF("start\n");
 #ifdef FREE_RUN_MODE
     ADC_setup();
 #endif

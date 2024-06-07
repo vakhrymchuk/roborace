@@ -15,8 +15,15 @@ enum Strategy
 class Solution
 {
 public:
-    Param *speedParam = new Param(80, "speed", "solution");
-    Param *speedTurboParam = new Param(120, "speed-turbo", "solution");
+    Param *speedParam = new Param(90, "speed", "solution");
+    Param *rotationPitchDegParam = new Param(7, "rotation-pitch-deg", "solution");
+    Param *backDistParam = new Param(25, "back-dist", "solution");
+
+    Param *turboSpeedParam = new Param(120, "speed-turbo", "turbo");
+    Param *turboDistParam = new Param(120, "turbo-dist", "turbo");
+    Param *turboAngleParam = new Param(55, "turbo-angle", "turbo");
+    Param *turboMaxErrorParam = new Param(200, "turbo-max-err", "turbo");
+    Param *turboMaxAngleParam = new Param(8, "turbo-max-angle", "turbo");
 
 private:
     Strategy strategy = FORWARD;
@@ -51,7 +58,7 @@ private:
         int degRange = 30;
         DEBUGF("size = %d \tpitch = %d \tyaw = %d\t", data.scan.data.size(), data.pitch, data.yaw);
         // if (data.pitch > 10 && (data.yaw > 180 - degRange || data.yaw < -180 + degRange))
-        if (millis() > 10000 && data.pitch > 7 && abs(data.yaw - 0) < degRange)
+        if (millis() > 10000 && data.pitch > rotationPitchDegParam->value && abs(data.yaw - 0) < degRange)
         {
             newStrategy(ROTATE_PITCH);
             absoluteAngleMax = data.absoluteAngle;
@@ -71,7 +78,9 @@ private:
 
         DEBUGRRF("forw = %d \t", f);
 
-        if (data.pitch < 5 && (f < 25 || data.scan.findDistanceAtDegree(180 - 10) < 25 || data.scan.findDistanceAtDegree(180 + 10) < 25))
+        if (data.pitch < 5 && (f < backDistParam->value ||
+                               data.scan.findDistanceAtDegree(180 - 10) < backDistParam->value ||
+                               data.scan.findDistanceAtDegree(180 + 10) < backDistParam->value))
         {
             newStrategy(BACKWARD);
             return;
@@ -79,20 +88,19 @@ private:
 
         double currentSpeed = data.speed;
         // speed = map(constrain(f, 60, 200), 60, 200, 70, 80);
-        // speed = 70;
 
         int error = 0;
 
-        if (f > 120)
+        if (f > turboDistParam->value)
         {
-            speed = speedTurboParam->value;
-            int left = data.scan.findDistanceAtDegree(180 - 55);
-            int right = data.scan.findDistanceAtDegree(180 + 55);
+            speed = turboSpeedParam->value;
+            int left = data.scan.findDistanceAtDegree(180 - turboAngleParam->value);
+            int right = data.scan.findDistanceAtDegree(180 + turboAngleParam->value);
             error = left - right;
-            int maxError = 200;
+            int maxError = turboMaxErrorParam->value;
             error = constrain(error, -maxError, maxError);
             turn = map(error, -maxError, maxError, -100, 100);
-            int maxTurn = 8;
+            int maxTurn = turboMaxAngleParam->value;
             turn = constrain(turn, -maxTurn, maxTurn);
         }
         else
@@ -208,7 +216,7 @@ private:
         {
             speed = rotateSpeed;
             turn = ServoWrapper::FULL_RIGHT;
-            if (data.scan.findDistanceAtDegree(180-10) > 150)
+            if (data.scan.findDistanceAtDegree(180 - 10) > 150)
             {
                 newStrategy(FORWARD);
             }

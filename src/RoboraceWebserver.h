@@ -56,8 +56,12 @@ public:
                   {
                     DEBUGRR("get script.js");
                     request->send(200, "application/javascript", script_js); });
+        server.on(chart_js_name, HTTP_GET, [&](AsyncWebServerRequest *request)
+                  {
+                    DEBUGRR("get chart.js");
+                    request->send(200, "application/javascript", chart_js); });
 
-        server.on("/data.js", HTTP_GET, [&](AsyncWebServerRequest *request)
+        server.on("/data.json", HTTP_GET, [&](AsyncWebServerRequest *request)
                   {
             const JsonDocument &document = createMessage();
             String message;
@@ -78,12 +82,14 @@ public:
     {
         paramHolder->add(wsInterval->getParam());
         paramHolder->add(solution.speedParam);
-        paramHolder->add(solution.speedTurboParam);
+        paramHolder->add(solution.rotationPitchDegParam);
+        paramHolder->add(solution.backDistParam);
 
-        // paramHolder->add(mechanics->servoEnabled);
-        // paramHolder->add(mechanics->turnCentralPosition);
-
-        // paramHolder->add(mechanics->powerEnabled);
+        paramHolder->add(solution.turboSpeedParam);
+        paramHolder->add(solution.turboDistParam);
+        paramHolder->add(solution.turboAngleParam);
+        paramHolder->add(solution.turboMaxErrorParam);
+        paramHolder->add(solution.turboMaxAngleParam);
 
         // paramHolder->readAllEeprom();
     }
