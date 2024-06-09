@@ -25,6 +25,6 @@ public:
 
 private:
     Engine engine;
-    ServoWrapper forward = ServoWrapper(26, 90, -58, 60);
-    ServoWrapper backward = ServoWrapper(27, 100, -25, 25);
+    ServoWrapper forward = ServoWrapper(26, 93, -58, 60);
+    ServoWrapper backward = ServoWrapper(27, 103, -25, 25);
 };

@@ -20,10 +20,10 @@ public:
     Param *rotationPitchDegParam = new Param(7, "rotation-pitch-deg", "solution");
     Param *backDistParam = new Param(25, "back-dist", "solution");
 
-    Param *turboSpeedParam = new Param(95, "turbo-speed", "turbo");
-    Param *turboDistParam = new Param(120, "turbo-dist", "turbo");
-    Param *turboAngleParam = new Param(80, "turbo-angle", "turbo");
-    Param *turboMaxErrorParam = new Param(250, "turbo-max-err", "turbo");
+    Param *turboSpeedParam = new Param(100, "turbo-speed", "turbo");
+    Param *turboDistParam = new Param(130, "turbo-dist", "turbo");
+    Param *turboAngleParam = new Param(55, "turbo-angle", "turbo");
+    Param *turboMaxErrorParam = new Param(180, "turbo-max-err", "turbo");
     Param *turboMaxAngleParam = new Param(8, "turbo-max-angle", "turbo");
 
 private:
@@ -32,6 +32,7 @@ private:
 
     int absoluteAngleMax = 0;
     int absoluteAngleMin = 0;
+    int lastError = 0;
 
 public:
     void logic(PhysicalData &data, int &speed, int &turn)
@@ -92,12 +93,17 @@ private:
 
         int error = 0;
 
-        if (f > turboDistParam->value || data.scan.findDistanceAtDegree(180-15) > turboDistParam->value
-        || data.scan.findDistanceAtDegree(180+15) > turboDistParam->value)
+        if (f > turboDistParam->value /* && data.scan.findDistanceAtDegree(180-15) > turboDistParam->value
+        && data.scan.findDistanceAtDegree(180+15) > turboDistParam->value */
+        )
         {
             speed = turboSpeedParam->value;
+            if (f > 150)
+                speed += map(constrain(f, 150, 400), 150, 400, 5, 10);
             int left = data.scan.findDistanceAtDegree(180 - turboAngleParam->value);
             int right = data.scan.findDistanceAtDegree(180 + turboAngleParam->value);
+            left = constrain(left, 0, 100);
+            right = constrain(right, 0, 100);
             error = left - right;
             int maxError = turboMaxErrorParam->value;
             error = constrain(error, -maxError, maxError);
@@ -113,12 +119,22 @@ private:
                 int deg = 30 * i;
                 int left = data.scan.findDistanceAtDegree(180 - deg);
                 int right = data.scan.findDistanceAtDegree(180 + deg);
-                error += left * log(left) - right * log(right);
+                error += (left * log(left) - right * log(right));
                 DEBUGRRF("left%d = %d \tright%d = %d \t", deg, left, deg, right);
             }
 
             int maxError = maxErrorParam->value;
             error = constrain(error, -maxError, maxError);
+            if (f < 50)
+            {
+                error = error * 5;
+                if (error == 0)
+                    error = 2000;
+            }
+
+            int sum = 0.1 * error + 0.5 * (error - lastError);
+            lastError = error;
+
             turn = map(error, -maxError, maxError, -100, 100);
         }
 

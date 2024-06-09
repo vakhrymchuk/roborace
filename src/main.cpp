@@ -5,10 +5,10 @@
 #define WAIT_5S true
 
 #include "RoboraceWebserver.h"
-// #include "hal/EnginePidConfig.h"
-// #include "hal/ServoConfig.h"
+// #include "hal/testconfig/EnginePidConfig.h"
+// #include "hal/testconfig/ServoConfig.h"
 
-RoboraceWebserver *roborace;
+Roborace *roborace;
 // EnginePidConfig *roborace;
 // ServoConfig *roborace;
 
@@ -22,7 +22,7 @@ void setup()
     ADC_setup();
 #endif
 
-    roborace = new RoboraceWebserver();
+    roborace = new Roborace();
     // roborace = new EnginePidConfig();
     // roborace = new ServoConfig();
 }

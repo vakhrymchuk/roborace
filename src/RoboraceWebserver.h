@@ -61,7 +61,7 @@ public:
         //             DEBUGRR("get chart.js");
         //             request->send(200, "application/javascript", chart_js); });
 
-        server.on("/data.json", HTTP_GET, [&](AsyncWebServerRequest *request)
+        server.on("/", HTTP_GET, [&](AsyncWebServerRequest *request)
                   {
             const JsonDocument &document = createMessage();
             String message;
