@@ -40,26 +40,26 @@ public:
         WiFi.mode(WIFI_AP);
         WiFi.softAP("esp-server", "82514211");
 
-        server.on("/", HTTP_GET, [&](AsyncWebServerRequest *request)
-                  { 
-                    DEBUGRR("get root");
-                    request->send(200, "text/html", index_html); });
-        server.on(index_html_name, HTTP_GET, [&](AsyncWebServerRequest *request)
-                  { 
-                    DEBUGRR("get index.html");
-                    request->send(200, "text/html", index_html); });
-        server.on(style_css_name, HTTP_GET, [&](AsyncWebServerRequest *request)
-                  {
-                    DEBUGRR("get style.css");
-                    request->send(200, "text/css", style_css); });
-        server.on(script_js_name, HTTP_GET, [&](AsyncWebServerRequest *request)
-                  {
-                    DEBUGRR("get script.js");
-                    request->send(200, "application/javascript", script_js); });
-        server.on(chart_js_name, HTTP_GET, [&](AsyncWebServerRequest *request)
-                  {
-                    DEBUGRR("get chart.js");
-                    request->send(200, "application/javascript", chart_js); });
+        // server.on("/", HTTP_GET, [&](AsyncWebServerRequest *request)
+        //           { 
+        //             DEBUGRR("get root");
+        //             request->send(200, "text/html", index_html); });
+        // server.on(index_html_name, HTTP_GET, [&](AsyncWebServerRequest *request)
+        //           { 
+        //             DEBUGRR("get index.html");
+        //             request->send(200, "text/html", index_html); });
+        // server.on(style_css_name, HTTP_GET, [&](AsyncWebServerRequest *request)
+        //           {
+        //             DEBUGRR("get style.css");
+        //             request->send(200, "text/css", style_css); });
+        // server.on(script_js_name, HTTP_GET, [&](AsyncWebServerRequest *request)
+        //           {
+        //             DEBUGRR("get script.js");
+        //             request->send(200, "application/javascript", script_js); });
+        // server.on(chart_js_name, HTTP_GET, [&](AsyncWebServerRequest *request)
+        //           {
+        //             DEBUGRR("get chart.js");
+        //             request->send(200, "application/javascript", chart_js); });
 
         server.on("/data.json", HTTP_GET, [&](AsyncWebServerRequest *request)
                   {
@@ -82,6 +82,7 @@ public:
     {
         paramHolder->add(wsInterval->getParam());
         paramHolder->add(solution.speedParam);
+        paramHolder->add(solution.maxErrorParam);
         paramHolder->add(solution.rotationPitchDegParam);
         paramHolder->add(solution.backDistParam);
 

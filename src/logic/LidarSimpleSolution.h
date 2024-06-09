@@ -15,14 +15,15 @@ enum Strategy
 class Solution
 {
 public:
-    Param *speedParam = new Param(90, "speed", "solution");
+    Param *speedParam = new Param(85, "speed", "solution");
+    Param *maxErrorParam = new Param(1200, "pid-max-error", "solution");
     Param *rotationPitchDegParam = new Param(7, "rotation-pitch-deg", "solution");
     Param *backDistParam = new Param(25, "back-dist", "solution");
 
-    Param *turboSpeedParam = new Param(120, "speed-turbo", "turbo");
+    Param *turboSpeedParam = new Param(95, "turbo-speed", "turbo");
     Param *turboDistParam = new Param(120, "turbo-dist", "turbo");
-    Param *turboAngleParam = new Param(55, "turbo-angle", "turbo");
-    Param *turboMaxErrorParam = new Param(200, "turbo-max-err", "turbo");
+    Param *turboAngleParam = new Param(80, "turbo-angle", "turbo");
+    Param *turboMaxErrorParam = new Param(250, "turbo-max-err", "turbo");
     Param *turboMaxAngleParam = new Param(8, "turbo-max-angle", "turbo");
 
 private:
@@ -91,7 +92,8 @@ private:
 
         int error = 0;
 
-        if (f > turboDistParam->value)
+        if (f > turboDistParam->value || data.scan.findDistanceAtDegree(180-15) > turboDistParam->value
+        || data.scan.findDistanceAtDegree(180+15) > turboDistParam->value)
         {
             speed = turboSpeedParam->value;
             int left = data.scan.findDistanceAtDegree(180 - turboAngleParam->value);
@@ -115,7 +117,7 @@ private:
                 DEBUGRRF("left%d = %d \tright%d = %d \t", deg, left, deg, right);
             }
 
-            int maxError = 1100;
+            int maxError = maxErrorParam->value;
             error = constrain(error, -maxError, maxError);
             turn = map(error, -maxError, maxError, -100, 100);
         }

@@ -36,7 +36,7 @@ public:
             {
                 PhysicalData data = createPhysicalData();
                 solution.logic(data, speed, turn);
-                speed += mpu.pitch * 2;
+                speed += mpu.pitch * 1;
                 DEBUGF("speed = %d \t turn = %d\n", speed, turn);
             }
             else
