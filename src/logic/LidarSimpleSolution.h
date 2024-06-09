@@ -15,7 +15,7 @@ enum Strategy
 class Solution
 {
 public:
-    Param *speedParam = new Param(85, "speed", "solution");
+    Param *speedParam = new Param(80, "speed", "solution");
     Param *maxErrorParam = new Param(1200, "pid-max-error", "solution");
     Param *rotationPitchDegParam = new Param(7, "rotation-pitch-deg", "solution");
     Param *backDistParam = new Param(25, "back-dist", "solution");
@@ -29,6 +29,7 @@ public:
 private:
     Strategy strategy = FORWARD;
     Stopwatch start;
+    Stopwatch gorka;
 
     int absoluteAngleMax = 0;
     int absoluteAngleMin = 0;
@@ -67,6 +68,10 @@ private:
             absoluteAngleMin = data.absoluteAngle;
             return;
         }
+        if (data.pitch > 5)
+        {
+            gorka.start();
+        }
 
         // if (isCounterClockWise(data, 330))
         // {
@@ -98,7 +103,7 @@ private:
         )
         {
             speed = turboSpeedParam->value;
-            if (f > 150)
+            if (f > 150 && gorka.isMoreThan(3000))
                 speed += map(constrain(f, 150, 400), 150, 400, 5, 10);
             int left = data.scan.findDistanceAtDegree(180 - turboAngleParam->value);
             int right = data.scan.findDistanceAtDegree(180 + turboAngleParam->value);
