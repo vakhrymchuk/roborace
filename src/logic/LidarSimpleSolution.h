@@ -15,7 +15,7 @@ enum Strategy
 class Solution
 {
 public:
-    Param *speedParam = new Param(80, "speed", "solution");
+    Param *speedParam = new Param(100, "speed", "solution");
     Param *maxErrorParam = new Param(1200, "pid-max-error", "solution");
     Param *rotationPitchDegParam = new Param(7, "rotation-pitch-deg", "solution");
     Param *backDistParam = new Param(25, "back-dist", "solution");
@@ -63,6 +63,7 @@ private:
         // if (data.pitch > 10 && (data.yaw > 180 - degRange || data.yaw < -180 + degRange))
         if (millis() > 10000 && data.pitch > rotationPitchDegParam->value && abs(data.yaw - 0) < degRange)
         {
+            desiredRotate = data.absoluteAngle + 90;
             newStrategy(ROTATE_PITCH);
             absoluteAngleMax = data.absoluteAngle;
             absoluteAngleMin = data.absoluteAngle;
@@ -94,72 +95,41 @@ private:
         }
 
         double currentSpeed = data.speed;
-        // speed = map(constrain(f, 60, 200), 60, 200, 70, 80);
 
-        int error = 0;
-
-        if (f > turboDistParam->value /* && data.scan.findDistanceAtDegree(180-15) > turboDistParam->value
-        && data.scan.findDistanceAtDegree(180+15) > turboDistParam->value */
-        )
+        speed = speedParam->value;
+        // if (f > 200)
+            // speed += map(constrain(f, 200, 400), 200, 400, 20, 30);
+        int maxDist = 0;
+        int maxDistAngle = 0;
+        for (size_t i = 0; i <= 6; i++)
         {
-            speed = turboSpeedParam->value;
-            if (f > 150 && gorka.isMoreThan(3000))
-                speed += map(constrain(f, 150, 400), 150, 400, 5, 10);
-            int left = data.scan.findDistanceAtDegree(180 - turboAngleParam->value);
-            int right = data.scan.findDistanceAtDegree(180 + turboAngleParam->value);
-            left = constrain(left, 0, 100);
-            right = constrain(right, 0, 100);
-            error = left - right;
-            int maxError = turboMaxErrorParam->value;
-            error = constrain(error, -maxError, maxError);
-            turn = map(error, -maxError, maxError, -100, 100);
-            int maxTurn = turboMaxAngleParam->value;
-            turn = constrain(turn, -maxTurn, maxTurn);
-        }
-        else
-        {
-            speed = speedParam->value;
-            for (size_t i = 1; i <= 3; i++)
+            int deg = 15 * i;
+            int left = data.scan.findDistanceAtDegree(180 - deg);
+            int right = data.scan.findDistanceAtDegree(180 + deg);
+            if (left > maxDist)
             {
-                int deg = 30 * i;
-                int left = data.scan.findDistanceAtDegree(180 - deg);
-                int right = data.scan.findDistanceAtDegree(180 + deg);
-                error += (left * log(left) - right * log(right));
-                DEBUGRRF("left%d = %d \tright%d = %d \t", deg, left, deg, right);
+                maxDist = left;
+                maxDistAngle = -deg;
             }
-
-            int maxError = maxErrorParam->value;
-            error = constrain(error, -maxError, maxError);
-            if (f < 50)
+            if (right > maxDist)
             {
-                error = error * 5;
-                if (error == 0)
-                    error = 2000;
+                maxDist = right;
+                maxDistAngle = deg;
             }
-
-            int sum = 0.1 * error + 0.5 * (error - lastError);
-            lastError = error;
-
-            turn = map(error, -maxError, maxError, -100, 100);
         }
 
-        // if (scan.findDistanceAtDegree(180 - 90) > 140)
-        // {
-        //     turn = 80;
-        // }
-        // else if (scan.findDistanceAtDegree(180 + 90) > 140)
-        // {
-        //     turn = -80;
-        // }
-        // else if (scan.findDistanceAtDegree(180 - 45) > 140)
-        // {
-        //     turn = 60;
-        // }
-        // else if (scan.findDistanceAtDegree(180 + 45) > 140)
-        // {
-        //     turn = -60;
-        // }
+        turn = maxDistAngle;
 
+        if (data.pitch > 5){
+            if(data.scan.findDistanceAtDegree(180+90)<30) {
+                turn = -10;
+            }
+            if(data.scan.findDistanceAtDegree(180-90)<30) {
+                turn = 10;
+            }
+        }
+
+        DEBUGRRF("max dist angle = %d \t max dist = %d\n", maxDistAngle, maxDist);
         DEBUGRRF("speed = %d \t turn = %d\n", speed, turn);
     }
 
@@ -179,7 +149,7 @@ private:
     void backward(PhysicalData &data, int &speed, int &turn)
     {
         DEBUGRR("BACK\n");
-        speed = -50;
+        speed = -70;
 
         int left = data.scan.findDistanceAtDegree(180 - 55);
         int right = data.scan.findDistanceAtDegree(180 + 55);
@@ -196,6 +166,8 @@ private:
         }
     }
 
+    int desiredRotate = 0;
+
     void rotate(PhysicalData &data, int &speed, int &turn)
     {
         DEBUGRRF("   rotate!!  %d", start.time());
@@ -208,12 +180,12 @@ private:
         else if (start.isLessThan(1600))
         {
             speed = -rotateSpeed;
-            turn = ServoWrapper::FULL_RIGHT;
+            turn = 90;
         }
         else if (start.isLessThan(2300) && data.scan.findDistanceAtDegree(180 - 30) > 40 && data.scan.findDistanceAtDegree(180 + 30) > 25)
         {
             speed = rotateSpeed;
-            turn = ServoWrapper::FULL_LEFT;
+            turn = 90;
         }
         else
         {
@@ -224,21 +196,21 @@ private:
     void rotatePitch(PhysicalData &data, int &speed, int &turn)
     {
         DEBUGRRF("   rotate pitch!!  %d", start.time());
-        int rotateSpeed = 60;
+        int rotateSpeed = 90;
         if (start.isMoreThan(1000) && (start.isLessThan(1000) || data.pitch > 5))
         {
             speed = -rotateSpeed;
             turn = 0;
         }
-        else if (start.isLessThan(2000) && data.scan.findDistanceAtDegree(0) > 40)
+        else if (start.isLessThan(2000) /* && data.scan.findDistanceAtDegree(0) > 40 */)
         {
             speed = -rotateSpeed;
-            turn = 30;
+            turn = -30;
         }
         else if (start.isLessThan(2500))
         {
             speed = rotateSpeed;
-            turn = ServoWrapper::FULL_RIGHT;
+            turn = 50;
             if (data.scan.findDistanceAtDegree(180 - 10) > 150)
             {
                 newStrategy(FORWARD);

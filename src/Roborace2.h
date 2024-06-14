@@ -6,6 +6,7 @@
 #include "model/LaserScan.h"
 #include "model/PhysicData.h"
 #include "logic/LidarSimpleSolution.h"
+#include "PIDController.h"
 
 class Roborace
 {
@@ -17,12 +18,15 @@ public:
 
 private:
     Stopwatch wait;
+    PIDController pid;
 
 public:
     Roborace()
     {
         Lidar::init();
         mpu.init();
+        pid.tune(2, 0, 2);
+        pid.limit(-100, 100);
     }
 
     virtual void loop()
@@ -36,7 +40,8 @@ public:
             {
                 PhysicalData data = createPhysicalData();
                 solution.logic(data, speed, turn);
-                speed += mpu.pitch * 1;
+                desiredAngle = mpu.absoluteAngle() + turn;
+                speed += mpu.pitch * 2;
                 DEBUGF("speed = %d \t turn = %d\n", speed, turn);
             }
             else
@@ -58,6 +63,11 @@ public:
             speed = 0;
 #endif
 
+        pid.setpoint(desiredAngle);
+        turn = (int) -pid.compute(mpu.absoluteAngle());
+
+        DEBUGF("SERVO turn = %d\n", turn);
+
         mechanics.run(speed, turn);
     }
 
@@ -71,4 +81,5 @@ protected:
 
     int speed = 0;
     int turn = ServoWrapper::CENTER;
+    int desiredAngle = 0;
 };
