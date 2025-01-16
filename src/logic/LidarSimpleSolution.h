@@ -15,7 +15,7 @@ enum Strategy
 class Solution
 {
 public:
-    Param *speedParam = new Param(95, "speed", "solution");
+    Param *speedParam = new Param(90, "speed", "solution");
     Param *maxErrorParam = new Param(1200, "pid-max-error", "solution");
     Param *rotationPitchDegParam = new Param(7, "rotation-pitch-deg", "solution");
     Param *backDistParam = new Param(25, "back-dist", "solution");
@@ -70,7 +70,7 @@ private:
             absoluteAngleMin = data.absoluteAngle;
             return;
         }
-        if (data.pitch > 5)
+        if (data.pitch > 5 && gorka.isMoreThan(5, SECOND))
         {
             gorka.start();
         }
@@ -88,7 +88,9 @@ private:
         DEBUGRRF("forw = %d \t", f);
 
         if (data.pitch < 5 && (f < backDistParam->value ||
+                               data.scan.findDistanceAtDegree(180 - 10) < backDistParam->value ||
                                data.scan.findDistanceAtDegree(180 - 20) < backDistParam->value ||
+                               data.scan.findDistanceAtDegree(180 + 10) < backDistParam->value ||
                                data.scan.findDistanceAtDegree(180 + 20) < backDistParam->value))
         {
             newStrategy(BACKWARD);
@@ -98,15 +100,19 @@ private:
         double currentSpeed = data.speed;
 
         speed = speedParam->value;
-        // if (f > 200)
-            // speed += map(constrain(f, 200, 400), 200, 400, 20, 30);
+
         int maxDist = 0;
         int maxDistAngle = 0;
-        for (size_t i = 0; i <= 6; i++)
+        for (size_t i = 0; i <= 6; i++) // find longes dist and it angle
         {
             int deg = 15 * i;
             int left = data.scan.findDistanceAtDegree(180 - deg);
             int right = data.scan.findDistanceAtDegree(180 + deg);
+            if (gorka.isLessThan(5, SECOND)) // limit dist on gorka
+            {
+                left = min(left, 150);
+                right = min(right, 150);
+            }
             if (left > maxDist)
             {
                 maxDist = left;
@@ -119,19 +125,24 @@ private:
             }
         }
 
+        if (maxDist <= 100)
+            speed += map(constrain(maxDist, 50, 100), 50, 100, -20, 0);
+        else
+            speed += map(constrain(maxDist, 100, 300), 100, 300, 0, 20);
+
         turn = maxDistAngle;
 
-        if (data.pitch > 5)
-        {
-            if (data.scan.findDistanceAtDegree(180 + 90) < 30)
-            {
-                turn = -10;
-            }
-            if (data.scan.findDistanceAtDegree(180 - 90) < 30)
-            {
-                turn = 10;
-            }
-        }
+        // if (data.pitch > 5)
+        // {
+        //     if (data.scan.findDistanceAtDegree(180 + 90) < 30)
+        //     {
+        //         turn = -10;
+        //     }
+        //     if (data.scan.findDistanceAtDegree(180 - 90) < 30)
+        //     {
+        //         turn = 10;
+        //     }
+        // }
 
         DEBUGRRF("max dist angle = %d \t max dist = %d\n", maxDistAngle, maxDist);
         DEBUGRRF("speed = %d \t turn = %d\n", speed, turn);
