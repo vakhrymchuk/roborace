@@ -15,7 +15,7 @@ enum Strategy
 class Solution
 {
 public:
-    Param *speedParam = new Param(100, "speed", "solution");
+    Param *speedParam = new Param(95, "speed", "solution");
     Param *maxErrorParam = new Param(1200, "pid-max-error", "solution");
     Param *rotationPitchDegParam = new Param(7, "rotation-pitch-deg", "solution");
     Param *backDistParam = new Param(25, "back-dist", "solution");
@@ -61,10 +61,11 @@ private:
         int degRange = 30;
         DEBUGF("size = %d \tpitch = %d \tyaw = %d\t", data.scan.data.size(), data.pitch, data.yaw);
         // if (data.pitch > 10 && (data.yaw > 180 - degRange || data.yaw < -180 + degRange))
-        if (millis() > 10000 && data.pitch > rotationPitchDegParam->value && abs(data.yaw - 0) < degRange)
+        // if (millis() > 10000 && data.pitch > rotationPitchDegParam->value && abs(data.yaw - 0) < degRange)
+        if (isClockWise(data, 270))
         {
-            desiredRotate = data.absoluteAngle + 90;
-            newStrategy(ROTATE_PITCH);
+            desiredRotate = data.absoluteAngle + 170;
+            newStrategy(ROTATE);
             absoluteAngleMax = data.absoluteAngle;
             absoluteAngleMin = data.absoluteAngle;
             return;
@@ -87,8 +88,8 @@ private:
         DEBUGRRF("forw = %d \t", f);
 
         if (data.pitch < 5 && (f < backDistParam->value ||
-                               data.scan.findDistanceAtDegree(180 - 10) < backDistParam->value ||
-                               data.scan.findDistanceAtDegree(180 + 10) < backDistParam->value))
+                               data.scan.findDistanceAtDegree(180 - 20) < backDistParam->value ||
+                               data.scan.findDistanceAtDegree(180 + 20) < backDistParam->value))
         {
             newStrategy(BACKWARD);
             return;
@@ -120,11 +121,14 @@ private:
 
         turn = maxDistAngle;
 
-        if (data.pitch > 5){
-            if(data.scan.findDistanceAtDegree(180+90)<30) {
+        if (data.pitch > 5)
+        {
+            if (data.scan.findDistanceAtDegree(180 + 90) < 30)
+            {
                 turn = -10;
             }
-            if(data.scan.findDistanceAtDegree(180-90)<30) {
+            if (data.scan.findDistanceAtDegree(180 - 90) < 30)
+            {
                 turn = 10;
             }
         }
@@ -185,7 +189,7 @@ private:
         else if (start.isLessThan(2300) && data.scan.findDistanceAtDegree(180 - 30) > 40 && data.scan.findDistanceAtDegree(180 + 30) > 25)
         {
             speed = rotateSpeed;
-            turn = 90;
+            turn = -90;
         }
         else
         {

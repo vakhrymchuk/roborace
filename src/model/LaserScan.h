@@ -23,7 +23,7 @@ public:
             d = min(d, c);
             count++;
         }
-        while (count < 12 && inc++ < 20)
+        while (count < 16 && inc++ < 20)
         {
             c = getDataAtDegree(degree - inc);
             if (c > 0)

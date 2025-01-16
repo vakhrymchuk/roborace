@@ -25,8 +25,8 @@ public:
     {
         Lidar::init();
         mpu.init();
-        pid.tune(2, 0, 2);
-        pid.limit(-100, 100);
+        pid.tune(1.5, 0, 1.5);
+        pid.limit(-90, 90);
     }
 
     virtual void loop()
