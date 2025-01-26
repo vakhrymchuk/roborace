@@ -125,10 +125,12 @@ private:
             }
         }
 
-        if (maxDist <= 100)
-            speed += map(constrain(maxDist, 50, 100), 50, 100, -20, 0);
-        else
-            speed += map(constrain(maxDist, 100, 300), 100, 300, 0, 20);
+        int mid = 120;
+
+        if (maxDist <= mid)
+            speed += map(constrain(maxDist, 50, mid), 50, mid, -20, 0);
+        if (f > 150)
+            speed += map(constrain(f, 150, 300), 150, 300, 0, 20);
 
         turn = maxDistAngle;
 
