@@ -25,8 +25,8 @@ public:
     {
         Lidar::init();
         mpu.init();
-        pid.tune(1.5, 0, 1.5);
-        pid.limit(-90, 90);
+        pid.tune(2.0, 0, 4.0);
+        pid.limit(-100, 100);
     }
 
     virtual void loop()
@@ -60,7 +60,7 @@ public:
         }
 
 #ifdef WAIT_5S
-        if (millis() < 3500)
+        if (millis() < 4000)
             speed = 0;
 #endif
 

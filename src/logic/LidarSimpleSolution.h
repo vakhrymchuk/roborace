@@ -15,7 +15,7 @@ enum Strategy
 class Solution
 {
 public:
-    Param *speedParam = new Param(90, "speed", "solution");
+    Param *speedParam = new Param(85, "speed", "solution");
     Param *maxErrorParam = new Param(1200, "pid-max-error", "solution");
     Param *rotationPitchDegParam = new Param(7, "rotation-pitch-deg", "solution");
     Param *backDistParam = new Param(25, "back-dist", "solution");
@@ -62,9 +62,9 @@ private:
         DEBUGF("size = %d \tpitch = %d \tyaw = %d\t", data.scan.data.size(), data.pitch, data.yaw);
         // if (data.pitch > 10 && (data.yaw > 180 - degRange || data.yaw < -180 + degRange))
         // if (millis() > 10000 && data.pitch > rotationPitchDegParam->value && abs(data.yaw - 0) < degRange)
-        if (isClockWise(data, 270))
+        if (isCounterClockWise(data, 180))
         {
-            desiredRotate = data.absoluteAngle + 170;
+            desiredRotate = data.absoluteAngle - 170;
             newStrategy(ROTATE);
             absoluteAngleMax = data.absoluteAngle;
             absoluteAngleMin = data.absoluteAngle;
@@ -81,14 +81,6 @@ private:
             gorka.start();
             return;
         }
-
-        // if (isCounterClockWise(data, 330))
-        // {
-        //     newStrategy(ROTATE);
-        //     absoluteAngleMax = data.absoluteAngle;
-        //     absoluteAngleMin = data.absoluteAngle;
-        //     return;
-        // }
 
         int f = data.scan.findDistanceAtDegree(180);
 
@@ -110,11 +102,11 @@ private:
 
         int maxDist = 0;
         int maxDistAngle = 0;
-        for (size_t i = 0; i <= 6; i++) // find longes dist and it angle
+        for (size_t i = 0; i <= 7; i++) // find longes dist and it angle
         {
             int deg = 15 * i;
-            int left = data.scan.findDistanceAtDegree(180 - deg) - i * 1;
-            int right = data.scan.findDistanceAtDegree(180 + deg) - i * 1;
+            int left = data.scan.findDistanceAtDegree(180 - deg) - i * 0;
+            int right = data.scan.findDistanceAtDegree(180 + deg) - i * 0;
             // if (data.pitch > 15) {
             //     left = min(300, left);
             //     right = min(300, right);
@@ -134,6 +126,7 @@ private:
                 maxDist = right;
                 maxDistAngle = deg;
             }
+            if(maxDist > 150) break;
         }
 
         int mid = 120;
@@ -141,7 +134,7 @@ private:
         if (maxDist <= mid)
             speed += map(constrain(maxDist, 50, mid), 50, mid, -10, 0);
         if (f > 150)
-            speed += map(constrain(f, 150, 300), 150, 300, 0, 15);
+            speed += map(constrain(f, 150, 300), 150, 300, 0, 30);
 
         turn = maxDistAngle;
 
@@ -202,21 +195,21 @@ private:
     void rotate(PhysicalData &data, int &speed, int &turn)
     {
         DEBUGRRF("   rotate!!  %d", start.time());
-        int rotateSpeed = 60;
-        if (start.isLessThan(200) && data.scan.findDistanceAtDegree(180 - 30) > 40)
+        int rotateSpeed = 80;
+        if (start.isLessThan(500) && data.scan.findDistanceAtDegree(180 - 30) > 20)
         {
-            speed = -rotateSpeed;
-            turn = 0;
+            speed = rotateSpeed;
+            turn = 90;
         }
         else if (start.isLessThan(1600))
         {
             speed = -rotateSpeed;
-            turn = 90;
+            turn = -90;
         }
         else if (start.isLessThan(2300) && data.scan.findDistanceAtDegree(180 - 30) > 40 && data.scan.findDistanceAtDegree(180 + 30) > 25)
         {
             speed = rotateSpeed;
-            turn = -90;
+            turn = 90;
         }
         else
         {
