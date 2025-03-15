@@ -41,7 +41,8 @@ public:
                 PhysicalData data = createPhysicalData();
                 solution.logic(data, speed, turn);
                 desiredAngle = mpu.absoluteAngle() + turn;
-                speed += mpu.pitch * 2;
+                if(mpu.pitch > 8)
+                  speed += mpu.pitch * 5;
                 DEBUGF("speed = %d \t turn = %d\n", speed, turn);
             }
             else

@@ -24,8 +24,8 @@ public:
         servo.attach(POWER_SERVO_PIN);
         servo.writeMicroseconds(DEFAULT_PULSE_WIDTH);
 
-        pid.tune(0.5, 0.003, 0);
-        pid.limit(-100, 100);
+        pid.tune(0.6, 0.005, 0);
+        pid.limit(-100, 200);
 
         pidBack.tune(0.5, 0.003, 0.0);
         pidBack.limit(-100, 100);

@@ -70,9 +70,16 @@ private:
             absoluteAngleMin = data.absoluteAngle;
             return;
         }
-        if (data.pitch > 5 && gorka.isMoreThan(5, SECOND))
+        if (data.pitch > 8 && gorka.isMoreThan(10, SECOND))
         {
             gorka.start();
+        }
+
+        if (data.pitch > 8 && gorka.isMoreThan(3, SECOND))
+        {
+            newStrategy(BACKWARD);
+            gorka.start();
+            return;
         }
 
         // if (isCounterClockWise(data, 330))
@@ -106,8 +113,12 @@ private:
         for (size_t i = 0; i <= 6; i++) // find longes dist and it angle
         {
             int deg = 15 * i;
-            int left = data.scan.findDistanceAtDegree(180 - deg);
-            int right = data.scan.findDistanceAtDegree(180 + deg);
+            int left = data.scan.findDistanceAtDegree(180 - deg) - i * 1;
+            int right = data.scan.findDistanceAtDegree(180 + deg) - i * 1;
+            // if (data.pitch > 15) {
+            //     left = min(300, left);
+            //     right = min(300, right);
+            // }
             if (gorka.isLessThan(5, SECOND)) // limit dist on gorka
             {
                 left = min(left, 150);
@@ -128,9 +139,9 @@ private:
         int mid = 120;
 
         if (maxDist <= mid)
-            speed += map(constrain(maxDist, 50, mid), 50, mid, -20, 0);
+            speed += map(constrain(maxDist, 50, mid), 50, mid, -10, 0);
         if (f > 150)
-            speed += map(constrain(f, 150, 300), 150, 300, 0, 20);
+            speed += map(constrain(f, 150, 300), 150, 300, 0, 15);
 
         turn = maxDistAngle;
 
@@ -177,7 +188,10 @@ private:
         int maxTurn = 30;
         turn = constrain(turn, -maxTurn, maxTurn);
 
-        if (start.isMoreThan(2000) || (data.scan.findDistanceAtDegree(180 - 10) > 40 && data.scan.findDistanceAtDegree(180 + 10) > 40))
+        bool needToCheckMinTime = data.pitch > 10;
+        bool minTimeOk = needToCheckMinTime == false || start.isMoreThan(1200);
+
+        if (start.isMoreThan(2000) || (minTimeOk && data.scan.findDistanceAtDegree(180 - 10) > 40 && data.scan.findDistanceAtDegree(180 + 10) > 40))
         {
             newStrategy(FORWARD);
         }
