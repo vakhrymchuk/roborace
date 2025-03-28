@@ -15,7 +15,7 @@ enum Strategy
 class Solution
 {
 public:
-    Param *speedParam = new Param(85, "speed", "solution");
+    Param *speedParam = new Param(95, "speed", "solution");
     Param *maxErrorParam = new Param(1200, "pid-max-error", "solution");
     Param *rotationPitchDegParam = new Param(7, "rotation-pitch-deg", "solution");
     Param *backDistParam = new Param(25, "back-dist", "solution");
@@ -99,12 +99,13 @@ private:
         double currentSpeed = data.speed;
 
         speed = speedParam->value;
+        if (this->start.isMoreThan(10, SECOND)) speed += 5;
 
         int maxDist = 0;
         int maxDistAngle = 0;
-        for (size_t i = 0; i <= 7; i++) // find longes dist and it angle
+        for (size_t i = 0; i <= 9; i++) // find longes dist and it angle
         {
-            int deg = 15 * i;
+            int deg = 10 * i;
             int left = data.scan.findDistanceAtDegree(180 - deg) - i * 0;
             int right = data.scan.findDistanceAtDegree(180 + deg) - i * 0;
             // if (data.pitch > 15) {
@@ -133,8 +134,8 @@ private:
 
         if (maxDist <= mid)
             speed += map(constrain(maxDist, 50, mid), 50, mid, -10, 0);
-        if (f > 150)
-            speed += map(constrain(f, 150, 300), 150, 300, 0, 30);
+        else if (f > 150)
+            speed += map(constrain(f, 150, 300), 150, 300, 0, 40);
 
         turn = maxDistAngle;
 
