@@ -15,10 +15,10 @@ enum Strategy
 class Solution
 {
 public:
-    Param *speedParam = new Param(90, "speed", "solution");
+    Param *speedParam = new Param(110, "speed", "solution");
     Param *maxErrorParam = new Param(1200, "pid-max-error", "solution");
     Param *rotationPitchDegParam = new Param(7, "rotation-pitch-deg", "solution");
-    Param *backDistParam = new Param(25, "back-dist", "solution");
+    Param *backDistParam = new Param(20, "back-dist", "solution");
 
     Param *turboSpeedParam = new Param(100, "turbo-speed", "turbo");
     Param *turboDistParam = new Param(130, "turbo-dist", "turbo");
@@ -72,12 +72,12 @@ private:
             absoluteAngleMin = data.absoluteAngle;
             return;
         }
-        if (data.pitch > 8 && gorka.isMoreThan(10, SECOND))
+        if (data.pitch > 10 && gorka.isMoreThan(10, SECOND))
         {
             gorka.start();
         }
 
-        if (data.pitch > 8 && gorka.isMoreThan(3, SECOND))
+        if (data.pitch > 10 && gorka.isMoreThan(3, SECOND))
         {
             newStrategy(BACKWARD);
             gorka.start();
@@ -140,11 +140,15 @@ private:
                 maxDist = right;
                 maxDistAngle = deg;
             }
-            if (maxDist > 150)
+            if (maxDist > 160)
                 break;
         }
 
-        int mid = 120;
+        if(data.pitch < -5) {
+            maxDistAngle /= 2;
+        }
+
+        int mid = 110;
 
         if (maxDist <= mid)
             speed += map(constrain(maxDist, 50, mid), 50, mid, -10, 0);

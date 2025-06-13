@@ -24,8 +24,8 @@ public:
         servo.attach(POWER_SERVO_PIN);
         servo.writeMicroseconds(DEFAULT_PULSE_WIDTH);
 
-        pid.tune(0.1, 0.01, 0);
-        pid.limit(-100, 100);
+        pid.tune(0.15, 0.01, 0);
+        pid.limit(-100, 60);
 
         pidBack.tune(0.5, 0.003, 0.0);
         pidBack.limit(-100, 100);
@@ -54,13 +54,13 @@ public:
                 }
                 if (directionChanged.isLessThan(400))
                 {
-                    power = 50;
+                    power = 80;
                     pid.resetLastTime();
                 }
                 else
                 {
                     pid.setpoint(speed);
-                    power = 50 + (int)pid.compute(speedActual);
+                    power = 80 + (int)pid.compute(speedActual);
                 }
             }
             else
