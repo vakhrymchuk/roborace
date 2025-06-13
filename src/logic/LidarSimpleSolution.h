@@ -15,7 +15,7 @@ enum Strategy
 class Solution
 {
 public:
-    Param *speedParam = new Param(110, "speed", "solution");
+    Param *speedParam = new Param(100, "speed", "solution");
     Param *maxErrorParam = new Param(1200, "pid-max-error", "solution");
     Param *rotationPitchDegParam = new Param(7, "rotation-pitch-deg", "solution");
     Param *backDistParam = new Param(20, "back-dist", "solution");
@@ -30,12 +30,16 @@ private:
     Strategy strategy = FORWARD;
     Stopwatch start;
     Stopwatch gorka;
+    bool gorkaStarted = false;
     Stopwatch backStopwatch;
     bool isBack = false;
+    int minTimeBack = 0;
 
     int absoluteAngleMax = 0;
     int absoluteAngleMin = 0;
     int lastError = 0;
+
+    Stopwatch goodSpeedStopwatch;
 
 public:
     void logic(PhysicalData &data, int &speed, int &turn)
@@ -61,10 +65,10 @@ private:
     void forward(PhysicalData &data, int &speed, int &turn)
     {
         int degRange = 30;
-        DEBUGF("size = %d \tpitch = %d \tyaw = %d\t", data.scan.data.size(), data.pitch, data.yaw);
+        DEBUGF("size = %d \tpitch = %d \tyaw = %d\t\n", data.scan.data.size(), data.pitch, data.yaw);
         // if (data.pitch > 10 && (data.yaw > 180 - degRange || data.yaw < -180 + degRange))
         // if (millis() > 10000 && data.pitch > rotationPitchDegParam->value && abs(data.yaw - 0) < degRange)
-        if (isCounterClockWise(data, 180))
+        if (isCounterClockWise(data, 150))
         {
             desiredRotate = data.absoluteAngle - 170;
             newStrategy(ROTATE);
@@ -72,13 +76,16 @@ private:
             absoluteAngleMin = data.absoluteAngle;
             return;
         }
-        if (data.pitch > 10 && gorka.isMoreThan(10, SECOND))
+        if (data.pitch > 8 && !gorkaStarted)
         {
             gorka.start();
-        }
+            gorkaStarted = true;
+        } else 
+            gorkaStarted = false;
 
-        if (data.pitch > 10 && gorka.isMoreThan(3, SECOND))
+        if (data.pitch > 8 && gorka.isMoreThan(3, SECOND))
         {
+            minTimeBack = 1200;
             newStrategy(BACKWARD);
             gorka.start();
             return;
@@ -88,7 +95,7 @@ private:
 
         DEBUGRRF("forw = %d \t", f);
 
-        if (data.pitch < 5 && (f < backDistParam->value ||
+        if (abs(data.pitch) < 5 && (f < backDistParam->value ||
                                data.scan.findDistanceAtDegree(180 - 10) < backDistParam->value ||
                                data.scan.findDistanceAtDegree(180 - 20) < backDistParam->value ||
                                data.scan.findDistanceAtDegree(180 + 10) < backDistParam->value ||
@@ -101,6 +108,7 @@ private:
             }
             if (backStopwatch.isMoreThan(500))
             {
+                minTimeBack = 1100;
                 newStrategy(BACKWARD);
                 return;
             }
@@ -112,7 +120,19 @@ private:
 
         speed = speedParam->value;
         if (this->start.isMoreThan(10, SECOND))
-            speed += 10;
+            speed += 5;
+
+        if (currentSpeed >= speed - 10)
+        {
+            goodSpeedStopwatch.start();
+        }
+        if (goodSpeedStopwatch.isMoreThan(1000) && start.isMoreThan(10000))
+        {
+            minTimeBack = 1500;
+            newStrategy(BACKWARD);
+            goodSpeedStopwatch.start();
+            return;
+        }
 
         int maxDist = 0;
         int maxDistAngle = 0;
@@ -144,17 +164,18 @@ private:
                 break;
         }
 
-        if(data.pitch < -5) {
-            maxDistAngle /= 2;
+        if (abs(data.pitch) > 8)
+        {
+            maxDistAngle = constrain(maxDistAngle, -20, 20);
         }
 
-        int mid = 110;
+        int mid = 150;
 
-        if (maxDist <= mid)
-            speed += map(constrain(maxDist, 50, mid), 50, mid, -10, 0);
+        if (maxDist <= mid && f <= mid)
+            speed += map(constrain(maxDist, 50, mid), 50, mid, -8, 0);
         // else if (f > 150)
         // speed += map(constrain(f, 150, 300), 150, 300, 0, 40);
-        // if (f > 200)
+        // if ((f+ maxDistAngle) > 400)
         //     speed += 10;
 
         turn = maxDistAngle;
@@ -202,8 +223,8 @@ private:
         int maxTurn = 30;
         turn = constrain(turn, -maxTurn, maxTurn);
 
-        bool needToCheckMinTime = data.pitch > 10;
-        bool minTimeOk = needToCheckMinTime == false || start.isMoreThan(1200);
+        // bool needToCheckMinTime = data.pitch > 10;
+        bool minTimeOk = start.isMoreThan(minTimeBack);
 
         if (start.isMoreThan(2000) || (minTimeOk && data.scan.findDistanceAtDegree(180 - 10) > 40 && data.scan.findDistanceAtDegree(180 + 10) > 40))
         {

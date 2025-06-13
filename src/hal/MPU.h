@@ -54,7 +54,7 @@ public:
                 rotates += (yaw < 0) ? 1 : -1;
             prevYaw = yaw;
 
-            DEBUGRRF("y=%d\tp=%d\tr=%d\trot=%d\tangle=%d", yaw, pitch, roll, rotates, absoluteAngle());
+            DEBUGRRF("y=%d\tp=%d\tr=%d\trot=%d\tangle=%d\n", yaw, pitch, roll, rotates, absoluteAngle());
         }
     }
 };

@@ -25,7 +25,7 @@ public:
     {
         Lidar::init();
         mpu.init();
-        pid.tune(1.5, 0, 3.0);
+        pid.tune(1.6, 0, 3.2);
         pid.limit(-100, 100);
     }
 
@@ -56,7 +56,7 @@ public:
         {
             speed = 0;
             turn = 50 * sin(0.005 * millis());
-            DEBUGRR("Scan is not received");
+            DEBUGRR("Scan is not received\n");
         }
 
 #ifdef WAIT_5S
