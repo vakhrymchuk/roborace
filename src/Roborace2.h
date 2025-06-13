@@ -25,7 +25,7 @@ public:
     {
         Lidar::init();
         mpu.init();
-        pid.tune(2.0, 0, 4.0);
+        pid.tune(1.5, 0, 3.0);
         pid.limit(-100, 100);
     }
 
@@ -42,7 +42,7 @@ public:
                 solution.logic(data, speed, turn);
                 desiredAngle = mpu.absoluteAngle() + turn;
                 if(mpu.pitch > 8)
-                  speed += mpu.pitch * 5;
+                  speed += mpu.pitch * 2;
                 DEBUGF("speed = %d \t turn = %d\n", speed, turn);
             }
             else

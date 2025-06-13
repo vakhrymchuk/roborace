@@ -15,7 +15,7 @@ enum Strategy
 class Solution
 {
 public:
-    Param *speedParam = new Param(95, "speed", "solution");
+    Param *speedParam = new Param(90, "speed", "solution");
     Param *maxErrorParam = new Param(1200, "pid-max-error", "solution");
     Param *rotationPitchDegParam = new Param(7, "rotation-pitch-deg", "solution");
     Param *backDistParam = new Param(25, "back-dist", "solution");
@@ -30,6 +30,8 @@ private:
     Strategy strategy = FORWARD;
     Stopwatch start;
     Stopwatch gorka;
+    Stopwatch backStopwatch;
+    bool isBack = false;
 
     int absoluteAngleMax = 0;
     int absoluteAngleMin = 0;
@@ -92,14 +94,25 @@ private:
                                data.scan.findDistanceAtDegree(180 + 10) < backDistParam->value ||
                                data.scan.findDistanceAtDegree(180 + 20) < backDistParam->value))
         {
-            newStrategy(BACKWARD);
-            return;
+            if (!isBack)
+            {
+                isBack = true;
+                backStopwatch.start();
+            }
+            if (backStopwatch.isMoreThan(500))
+            {
+                newStrategy(BACKWARD);
+                return;
+            }
         }
+        else
+            isBack = false;
 
         double currentSpeed = data.speed;
 
         speed = speedParam->value;
-        if (this->start.isMoreThan(10, SECOND)) speed += 5;
+        if (this->start.isMoreThan(10, SECOND))
+            speed += 10;
 
         int maxDist = 0;
         int maxDistAngle = 0;
@@ -127,15 +140,18 @@ private:
                 maxDist = right;
                 maxDistAngle = deg;
             }
-            if(maxDist > 150) break;
+            if (maxDist > 150)
+                break;
         }
 
         int mid = 120;
 
         if (maxDist <= mid)
             speed += map(constrain(maxDist, 50, mid), 50, mid, -10, 0);
-        else if (f > 150)
-            speed += map(constrain(f, 150, 300), 150, 300, 0, 40);
+        // else if (f > 150)
+        // speed += map(constrain(f, 150, 300), 150, 300, 0, 40);
+        // if (f > 200)
+        //     speed += 10;
 
         turn = maxDistAngle;
 
