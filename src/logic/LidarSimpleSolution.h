@@ -15,12 +15,12 @@ enum Strategy
 class Solution
 {
 public:
-    Param *speedParam = new Param(100, "speed", "solution");
+    Param *speedParam = new Param(110, "speed", "solution");
     Param *maxErrorParam = new Param(1200, "pid-max-error", "solution");
     Param *rotationPitchDegParam = new Param(7, "rotation-pitch-deg", "solution");
     Param *backDistParam = new Param(20, "back-dist", "solution");
 
-    Param *turboSpeedParam = new Param(100, "turbo-speed", "turbo");
+    Param *turboSpeedParam = new Param(110, "turbo-speed", "turbo");
     Param *turboDistParam = new Param(130, "turbo-dist", "turbo");
     Param *turboAngleParam = new Param(55, "turbo-angle", "turbo");
     Param *turboMaxErrorParam = new Param(180, "turbo-max-err", "turbo");
@@ -119,8 +119,8 @@ private:
         double currentSpeed = data.speed;
 
         speed = speedParam->value;
-        if (this->start.isMoreThan(10, SECOND))
-            speed += 5;
+        if (this->start.isMoreThan(8, SECOND))
+            speed += 10;
 
         if (currentSpeed >= speed - 10)
         {
@@ -166,13 +166,13 @@ private:
 
         if (abs(data.pitch) > 8)
         {
-            maxDistAngle = constrain(maxDistAngle, -20, 20);
+            maxDistAngle = constrain(maxDistAngle, -15, 15);
         }
 
-        int mid = 150;
+        int mid = 120;
 
         if (maxDist <= mid && f <= mid)
-            speed += map(constrain(maxDist, 50, mid), 50, mid, -8, 0);
+            speed += map(constrain(maxDist, 50, mid), 50, mid, -20, 0);
         // else if (f > 150)
         // speed += map(constrain(f, 150, 300), 150, 300, 0, 40);
         // if ((f+ maxDistAngle) > 400)
