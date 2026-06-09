@@ -15,10 +15,10 @@ enum Strategy
 class Solution
 {
 public:
-    Param *speedParam = new Param(120, "speed", "solution");
+    Param *speedParam = new Param(95, "speed", "solution");
     Param *maxErrorParam = new Param(1200, "pid-max-error", "solution");
     Param *rotationPitchDegParam = new Param(7, "rotation-pitch-deg", "solution");
-    Param *backDistParam = new Param(20, "back-dist", "solution");
+    Param *backDistParam = new Param(25, "back-dist", "solution");
 
     Param *turboSpeedParam = new Param(110, "turbo-speed", "turbo");
     Param *turboDistParam = new Param(130, "turbo-dist", "turbo");
@@ -98,8 +98,10 @@ private:
         if (abs(data.pitch) < 5 && (f < backDistParam->value ||
                                data.scan.findDistanceAtDegree(180 - 10) < backDistParam->value ||
                                data.scan.findDistanceAtDegree(180 - 20) < backDistParam->value ||
+                               data.scan.findDistanceAtDegree(180 - 30) < backDistParam->value ||
                                data.scan.findDistanceAtDegree(180 + 10) < backDistParam->value ||
-                               data.scan.findDistanceAtDegree(180 + 20) < backDistParam->value))
+                               data.scan.findDistanceAtDegree(180 + 20) < backDistParam->value ||
+                               data.scan.findDistanceAtDegree(180 + 30) < backDistParam->value))
         {
             if (!isBack)
             {
@@ -166,15 +168,16 @@ private:
 
         if (abs(data.pitch) > 8)
         {
-            maxDistAngle = constrain(maxDistAngle, -15, 15);
+            maxDistAngle = constrain(maxDistAngle, -25, 25);
+            maxDistAngle += 10;
         }
 
         int mid = 120;
 
-        if (maxDist <= mid && f <= mid)
-            speed += map(constrain(maxDist, 50, mid), 50, mid, -40, 0);
-        // else if (f > 150)
-        // speed += map(constrain(f, 150, 300), 150, 300, 0, 40);
+        if (f <= mid)
+            speed += map(constrain(maxDist, 50, mid), 50, mid, -30, 0);
+        else if (f > 150)
+            speed += map(constrain(f, 150, 300), 150, 300, 0, 30);
         // if ((f+ maxDistAngle) > 400)
         //     speed += 10;
 
