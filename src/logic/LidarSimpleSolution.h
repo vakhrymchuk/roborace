@@ -3,6 +3,7 @@
 #endif
 
 #include "Stopwatch.h"
+#include "param/Param.h"
 
 enum Strategy
 {
@@ -15,7 +16,7 @@ enum Strategy
 class Solution
 {
 public:
-    Param *speedParam = new Param(95, "speed", "solution");
+    Param *speedParam = new Param(70, "speed", "solution");
     Param *maxErrorParam = new Param(1200, "pid-max-error", "solution");
     Param *rotationPitchDegParam = new Param(7, "rotation-pitch-deg", "solution");
     Param *backDistParam = new Param(25, "back-dist", "solution");

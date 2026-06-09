@@ -1,10 +1,11 @@
 #include <Arduino.h>
 
-#define DEBUGRRF(...) //Serial.printf(__VA_ARGS__)
-#define DEBUGRR(...) //Serial.println(__VA_ARGS__)
+#define DEBUGRRF(...) Serial.printf(__VA_ARGS__)
+#define DEBUGRR(...) Serial.println(__VA_ARGS__)
+#define DEBUGF(...) Serial.printf(__VA_ARGS__)
 #define WAIT_5S true
 
-#include "RoboraceWebserver.h"
+#include "Roborace2.h"
 // #include "hal/testconfig/EnginePidConfig.h"
 // #include "hal/testconfig/ServoConfig.h"
 
