@@ -122,7 +122,7 @@ private:
             speed = 0;
         } else if (lineSensor.shouldSlowDown()) {
             // Снижение скорости перед стоп-линией
-            speed = 50;
+            speed = 55;
         }
         // В режиме OBSTACLE_IGNORE скорость не меняется, просто игнорируем датчик
     }

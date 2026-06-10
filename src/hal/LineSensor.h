@@ -35,7 +35,7 @@ public:
     static constexpr int DISTANCE_TO_STOP_CM = 100;
     
     // Временные константы (мс) при скорости 150 см/с
-    static constexpr unsigned long LINE_MIN_MS = 10;
+    static constexpr unsigned long LINE_MIN_MS = 20;
     static constexpr unsigned long LINE_MAX_MS = 70;
     static constexpr unsigned long WHITE_GAP_MIN_MS = 100;
     static constexpr unsigned long DECISION_TIMEOUT_MS = 200;
@@ -74,6 +74,7 @@ public:
                     } else if (lineCount == 1) {
                         event = TrackEvent::STOP_AHEAD;
                         state = LineSensorState::APPROACH_STOP;
+                        ignoreStartTime = now;
                         lineCount = 0;
                     } else {
                         state = LineSensorState::IDLE;
@@ -89,6 +90,9 @@ public:
                 break;
                 
             case LineSensorState::APPROACH_STOP:
+                if (now - ignoreStartTime > 1000) {
+                    state = LineSensorState::IDLE;
+                }
                 break;
                 
             case LineSensorState::STOPPED:

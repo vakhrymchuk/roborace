@@ -16,10 +16,10 @@ enum Strategy
 class Solution
 {
 public:
-    Param *speedParam = new Param(75, "speed", "solution");
+    Param *speedParam = new Param(70, "speed", "solution");
     Param *maxErrorParam = new Param(1200, "pid-max-error", "solution");
     Param *rotationPitchDegParam = new Param(7, "rotation-pitch-deg", "solution");
-    Param *backDistParam = new Param(25, "back-dist", "solution");
+    Param *backDistParam = new Param(30, "back-dist", "solution");
 
     Param *turboSpeedParam = new Param(110, "turbo-speed", "turbo");
     Param *turboDistParam = new Param(130, "turbo-dist", "turbo");
