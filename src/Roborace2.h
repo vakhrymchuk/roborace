@@ -75,7 +75,7 @@ public:
 #endif
 
         // Применяем модификации скорости от датчика линии
-        applyLineSpeedModifier();
+        // applyLineSpeedModifier();
 
         pid.setpoint(desiredAngle);
         turn = (int) -pid.compute(mpu.absoluteAngle());
