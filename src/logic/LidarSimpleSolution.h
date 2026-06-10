@@ -175,11 +175,11 @@ private:
 
         if (maxDist < 70) // ограничение поворота чтобы перед горкой в угол не ехать
         {
-            // int deg = 50;
-            // int left = data.scan.findDistanceAtDegree(180 - deg);
-            // int right = data.scan.findDistanceAtDegree(180 + deg);
-            // int error = right - left;
-            // maxDistAngle = 1.0 * error;
+            int deg = 50;
+            int left = data.scan.findDistanceAtDegree(180 - deg);
+            int right = data.scan.findDistanceAtDegree(180 + deg);
+            int error = right - left;
+            maxDistAngle = 1.0 * error;
             maxDistAngle = constrain(maxDistAngle, -10, 10);
         }
 
