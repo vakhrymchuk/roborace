@@ -16,7 +16,7 @@ enum Strategy
 class Solution
 {
 public:
-    Param *speedParam = new Param(80, "speed", "solution");
+    Param *speedParam = new Param(75, "speed", "solution");
     Param *maxErrorParam = new Param(1200, "pid-max-error", "solution");
     Param *rotationPitchDegParam = new Param(7, "rotation-pitch-deg", "solution");
     Param *backDistParam = new Param(25, "back-dist", "solution");
@@ -175,11 +175,11 @@ private:
 
         if (maxDist < 70) // ограничение поворота чтобы перед горкой в угол не ехать
         {
-            int deg = 50;
-            int left = data.scan.findDistanceAtDegree(180 - deg);
-            int right = data.scan.findDistanceAtDegree(180 + deg);
-            int error = right - left;
-            maxDistAngle = 1.0 * error;
+            // int deg = 50;
+            // int left = data.scan.findDistanceAtDegree(180 - deg);
+            // int right = data.scan.findDistanceAtDegree(180 + deg);
+            // int error = right - left;
+            // maxDistAngle = 1.0 * error;
             maxDistAngle = constrain(maxDistAngle, -10, 10);
         }
 

@@ -35,7 +35,7 @@ public:
     static constexpr int DISTANCE_TO_STOP_CM = 100;
     
     // Временные константы (мс) при скорости 150 см/с
-    static constexpr unsigned long LINE_MIN_MS = 30;
+    static constexpr unsigned long LINE_MIN_MS = 20;
     static constexpr unsigned long LINE_MAX_MS = 120;
     static constexpr unsigned long WHITE_GAP_MIN_MS = 100;
     static constexpr unsigned long DECISION_TIMEOUT_MS = 200;
