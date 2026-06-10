@@ -36,7 +36,7 @@ public:
     
     // Временные константы (мс) при скорости 150 см/с
     static constexpr unsigned long LINE_MIN_MS = 7;
-    static constexpr unsigned long LINE_MAX_MS = 25;
+    static constexpr unsigned long LINE_MAX_MS = 50;
     static constexpr unsigned long WHITE_GAP_MIN_MS = 100;
     static constexpr unsigned long DECISION_TIMEOUT_MS = 200;
     static constexpr unsigned long STOP_LINE_MIN_MS = 100;
@@ -85,7 +85,8 @@ public:
                 break;
                 
             case LineSensorState::APPROACH_STOP:
-                if (now - ignoreStartTime > 500) {
+                if (now - ignoreStartTime > 800) {
+                    event = TrackEvent::STOP_AHEAD;
                     state = LineSensorState::STOPPED;
                 }
                 break;
@@ -168,7 +169,8 @@ void IRAM_ATTR LineSensor::handleInterrupt() {
                     state = LineSensorState::COUNTING_LINES;
                 }
             } else if (blackDuration > LINE_MAX_MS && state == LineSensorState::COUNTING_LINES) {
-                state = LineSensorState::WAITING_DECISION;
+                state = LineSensorState::STOPPED;
+                stopStartTime = now;
             }
         }
         
