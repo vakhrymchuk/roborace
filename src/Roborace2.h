@@ -78,7 +78,7 @@ public:
 
         // Уменьшаем скорость при yaw 160-200 градусов (в диапазоне -180..180 это 160..180 и -180..-160)
         if (mpu.yaw >= 155 || mpu.yaw < -160) {
-            speed = min(speed, 50);
+            speed = min(speed, 55);
         }
 
         pid.setpoint(desiredAngle);

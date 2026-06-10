@@ -11,7 +11,7 @@ enum class LineSensorState {
 
 class LineSensor {
 public:
-    static constexpr unsigned long BLACK_LINE_MIN_MS = 40;  // ~5 см при 150 см/с
+    static constexpr unsigned long BLACK_LINE_MIN_MS = 35;  // ~5 см при 150 см/с
     static constexpr unsigned long STOP_DURATION_MS = 1000;
     static constexpr unsigned long IGNORE_AFTER_STOP_MS = 5000;
 
