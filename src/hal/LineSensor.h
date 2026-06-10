@@ -66,12 +66,7 @@ public:
                 
             case LineSensorState::WAITING_DECISION:
                 if (now - lastEdgeTime > DECISION_TIMEOUT_MS) {
-                    if (lineCount >= 2) {
-                        event = TrackEvent::OBSTACLE;
-                        state = LineSensorState::OBSTACLE_IGNORE;
-                        ignoreStartTime = now;
-                        lineCount = 0;
-                    } else if (lineCount == 1) {
+                    if (lineCount >= 1) {
                         event = TrackEvent::STOP_AHEAD;
                         state = LineSensorState::APPROACH_STOP;
                         ignoreStartTime = now;
@@ -90,8 +85,8 @@ public:
                 break;
                 
             case LineSensorState::APPROACH_STOP:
-                if (now - ignoreStartTime > 1000) {
-                    state = LineSensorState::IDLE;
+                if (now - ignoreStartTime > 500) {
+                    state = LineSensorState::STOPPED;
                 }
                 break;
                 
@@ -159,7 +154,7 @@ void IRAM_ATTR LineSensor::handleInterrupt() {
         } else {
             // черный -> белый
             unsigned long blackDuration = now - blackStartTime;
-            Serial.println("Black duration: " + String(blackDuration) + " ms");
+            // Serial.println("Black duration: " + String(blackDuration) + " ms");
             
             if (state == LineSensorState::APPROACH_STOP) {
                 if (blackDuration >= STOP_LINE_MIN_MS) {
@@ -168,7 +163,7 @@ void IRAM_ATTR LineSensor::handleInterrupt() {
                 }
             } else if (blackDuration >= LINE_MIN_MS && blackDuration <= LINE_MAX_MS) {
                 lineCount++;
-                Serial.println("Line count: " + String(lineCount));
+                // Serial.println("Line count: " + String(lineCount));
                 if (state == LineSensorState::IDLE) {
                     state = LineSensorState::COUNTING_LINES;
                 }
