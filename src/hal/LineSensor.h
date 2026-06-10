@@ -13,6 +13,7 @@ class LineSensor {
 public:
     static constexpr unsigned long BLACK_LINE_MIN_MS = 33;  // ~5 см при 150 см/с
     static constexpr unsigned long STOP_DURATION_MS = 1000;
+    static constexpr unsigned long IGNORE_AFTER_STOP_MS = 5000;
 
     LineSensor() {
         instance = this;
@@ -32,10 +33,13 @@ public:
         if (state == LineSensorState::BLACK_LINE) {
             if (now - blackLineDetectedTime > STOP_DURATION_MS) {
                 state = LineSensorState::IDLE;
+                lastStopEndTime = now;
             }
         } else if (onBlack && (now - blackStartTime >= BLACK_LINE_MIN_MS)) {
-            state = LineSensorState::BLACK_LINE;
-            blackLineDetectedTime = now;
+            if (now - lastStopEndTime > IGNORE_AFTER_STOP_MS) {
+                state = LineSensorState::BLACK_LINE;
+                blackLineDetectedTime = now;
+            }
         }
         
         return state;
@@ -51,6 +55,7 @@ private:
     volatile bool onBlack = false;
     volatile unsigned long blackStartTime = 0;
     unsigned long blackLineDetectedTime = 0;
+    unsigned long lastStopEndTime = 0;
     
     static void onLineChange();
     void handleInterrupt();
