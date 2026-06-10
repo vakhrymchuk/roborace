@@ -66,7 +66,7 @@ public:
         {
             speed = 0;
             turn = 50 * sin(0.005 * millis());
-            // DEBUGRR("Scan is not received\n");
+            DEBUGRR("Scan is not received\n");
         }
 
 #ifdef WAIT_5S
@@ -80,7 +80,7 @@ public:
         pid.setpoint(desiredAngle);
         turn = (int) -pid.compute(mpu.absoluteAngle());
 
-        // DEBUGF("SERVO turn = %d\n", turn);
+        DEBUGF("SERVO turn = %d\n", turn);
 
         mechanics.run(speed, turn);
     }
