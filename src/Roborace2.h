@@ -21,7 +21,6 @@ public:
 private:
     Stopwatch wait;
     PIDController pid;
-    int baseSpeed = 0;  // Базовая скорость до модификаций
 
 public:
     Roborace()
@@ -37,9 +36,13 @@ public:
     {
         mpu.readData();
         
-        // Обработка датчика линии
-        TrackEvent lineEvent = lineSensor.update();
-        handleLineEvent(lineEvent);
+        lineSensor.update();
+        
+        if (lineSensor.shouldStop()) {
+            speed = 0;
+            mechanics.run(speed, turn);
+            return;
+        }
         
         if (Lidar::getData(scan.data))
         {
@@ -49,7 +52,6 @@ public:
             {
                 PhysicalData data = createPhysicalData();
                 solution.logic(data, speed, turn);
-                baseSpeed = speed;  // Сохраняем базовую скорость
                 desiredAngle = mpu.absoluteAngle() + turn;
                 if(mpu.pitch > 8)
                   speed += mpu.pitch * 1;
@@ -74,9 +76,6 @@ public:
             speed = 0;
 #endif
 
-        // Применяем модификации скорости от датчика линии
-        // applyLineSpeedModifier();
-
         pid.setpoint(desiredAngle);
         turn = (int) -pid.compute(mpu.absoluteAngle());
 
@@ -96,34 +95,4 @@ protected:
     int speed = 0;
     int turn = ServoWrapper::CENTER;
     int desiredAngle = 0;
-
-private:
-    void handleLineEvent(TrackEvent event) {
-        switch (event) {
-            case TrackEvent::OBSTACLE:
-                // Обнаружены камни - продолжаем ехать, игнорируем линии 1м
-                DEBUGRRF("LINE: Obstacle detected, ignoring lines for 1m\n");
-                break;
-                
-            case TrackEvent::STOP_AHEAD:
-                // Впереди стоп-линия - снижаем скорость
-                DEBUGRRF("LINE: Stop line ahead, slowing down\n");
-                break;
-                
-            case TrackEvent::NONE:
-            default:
-                break;
-        }
-    }
-    
-    void applyLineSpeedModifier() {
-        if (lineSensor.shouldStop()) {
-            // Остановка на стоп-линии
-            speed = 0;
-        } else if (lineSensor.shouldSlowDown()) {
-            // Снижение скорости перед стоп-линией
-            speed = 55;
-        }
-        // В режиме OBSTACLE_IGNORE скорость не меняется, просто игнорируем датчик
-    }
 };
