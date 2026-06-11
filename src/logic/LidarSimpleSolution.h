@@ -3,6 +3,7 @@
 #endif
 
 #include "Stopwatch.h"
+#include "param/Param.h"
 
 enum Strategy
 {
@@ -15,7 +16,7 @@ enum Strategy
 class Solution
 {
 public:
-    Param *speedParam = new Param(95, "speed", "solution");
+    Param *speedParam = new Param(70, "speed", "solution");
     Param *maxErrorParam = new Param(1200, "pid-max-error", "solution");
     Param *rotationPitchDegParam = new Param(7, "rotation-pitch-deg", "solution");
     Param *backDistParam = new Param(25, "back-dist", "solution");
@@ -65,7 +66,7 @@ private:
     void forward(PhysicalData &data, int &speed, int &turn)
     {
         int degRange = 30;
-        DEBUGF("size = %d \tpitch = %d \tyaw = %d\t\n", data.scan.data.size(), data.pitch, data.yaw);
+        DEBUGRRF("size = %d \tpitch = %d \tyaw = %d\t\n", data.scan.data.size(), data.pitch, data.yaw);
         // if (data.pitch > 10 && (data.yaw > 180 - degRange || data.yaw < -180 + degRange))
         // if (millis() > 10000 && data.pitch > rotationPitchDegParam->value && abs(data.yaw - 0) < degRange)
         if (isCounterClockWise(data, 150))

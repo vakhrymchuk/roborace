@@ -43,7 +43,7 @@ public:
                 desiredAngle = mpu.absoluteAngle() + turn;
                 if(mpu.pitch > 8)
                   speed += mpu.pitch * 1;
-                DEBUGF("speed = %d \t turn = %d\n", speed, turn);
+                DEBUGRRF("speed = %d \t turn = %d\n", speed, turn);
             }
             else
             {
@@ -67,7 +67,7 @@ public:
         pid.setpoint(desiredAngle);
         turn = (int) -pid.compute(mpu.absoluteAngle());
 
-        DEBUGF("SERVO turn = %d\n", turn);
+        DEBUGRRF("SERVO turn = %d\n", turn);
 
         mechanics.run(speed, turn);
     }
