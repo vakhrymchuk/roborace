@@ -122,8 +122,8 @@ private:
         double currentSpeed = data.speed;
 
         speed = speedParam->value;
-        if (this->start.isMoreThan(10, SECOND))
-            speed += 10;
+        if (this->start.isMoreThan(8, SECOND))
+            speed += 8;
 
         if (currentSpeed >= speed - 10)
         {
@@ -176,7 +176,7 @@ private:
         int mid = 120;
 
         if (f <= mid)
-            speed += map(constrain(maxDist, 50, mid), 50, mid, -30, 0);
+            speed += map(constrain(maxDist, 50, mid), 50, mid, -20, 0);
         else if (f > 150)
             speed += map(constrain(f, 150, 300), 150, 300, 0, 20);
         // if ((f+ maxDistAngle) > 400)
