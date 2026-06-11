@@ -45,8 +45,8 @@ public:
 
             calcSpeed();
 
-            int power;
-            if (speed >= 0)
+            int power = 0;
+            if (speed > 0)
             {
                 if (lastSpeed < 0)
                 {

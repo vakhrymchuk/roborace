@@ -62,7 +62,12 @@ public:
         }
     }
 
+    void startRace()
+    {
+        start.start();
+    }
 private:
+
     void forward(PhysicalData &data, int &speed, int &turn)
     {
         int degRange = 30;
@@ -81,7 +86,8 @@ private:
         {
             gorka.start();
             gorkaStarted = true;
-        } else 
+        }
+        else
             gorkaStarted = false;
 
         if (data.pitch > 8 && gorka.isMoreThan(3, SECOND))
@@ -96,20 +102,14 @@ private:
 
         DEBUGRRF("forw = %d \t", f);
 
-        if (abs(data.pitch) < 5 && (f < backDistParam->value ||
-                               data.scan.findDistanceAtDegree(180 - 10) < backDistParam->value ||
-                               data.scan.findDistanceAtDegree(180 - 20) < backDistParam->value ||
-                               data.scan.findDistanceAtDegree(180 - 30) < backDistParam->value ||
-                               data.scan.findDistanceAtDegree(180 + 10) < backDistParam->value ||
-                               data.scan.findDistanceAtDegree(180 + 20) < backDistParam->value ||
-                               data.scan.findDistanceAtDegree(180 + 30) < backDistParam->value))
+        if (start.isMoreThan(2000) && abs(data.pitch) < 5 && (f < backDistParam->value || data.scan.findDistanceAtDegree(180 - 10) < backDistParam->value || data.scan.findDistanceAtDegree(180 - 20) < backDistParam->value || data.scan.findDistanceAtDegree(180 - 30) < backDistParam->value || data.scan.findDistanceAtDegree(180 + 10) < backDistParam->value || data.scan.findDistanceAtDegree(180 + 20) < backDistParam->value || data.scan.findDistanceAtDegree(180 + 30) < backDistParam->value))
         {
             if (!isBack)
             {
                 isBack = true;
                 backStopwatch.start();
             }
-            if (backStopwatch.isMoreThan(500))
+            if (backStopwatch.isMoreThan(600))
             {
                 minTimeBack = 1100;
                 newStrategy(BACKWARD);
@@ -122,7 +122,7 @@ private:
         double currentSpeed = data.speed;
 
         speed = speedParam->value;
-        if (this->start.isMoreThan(8, SECOND))
+        if (this->start.isMoreThan(10, SECOND))
             speed += 10;
 
         if (currentSpeed >= speed - 10)
@@ -178,7 +178,7 @@ private:
         if (f <= mid)
             speed += map(constrain(maxDist, 50, mid), 50, mid, -30, 0);
         else if (f > 150)
-            speed += map(constrain(f, 150, 300), 150, 300, 0, 30);
+            speed += map(constrain(f, 150, 300), 150, 300, 0, 20);
         // if ((f+ maxDistAngle) > 400)
         //     speed += 10;
 

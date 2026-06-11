@@ -19,6 +19,7 @@ public:
 private:
     Stopwatch wait;
     PIDController pid;
+    bool started = false;
 
 public:
     Roborace()
@@ -41,8 +42,8 @@ public:
                 PhysicalData data = createPhysicalData();
                 solution.logic(data, speed, turn);
                 desiredAngle = mpu.absoluteAngle() + turn;
-                if(mpu.pitch > 8)
-                  speed += mpu.pitch * 1;
+                // if(mpu.pitch > 8)
+                //   speed += mpu.pitch * 1;
                 DEBUGRRF("speed = %d \t turn = %d\n", speed, turn);
             }
             else
@@ -62,6 +63,12 @@ public:
 #ifdef WAIT_5S
         if (millis() < 4500)
             speed = 0;
+        else {
+            if(!started) {
+                started = true;
+                solution.startRace();
+            }
+        }
 #endif
 
         pid.setpoint(desiredAngle);
